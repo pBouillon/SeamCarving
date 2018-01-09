@@ -2,8 +2,51 @@ import java.io.*;
 import java.util.*;
 
 public class SeamCarving {
+
     private static final String BASE_PATH = "src/greymaps/" ;
     private static final String SEPARATOR = "  " ;
+
+    /**
+     * Build a double array with interest for each pixel
+     * for an array :[x] [y] [z]
+     * interest = y - avg(x, z)
+     *
+     * @param image
+     * @return interest: average val of adjascent pixels
+     */
+    public static int[][] interest (int[][] image) {
+        int height = image.length ;
+        int width  = image[0].length ;
+
+        int[][] interest_grid = new int[height][width] ;
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++){
+                // current pixel
+                int px_c = image[i][j] ;
+
+                // current pixel has no right neighbor
+                if (j - 1 < 0) {
+                    interest_grid[i][j] = Math.abs(px_c - image[i][j + 1]) ;
+                    continue ;
+                }
+
+                // current pixel has no left neighbor
+                else if (j + 1 == width) {
+                    interest_grid[i][j] = Math.abs(px_c - image[i][j - 1]) ;
+                    continue ;
+                }
+
+                // current pixel has both neighbors
+                int px_l = image[i][j - 1] ; // left  pixel
+                int px_r = image[i][j + 1] ; // right pixel
+                int neighbors_avg = (px_l + px_r) / 2 ;
+
+                interest_grid[i][j] = Math.abs(px_c - neighbors_avg) ;
+            }
+        }
+        return interest_grid ;
+    }
 
     /**
      * @param fn
