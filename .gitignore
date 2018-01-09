@@ -25,6 +25,7 @@ hs_err_pid*
 .idea/
 *.xml
 *.iml
+*.out
 
 # project
 *.dot
