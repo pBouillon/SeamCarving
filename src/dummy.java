@@ -4,8 +4,9 @@
  */
 public class dummy {
     public static void main(String[] args) {
-        writepgm_try() ;
-        interest_try() ;
+        //writepgm_try() ;
+        //interest_try() ;
+        tograpg_test();
     }
 
     private static void interest_try() {
@@ -28,6 +29,16 @@ public class dummy {
         System.out.println("8 2 1 15\n13 3 1 10\n140 52 5 25");
     }
 
+    private static void tograpg_test() {
+    	int[][] image = {
+                {3,   11, 24, 39},
+                {8,   21, 29, 39},
+                {200, 60, 25, 0}
+        } ;
+    	
+    	Graph g = SeamCarving.tograph(image);
+    	g.writeFile("test_graph.dot");
+    }
     private static void writepgm_try() {
         // same values as src/greymaps/test.pgm to check differences
         int[][] p_pgm = {
