@@ -1,0 +1,29 @@
+-- SEAM CARVING PROJECT --
+==========================
+
+Authors: 
+    - Pierre Bouillon 
+    - Yoan Fath
+
+
+-- TASKS REPARTITION --
+
+::Pierre Bouillon::
+
+    - .pgm saving function
+    - interest evaluation function
+    - TODO
+
+::Yoan Fath::
+
+    - TODO
+
+
+-- SOFTWARE USAGE --
+
+    - TODO
+
+
+-- IMPROVEMENTS BROUGHT--
+
+    - TODO
