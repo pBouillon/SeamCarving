@@ -18,6 +18,8 @@ public class dummy {
 
         int[][] ret = SeamCarving.interest(image) ;
 
+        SeamCarving.tograph(ret) ;
+
         for (int[] row : ret) {
             for (int col : row) {
                 System.out.print(col + " ");
