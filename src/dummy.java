@@ -8,7 +8,7 @@ public class dummy {
         interest_try() ;
     }
 
-    public static void interest_try() {
+    private static void interest_try() {
         int[][] image = {
                 {3,   11, 24, 39},
                 {8,   21, 29, 39},
@@ -28,7 +28,7 @@ public class dummy {
         System.out.println("8 2 1 15\n13 3 1 10\n140 52 5 25");
     }
 
-    public static void writepgm_try() {
+    private static void writepgm_try() {
         // same values as src/greymaps/test.pgm to check differences
         int[][] p_pgm = {
                 {3,   11, 24, 39},

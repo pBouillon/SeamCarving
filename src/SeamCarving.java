@@ -32,7 +32,7 @@ public class SeamCarving {
                 }
 
                 // current pixel has no left neighbor
-                else if (j + 1 == width) {
+                if (j + 1 == width) {
                     interest_grid[i][j] = Math.abs(px_c - image[i][j - 1]) ;
                     continue ;
                 }
@@ -95,8 +95,8 @@ public class SeamCarving {
      * @param filename destination
      */
     public static void writepgm (int[][] image, String filename) {
+        File destination ;
         PrintWriter pw    = null ;
-        File destination  = null ;
 
         // Create file if not exists
         try {
