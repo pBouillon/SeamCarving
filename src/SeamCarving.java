@@ -16,24 +16,29 @@ public class SeamCarving {
      * @param g manipulated graph
      * @param s start vertex
      * @param t end vertex
+     *
      * @return sequence of edges for the shortest path
      */
-	private static Object[] Dijkstra (Graph g, int s, int t) {
-	    ArrayList<Integer> path = new ArrayList<>() ;
+	private static ArrayList<Integer> Dijkstra (Graph g, int s, int t) {
+        ArrayList<Integer> sp = new ArrayList<>() ;
 
-        Heap priorities = new Heap(g.vertices()) ;
-        priorities.decreaseKey(s, 0) ;
+        Heap pq   = new Heap(g.vertices()) ; // priority queue pq
+        int  dist = 0 ;
 
-        while (path.get(path.size()) != t) { // to verify
-            int less_pr = priorities.pop() ;
-            
-            path.add(less_pr) ;
-            for (Edge e : g.adj(less_pr)) {
-				// change each priority for connected vertices
+        pq.decreaseKey(s, 0) ; // origin
+        do { // while we don't end our path at the goal
+
+            int shortest_v = pq.pop() ;
+
+            sp.add(shortest_v) ;              // add shortest vertice to path
+            dist += pq.priority(shortest_v) ; // update path cost
+
+            for (Edge e : g.adj(shortest_v)) { // for each edge
+                int newDist = dist + e.getCost() ;    // evaluate the new cost
+                pq.decreaseKey(e.getTo(), newDist) ; // update the priority of the element
             }
-        }
-
-	    return path.toArray() ;
+        } while (/*!pq.isEmpty()*/sp.get(sp.size()) != t) ;
+        return sp ;
     }
 
 	/**
@@ -236,4 +241,8 @@ public class SeamCarving {
 		}
 		pw.close() ;
 	}
+
+    public static ArrayList<Integer> getShortestPath (Graph g) {
+	    return Dijkstra(g, 0, g.vertices() + 1) ;
+    }
 }

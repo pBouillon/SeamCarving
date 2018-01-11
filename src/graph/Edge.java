@@ -15,4 +15,16 @@ public class Edge {
         this.from = x ;
         this.to   = y ;
     }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getFrom() {
+        return from;
+    }
+
+    public int getTo() {
+        return to;
+    }
 }

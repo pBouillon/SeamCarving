@@ -1,5 +1,7 @@
 import graph.Graph;
 
+import java.util.ArrayList;
+
 /**
  * From SeamCarving > PACKAGE_NAME
  * Created on 09/01/2018
@@ -8,7 +10,8 @@ public class dummy {
     public static void main(String[] args) {
         //writepgm_try() ;
         //interest_try() ;
-        tograpg_test();
+        //tograpg_test();
+        shortestPathTest() ;
     }
 
     private static void interest_try() {
@@ -40,10 +43,27 @@ public class dummy {
                 {200, 60, 25, 0}
         } ;
 
-    	int[][] itr = SeamCarving.interest(image) ;
-    	Graph g = SeamCarving.tograph(itr);
-    	g.writeFile("test_graph.dot");
+        int[][] itr = SeamCarving.interest(image) ;
+        Graph g = SeamCarving.tograph(itr);
+        g.writeFile("test_graph.dot");
     }
+
+    private static void shortestPathTest() {
+        int[][] image = {
+                {3,   11, 24, 39},
+                {8,   21, 29, 39},
+                {200, 60, 25, 0}
+        } ;
+
+        int[][] itr = SeamCarving.interest(image) ;
+        Graph g = SeamCarving.tograph(itr);
+
+        ArrayList<Integer> path = SeamCarving.getShortestPath(g) ;
+        for (int v : path) {
+            System.out.println(v) ;
+        }
+    }
+
     private static void writepgm_try() {
         // same values as src/greymaps/test.pgm to check differences
         int[][] p_pgm = {

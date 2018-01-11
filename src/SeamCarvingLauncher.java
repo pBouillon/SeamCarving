@@ -1,6 +1,8 @@
 import graph.Graph;
 import org.apache.commons.cli.*;
 
+import java.util.ArrayList;
+
 /**
  * Entrypoint for SeamCarving
  */
