@@ -173,20 +173,12 @@ public class SeamCarvingLauncher {
         String[] file    = launcher.getFiles()   ;
         boolean  simple  = launcher.useSimple()  ;
         boolean  verbose = launcher.useVerbose() ;
-        if (verbose) {
-            System.out.println("Arg parsing done") ;
-            System.out.println("Converting source to pixel array") ;
-        }
+
         int[][] maping   = SeamCarving.readpgm(file[0]) ;
 
-        if (verbose) {
-            System.out.println("Calculating pixel interest array") ;
-        }
+        assert maping != null ;
         int[][] interest = SeamCarving.interest(maping) ;
 
-        if (verbose) {
-            System.out.println("Converting interest array to graph") ;
-        }
         Graph imgGraph = SeamCarving.tograph(interest) ;
     }
 }

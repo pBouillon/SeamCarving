@@ -1,5 +1,6 @@
 import graph.Edge;
 import graph.Graph;
+import graph.Heap;
 
 import java.io.*;
 import java.util.*;
@@ -17,10 +18,22 @@ public class SeamCarving {
      * @param t end vertex
      * @return sequence of edges for the shortest path
      */
-	private static int[] Dijkstra (Graph g, int s, int t) {
-	    int[] shortest_path = {0, 0 , 0} ;
+	private static Object[] Dijkstra (Graph g, int s, int t) {
+	    ArrayList<Integer> path = new ArrayList<>() ;
 
-	    return shortest_path ;
+        Heap priorities = new Heap(g.vertices()) ;
+        priorities.decreaseKey(s, 0) ;
+
+        while (path.get(path.size()) != t) { // to verify
+            int less_pr = priorities.pop() ;
+            
+            path.add(less_pr) ;
+            for (Edge e : g.adj(less_pr)) {
+				// change each priority for connected vertices
+            }
+        }
+
+	    return path.toArray() ;
     }
 
 	/**

@@ -1,13 +1,13 @@
 package graph;
 
-class Heap {
+public class Heap {
 
     int cor [];
     int item[];
     int heap[];
     int size ;
    
-    Heap (int N) {
+    public Heap (int N) {
 		cor  = new int[N+1] ;
 		heap = new int[N+1] ;
 		item = new int[N+1] ;
@@ -28,21 +28,21 @@ class Heap {
      * @param x
      * @return
      */
-    int priority (int x) {
+	public int priority (int x) {
         return heap[cor[x]] ;
     }
 
     /**
      * @return
      */
-    boolean isEmpty() {
+	public boolean isEmpty() {
         return size == 0 ;
     }
 
     /**
      * @return
      */
-    int getsize() {
+	public int getsize() {
         return size ;
     }
 
@@ -50,7 +50,7 @@ class Heap {
      * @param x
      * @param p
      */
-    void decreaseKey (int x, int p) {
+	public void decreaseKey (int x, int p) {
         int pos = cor[x];
 		if (pos > size) {
 			 System.out.println("erreur") ;
@@ -71,7 +71,7 @@ class Heap {
     /**
      *
      */
-    void affiche()
+	void affiche()
 	 {
 		for (int i = 1; i <= size; i++)
 		  System.out.print("(" + item[i] + " " + heap[i] + ")");
@@ -82,7 +82,7 @@ class Heap {
      *
      * @return
      */
-    int pop() {
+	public int pop() {
 		int ret = item[1] ;
 		int min = heap[1] ;
 
