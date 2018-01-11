@@ -6,10 +6,14 @@ import org.apache.commons.cli.*;
  */
 public class SeamCarvingLauncher {
 
-    private final String COMPRESS_OPT = "compress" ;
-    private final String HELP_OPT     = "help" ;
-    private final String SIMPLE_OPT   = "simple"  ;
-    private final String VERBOSE_OPT  = "verbose" ;
+    private final String DEFAULT_OUT  = "out.pgm" ;
+    private final String PROG_NAME    = "SeamCarvingLauncher" ;
+
+    private final String OPT_COMPRESS = "compress" ;
+    private final String OPT_HELP     = "help" ;
+    private final String OPT_SIMPLE   = "simple"  ;
+    private final String OPT_VERBOSE  = "verbose" ;
+
 
     private boolean  simple  ;
     private boolean  verbose ; /* if using the simple algorithm instead of the double one */
@@ -42,30 +46,29 @@ public class SeamCarvingLauncher {
     private Options buildOptions() {
         Options scOptions = new Options() ;
 
-        Option compress = Option.builder(COMPRESS_OPT.charAt(0) + "")
-            .longOpt(COMPRESS_OPT)
-            .desc("Compress image source into dest")
-            .numberOfArgs(2)
+        Option compress = Option.builder(OPT_COMPRESS.charAt(0) + "")
+            .longOpt(OPT_COMPRESS)
+            .desc("Compress image source into dest.")
+            .hasArgs()
             .valueSeparator(' ')
             .argName("source> <dest")
-            .required(true)
             .build() ;
         scOptions.addOption(compress) ;
 
-        Option help = Option.builder(HELP_OPT.charAt(0) + "")
-                .longOpt(HELP_OPT)
+        Option help = Option.builder(OPT_HELP.charAt(0) + "")
+                .longOpt(OPT_HELP)
                 .desc("Displays help")
                 .build() ;
         scOptions.addOption(help) ;
 
-        Option simple = Option.builder(SIMPLE_OPT.charAt(0) + "")
-                .longOpt(SIMPLE_OPT)
-                .desc("Uses the 'simple' method instead of the double")
+        Option simple = Option.builder(OPT_SIMPLE.charAt(0) + "")
+                .longOpt(OPT_SIMPLE)
+                .desc("Uses the 'simple' method.")
                 .build() ;
         scOptions.addOption(simple) ;
 
-        Option verbose = Option.builder(VERBOSE_OPT.charAt(0) + "")
-            .longOpt(VERBOSE_OPT)
+        Option verbose = Option.builder(OPT_VERBOSE.charAt(0) + "")
+            .longOpt(OPT_VERBOSE)
             .desc("Shows program's progression")
             .build() ;
         scOptions.addOption(verbose) ;
@@ -73,9 +76,14 @@ public class SeamCarvingLauncher {
         return scOptions ;
     }
 
+    private void displayHelp (String msg, Options opts, int ret) {
+        HelpFormatter formatter  = new HelpFormatter() ;
+        System.out.println(msg) ;
+        formatter.printHelp(PROG_NAME, opts) ;
+        System.exit(ret) ;
+    }
+
     /**
-     * @TODO: handle more than 2 arg for dest; -h should not return 1
-     *
      * Parse all arguments
      *
      * Displays help if required argument is missing
@@ -86,33 +94,55 @@ public class SeamCarvingLauncher {
      */
     private void parse(String[] args) {
         CommandLineParser parser = new DefaultParser() ;
-        HelpFormatter formatter  = new HelpFormatter() ;
-
         Options scOptions = buildOptions() ;
-        CommandLine cmd ;
 
         try {
-            cmd = parser.parse(scOptions, args) ;
+            CommandLine cmd = parser.parse(scOptions, args) ;
 
-            if (cmd.hasOption(HELP_OPT)) {
-                formatter.printHelp("SeamCarvingLauncher", scOptions) ;
-                System.exit(0) ;
+            simple  = cmd.hasOption(OPT_SIMPLE) ;
+            verbose = cmd.hasOption(OPT_VERBOSE) ;
+
+            if (cmd.getArgs().length == 0 || cmd.hasOption(OPT_HELP)) {
+                displayHelp (
+                        "-- HELPER --",
+                        scOptions,
+                        0
+                ) ;
             }
-            
-            verbose = cmd.hasOption(VERBOSE_OPT) ;
 
-            simple = cmd.hasOption(SIMPLE_OPT) ;
-
-            if (cmd.hasOption(COMPRESS_OPT)) {
-                files = cmd.getOptionValues(COMPRESS_OPT) ;
+            if (cmd.hasOption(OPT_COMPRESS)) {
+                switch (cmd.getOptionValues(OPT_COMPRESS).length) {
+                    case 1 :
+                        files = new String[] {
+                                cmd.getOptionValues(OPT_COMPRESS)[0],
+                                DEFAULT_OUT
+                        };
+                        break ;
+                    case 2:
+                        files = cmd.getOptionValues(OPT_COMPRESS) ;
+                        break ;
+                    default:
+                        displayHelp (
+                                "Incorrect args for -c, --compress",
+                                scOptions,
+                                1
+                        ) ;
+                }
+            } else {
+                displayHelp (
+                        "Missing required argument: -c, -compress",
+                        scOptions,
+                        1
+                ) ;
             }
 
         } catch (ParseException e) {
-            System.out.println(e.getMessage()) ;
-            formatter.printHelp("SeamCarvingLauncher", scOptions) ;
-            System.exit(1) ;
+            displayHelp (
+                    e.getMessage(),
+                    scOptions,
+                    -1
+            ) ;
         }
-
     }
 
     /**
