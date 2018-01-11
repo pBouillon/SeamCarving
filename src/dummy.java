@@ -39,8 +39,9 @@ public class dummy {
                 {8,   21, 29, 39},
                 {200, 60, 25, 0}
         } ;
-    	
-    	Graph g = SeamCarving.tograph(image);
+
+    	int[][] itr = SeamCarving.interest(image) ;
+    	Graph g = SeamCarving.tograph(itr);
     	g.writeFile("test_graph.dot");
     }
     private static void writepgm_try() {

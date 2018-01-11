@@ -9,6 +9,20 @@ public class SeamCarving {
 	private static final String BASE_PATH = "src/greymaps/" ;
 	private static final String SEPARATOR = "  " ;
 
+    /**
+     * Dijkstra algorithm implementation
+     *
+     * @param g manipulated graph
+     * @param s start vertex
+     * @param t end vertex
+     * @return sequence of edges for the shortest path
+     */
+	private static int[] Dijkstra (Graph g, int s, int t) {
+	    int[] shortest_path = {0, 0 , 0} ;
+
+	    return shortest_path ;
+    }
+
 	/**
 	 * Build a double array with interest for each pixel
 	 * for an array :[x] [y] [z]
@@ -94,37 +108,42 @@ public class SeamCarving {
 	/**
 	 * Convert the image to a graph
      *
-	 * @param itr
-	 * @return graph 
+	 * @param  itr   interest per pixel (see SeamCarving.interest(...))
+     *
+	 * @return the translated graph
 	 */
     public static Graph tograph(int[][] itr){
+        int i, j ;
+
         int height = itr.length ;
         int width  = itr[0].length ;
 
-        int i, j ;
-        int[][] interest_grid = interest(itr) ;
+        Graph graph = new Graph (height * width + 2) ; // height * width + first node + last node
 
-        Graph graph = new Graph (height * width + 2) ;
         for (i = 0; i < height - 1; i++) {
             Edge edge ;
+            int  c_val ; // current value
+
             for (j = 0; j < width ; j++) {
+                c_val = itr[i][j] ;
+
                 edge = new Edge (
                         width * i + j,
                         width * (i + 1) + j,
-                        interest_grid[i][j]
+                        c_val
                 ) ;
                 if (!(j - 1 < 0)) {
                     edge = new Edge (
                             width * i + j,
                             width * (i + 1) + j - 1,
-                            interest_grid[i][j]
+                            c_val
                     ) ;
                 }
                 if (j + 1 < width) {
                     edge = new Edge (
                             width * i + j,
                             width * (i + 1) + j + 1,
-                            interest_grid[i][j]
+                            c_val
                     ) ;
                 }
                 graph.addEdge(edge) ;
@@ -134,9 +153,9 @@ public class SeamCarving {
         for (j = 0; j < width ; j++) {
             graph.addEdge (
                     new Edge (
-                            width * (height-1) + j,
+                            width * (height - 1) + j,
                             height * width,
-                            interest_grid[i][j]
+                            itr[i][j]
                     )
             ) ;
         }
