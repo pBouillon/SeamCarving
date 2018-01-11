@@ -1,3 +1,5 @@
+import graph.Graph;
+
 /**
  * From SeamCarving > PACKAGE_NAME
  * Created on 09/01/2018

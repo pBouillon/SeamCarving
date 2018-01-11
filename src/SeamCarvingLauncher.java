@@ -1,3 +1,4 @@
+import graph.Graph;
 import org.apache.commons.cli.*;
 
 /**
@@ -97,14 +98,10 @@ public class SeamCarvingLauncher {
                 formatter.printHelp("SeamCarvingLauncher", scOptions) ;
                 System.exit(0) ;
             }
+            
+            verbose = cmd.hasOption(VERBOSE_OPT) ;
 
-            if (cmd.hasOption(VERBOSE_OPT)) {
-                verbose = true ;
-            }
-
-            if (cmd.hasOption(SIMPLE_OPT)) {
-                simple = true ;
-            }
+            simple = cmd.hasOption(SIMPLE_OPT) ;
 
             if (cmd.hasOption(COMPRESS_OPT)) {
                 files = cmd.getOptionValues(COMPRESS_OPT) ;
