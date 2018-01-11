@@ -90,36 +90,66 @@ public class SeamCarving {
 			return null ;
 		}
 	}
+
 	/**
 	 * Convert the image to a graph
+     *
 	 * @param itr
 	 * @return graph 
 	 */
-	public static Graph tograph(int[][] itr){
-		int height = itr.length ;
-		int width  = itr[0].length ;
-		int i,j;
-		Graph graph = new Graph(height * width + 2);
+    public static Graph tograph(int[][] itr){
+        int height = itr.length ;
+        int width  = itr[0].length ;
 
-		int[][] interest_grid = interest(itr);
+        int i, j ;
+        int[][] interest_grid = interest(itr) ;
 
-		for (i = 0; i < height-1; i++) {
-			for (j = 0; j < width ; j++) {
-				graph.addEdge(new Edge(width*i+j, width*(i+1)+j, interest_grid[i][j]));
-				if(!(j-1<0))
-					graph.addEdge(new Edge(width*i+j, width*(i+1)+j-1, interest_grid[i][j]));		
-				if((j+1<width))
-					graph.addEdge(new Edge(width*i+j, width*(i+1)+j+1, interest_grid[i][j]));	
-			}
-		}
-		for (j = 0; j < width ; j++)		  
-			graph.addEdge(new Edge(width*(height-1)+j, height*width, interest_grid[i][j]));
+        Graph graph = new Graph (height * width + 2) ;
+        for (i = 0; i < height - 1; i++) {
+            Edge edge ;
+            for (j = 0; j < width ; j++) {
+                edge = new Edge (
+                        width * i + j,
+                        width * (i + 1) + j,
+                        interest_grid[i][j]
+                ) ;
+                if (!(j - 1 < 0)) {
+                    edge = new Edge (
+                            width * i + j,
+                            width * (i + 1) + j - 1,
+                            interest_grid[i][j]
+                    ) ;
+                }
+                if (j + 1 < width) {
+                    edge = new Edge (
+                            width * i + j,
+                            width * (i + 1) + j + 1,
+                            interest_grid[i][j]
+                    ) ;
+                }
+                graph.addEdge(edge) ;
+            }
+        }
 
-		for (j = 0; j < width; j++)					
-			graph.addEdge(new Edge(width*height+1, j, 0));
+        for (j = 0; j < width ; j++) {
+            graph.addEdge (
+                    new Edge (
+                            width * (height-1) + j,
+                            height * width,
+                            interest_grid[i][j]
+                    )
+            ) ;
+        }
 
-		return graph;
-	}
+        for (j = 0; j < width; j++) {
+            graph.addEdge (
+                    new Edge (width * height + 1, j, 0)
+            ) ;
+        }
+
+        return graph ;
+    }
+
 	/**
 	 * Save greyscale values into a .pgm file
 	 *
