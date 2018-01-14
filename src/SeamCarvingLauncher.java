@@ -1,24 +1,19 @@
 import graph.Graph;
-import org.apache.commons.cli.*;
-
-import java.util.ArrayList;
 
 /**
  * Entrypoint for SeamCarving
  */
 public class SeamCarvingLauncher {
+    private final static String PROG_NAME    = "SeamCarving" ;
 
-    private final String DEFAULT_OUT  = "out.pgm" ;
-    private final String PROG_NAME    = "SeamCarvingLauncher" ;
-
-    private final String OPT_COMPRESS = "compress" ;
-    private final String OPT_HELP     = "help" ;
-    private final String OPT_SIMPLE   = "simple"  ;
-    private final String OPT_VERBOSE  = "verbose" ;
+    private final static char OPT_COMPRESS = 'c' ;
+    private final static char OPT_HELP     = 'h' ;
+    private final static char OPT_SIMPLE   = 's'  ;
+    private final static char OPT_VERBOSE  = 'v' ;
 
 
-    private boolean  simple  ;
-    private boolean  verbose ; /* if using the simple algorithm instead of the double one */
+    private boolean  simple  ; /* if using the simple algorithm instead of the double one */
+    private boolean  verbose ;
     private String[] files   ; /* will contain String{source, dest} */
 
     /**
@@ -29,59 +24,19 @@ public class SeamCarvingLauncher {
      *  - boolean are false
      */
     private SeamCarvingLauncher() {
-        files   = null  ;
+        files   = new String[]{"", ""};
         simple  = false ;
         verbose = false ;
     }
 
-    /**
-     * Create all SeamCarving options
-     *
-     * Default options are:
-     *  - compress
-     *  - help
-     *  - simple
-     *  - verbose
-     *
-     * @return Options : an Option collection
-     */
-    private Options buildOptions() {
-        Options scOptions = new Options() ;
-
-        Option compress = Option.builder(OPT_COMPRESS.charAt(0) + "")
-            .longOpt(OPT_COMPRESS)
-            .desc("Compress image source into dest.")
-            .hasArgs()
-            .valueSeparator(' ')
-            .argName("source> <dest")
-            .build() ;
-        scOptions.addOption(compress) ;
-
-        Option help = Option.builder(OPT_HELP.charAt(0) + "")
-                .longOpt(OPT_HELP)
-                .desc("Displays help")
-                .build() ;
-        scOptions.addOption(help) ;
-
-        Option simple = Option.builder(OPT_SIMPLE.charAt(0) + "")
-                .longOpt(OPT_SIMPLE)
-                .desc("Uses the 'simple' method.")
-                .build() ;
-        scOptions.addOption(simple) ;
-
-        Option verbose = Option.builder(OPT_VERBOSE.charAt(0) + "")
-            .longOpt(OPT_VERBOSE)
-            .desc("Shows program's progression")
-            .build() ;
-        scOptions.addOption(verbose) ;
-
-        return scOptions ;
-    }
-
-    private void displayHelp (String msg, Options opts, int ret) {
-        HelpFormatter formatter  = new HelpFormatter() ;
-        System.out.println(msg) ;
-        formatter.printHelp(PROG_NAME, opts) ;
+    private void displayHelp (String msg, int ret) {
+        String helper_msg = "" +
+                PROG_NAME +" : " + msg + "\n" +
+                "   -" + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
+                "   -" + OPT_HELP      + " ................... displays help\n" +
+                "   -" + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
+                "   -" + OPT_VERBOSE   + " ................... enable verbose mode" ;
+        System.out.println(helper_msg) ;
         System.exit(ret) ;
     }
 
@@ -95,55 +50,45 @@ public class SeamCarvingLauncher {
      * @param args : program arguments
      */
     private void parse(String[] args) {
-        CommandLineParser parser = new DefaultParser() ;
-        Options scOptions = buildOptions() ;
-
-        try {
-            CommandLine cmd = parser.parse(scOptions, args) ;
-
-            simple  = cmd.hasOption(OPT_SIMPLE) ;
-            verbose = cmd.hasOption(OPT_VERBOSE) ;
-
-            if (cmd.getArgs().length == 0 || cmd.hasOption(OPT_HELP)) {
-                displayHelp (
-                        "-- HELPER --",
-                        scOptions,
-                        0
-                ) ;
-            }
-
-            if (cmd.hasOption(OPT_COMPRESS)) {
-                switch (cmd.getOptionValues(OPT_COMPRESS).length) {
-                    case 1 :
-                        files = new String[] {
-                                cmd.getOptionValues(OPT_COMPRESS)[0],
-                                DEFAULT_OUT
-                        };
+        int file_args = -1 ;
+        for (String arg : args) {
+            if (arg.charAt(0) == '-') {
+                switch (arg.charAt(1)) {
+                    case OPT_COMPRESS :
+                        if (file_args < 0) {
+                            file_args++ ;
+                        }
+                        else {
+                            displayHelp("Duplicated option", -1) ;
+                        }
                         break ;
-                    case 2:
-                        files = cmd.getOptionValues(OPT_COMPRESS) ;
+                    case OPT_HELP :
+                        displayHelp("Available options", 0) ;
+                        break ;
+                    case OPT_SIMPLE :
+                        this.simple = true ;
+                        break ;
+                    case OPT_VERBOSE :
+                        this.verbose = true ;
                         break ;
                     default:
-                        displayHelp (
-                                "Incorrect args for -c, --compress",
-                                scOptions,
-                                1
-                        ) ;
+                        displayHelp("Missing parameters", -1) ;
                 }
-            } else {
-                displayHelp (
-                        "Missing required argument: -c, -compress",
-                        scOptions,
-                        1
-                ) ;
             }
+            else if (file_args >= 0){
+                if (file_args > 1) {
+                    displayHelp("Too many arguments", -1) ;
+                }
+                this.files[file_args] = arg ;
+                file_args++ ;
+            }
+            else {
+                displayHelp("Missing arguments", -1) ;
+            }
+        }
 
-        } catch (ParseException e) {
-            displayHelp (
-                    e.getMessage(),
-                    scOptions,
-                    -1
-            ) ;
+        if (file_args < 2) {
+            displayHelp("Missing files arguments", -1) ;
         }
     }
 
