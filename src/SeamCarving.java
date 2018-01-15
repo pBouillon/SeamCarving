@@ -139,32 +139,30 @@ public class SeamCarving {
         Graph graph = new Graph (height * width + 2) ; // height * width + first node + last node
 
         for (i = 0; i < height - 1; i++) {
-            Edge edge ;
             int  c_val ; // current value
 
             for (j = 0; j < width ; j++) {
                 c_val = itr[i][j] ;
 
-                edge = new Edge (
+                graph.addEdge( new Edge (
                         width * i + j,
                         width * (i + 1) + j,
                         c_val
-                ) ;
+                )) ;
                 if (!(j - 1 < 0)) {
-                    edge = new Edge (
+                	graph.addEdge( new Edge (
                             width * i + j,
                             width * (i + 1) + j - 1,
                             c_val
-                    ) ;
+                    )) ;
                 }
                 if (j + 1 < width) {
-                    edge = new Edge (
+                	graph.addEdge( new Edge (
                             width * i + j,
                             width * (i + 1) + j + 1,
                             c_val
-                    ) ;
+                    )) ;
                 }
-                graph.addEdge(edge) ;
             }
         }
 

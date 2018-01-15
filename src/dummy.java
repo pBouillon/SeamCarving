@@ -10,8 +10,8 @@ public class dummy {
     public static void main(String[] args) {
         //writepgm_try() ;
         //interest_try() ;
-        //tograpg_test();
-        shortestPathTest() ;
+        tograpg_test();
+        //shortestPathTest() ;
     }
 
     private static void interest_try() {
