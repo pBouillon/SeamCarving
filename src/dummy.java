@@ -10,8 +10,8 @@ public class dummy {
     public static void main(String[] args) {
         //writepgm_try() ;
         //interest_try() ;
-        tograpg_test();
-        //shortestPathTest() ;
+        //tograpg_test();
+        shortestPathTest() ;
     }
 
     private static void interest_try() {
@@ -58,9 +58,17 @@ public class dummy {
         int[][] itr = SeamCarving.interest(image) ;
         Graph g = SeamCarving.tograph(itr);
 
-        ArrayList<Integer> path = SeamCarving.getShortestPath(g) ;
-        for (int v : path) {
-            System.out.println(v) ;
+        int [] path = SeamCarving.getShortestPath(g) ;
+        boolean bool = false;
+        
+        int i = g.vertices()-2; // final vertice
+        while(bool == false) {
+        	if(path[i] == 0) {
+        		bool = true;
+        	}else {
+        		System.out.println(path[i]) ;
+        		i = path[i] ;
+        	}
         }
     }
 

@@ -19,26 +19,36 @@ public class SeamCarving {
      *
      * @return sequence of edges for the shortest path
      */
-	private static ArrayList<Integer> Dijkstra (Graph g, int s, int t) {
+	private static int [] Dijkstra (Graph g, int s, int t) {
         ArrayList<Integer> sp = new ArrayList<>() ;
-
+        
         Heap pq   = new Heap(g.vertices()) ; // priority queue pq
-        int  dist = 0 ;
-
+        int[] dist = new int[g.vertices()];
+        int [] prev = new int[g.vertices()]; // array with previous node
+        
+        for ( int i = 0 ; i < dist.length ; i++) {
+        	dist[i] = Integer.MAX_VALUE ;
+        }
+        dist[s] = 0 ;
         pq.decreaseKey(s, 0) ; // origin
+
         do { // while we don't end our path at the goal
 
             int shortest_v = pq.pop() ;
-
+            System.out.println("lowest sommet  : " + shortest_v);
             sp.add(shortest_v) ;              // add shortest vertice to path
-            dist += pq.priority(shortest_v) ; // update path cost
-
+                      
             for (Edge e : g.adj(shortest_v)) { // for each edge
-                int newDist = dist + e.getCost() ;    // evaluate the new cost
-                pq.decreaseKey(e.getTo(), newDist) ; // update the priority of the element
+                int newDist = dist[shortest_v] + e.getCost() ;    // evaluate the new cost
+                if( dist[e.getTo()] > newDist ) {
+                	dist[e.getTo()] = newDist ;
+                	System.out.println(" decrease  : " + e.getTo() + " with : " + newDist);
+                	prev[e.getTo()] = shortest_v ;
+                    pq.decreaseKey(e.getTo(), newDist) ; // update the priority of the element
+                }
             }
-        } while (/*!pq.isEmpty()*/sp.get(sp.size()) != t) ;
-        return sp ;
+        } while (!pq.isEmpty()) ;
+        return prev ;
     }
 
 	/**
@@ -240,7 +250,7 @@ public class SeamCarving {
 		pw.close() ;
 	}
 
-    public static ArrayList<Integer> getShortestPath (Graph g) {
-	    return Dijkstra(g, 0, g.vertices() + 1) ;
+    public static int [] getShortestPath (Graph g) {
+	    return Dijkstra(g, g.vertices() -1, g.vertices()-2 ) ;
     }
 }
