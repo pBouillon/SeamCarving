@@ -5,6 +5,7 @@ import graph.Graph;
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;
+    private final static int    ROW_REMOVED  = 50 ;
 
     private final static char OPT_COMPRESS = 'c' ;
     private final static char OPT_HELP     = 'h' ;

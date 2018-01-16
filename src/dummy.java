@@ -66,14 +66,14 @@ public class dummy {
         Graph g = SeamCarving.tograph(itr);
 
         int [] path = SeamCarving.getShortestPath(g) ;
-        boolean bool = false;
+        boolean parsed = false;
         
         int i = g.vertices()-2; // final vertice to reach
         System.out.println(i);
-        while(bool == false) {
-        	if(path[i] == 0) {
-        		bool = true;
-        	}else {
+        while(!parsed) {
+        	if (path[i] == 0) {
+        		parsed = true ;
+        	} else {
         		System.out.println(path[i]) ;
         		i = path[i] ;
         	}

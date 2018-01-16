@@ -3,12 +3,29 @@ import graph.Graph;
 import graph.Heap;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class SeamCarving {
 
 	private static final String BASE_PATH = "src/greymaps/" ;
 	private static final String SEPARATOR = "  " ;
+
+	private static final int x = 0 ;
+	private static final int y = 1 ;
+
+    /**
+     * @param verticeID id of the vertice
+     * @param width     table width
+     *
+     * @return {x, y} - pixel coord in the image
+     */
+	public static int[] edge2coord (int verticeID, int width) {
+	    return new int[] {
+                verticeID / width,
+                verticeID % width
+        } ;
+    }
 
     /**
      * Dijkstra algorithm implementation
@@ -19,7 +36,7 @@ public class SeamCarving {
      *
      * @return sequence of edges for the shortest path
      */
-	private static int [] Dijkstra (Graph g, int s, int t) {
+	private static int[] Dijkstra (Graph g, int s, int t) {
         
         Heap pq   = new Heap(g.vertices()) ; // priority queue to ensure that every vertice is reached
         int[] dist = new int[g.vertices()]; // array with shortest path to each vertex
@@ -47,6 +64,28 @@ public class SeamCarving {
         } while (!pq.isEmpty()) ; // we try each node to be sure that there is no better path
         return prev ;
     }
+
+	/**
+	 * @param g
+	 * @return
+	 */
+	public static int[] getShortestPath (Graph g) {
+		int[] path = Dijkstra(g, g.vertices() - 1, g.vertices() - 2 ) ;
+
+		boolean parsed = false ;
+		int i = g.vertices() - 2 ; // final vertice to reach
+
+		System.out.println(i);
+		while (!parsed) {
+			if (path[i] == 0) {
+				parsed = true ;
+			} else {
+				System.out.println(path[i]) ;
+				i = path[i] ;
+			}
+		}
+		return path ;
+	}
 
 	/**
 	 * Build a double array with interest for each pixel
@@ -137,7 +176,7 @@ public class SeamCarving {
      *
 	 * @return the translated graph
 	 */
-    public static Graph tograph(int[][] itr) {
+    public static Graph tograph (int[][] itr) {
         int i, j ;
 
         int height = itr.length ;
@@ -247,7 +286,34 @@ public class SeamCarving {
 		pw.close() ;
 	}
 
-    public static int [] getShortestPath (Graph g) {
-	    return Dijkstra(g, g.vertices() - 1, g.vertices() - 2 ) ;
+    /**
+     * @param img
+     * @param vertices
+     * @return
+     */
+	public static int[][] run (int[][] img, int[] vertices) {
+	    for (int vertice : vertices) {
+	        int coord[] = edge2coord(vertice, img[0].length) ;
+	        img[coord[x]][coord[y]] = -1 ;
+        }
+
+        int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
+        ArrayList<Integer> row = new ArrayList<>() ;
+
+        for (int x = 0; x < img.length; ++x) {
+            for (int y = 0; y < img[0].length; ++y) {
+                if (img[x][y] != -1) {
+                    row.add(img[x][y]) ;
+                }
+            }
+
+            int[] rowTab = new int[row.size()] ;
+            for (int i = 0; i < rowTab.length; ++i) {
+                rowTab[i] = row.get(i);
+            }
+            newImg[x] = rowTab ;
+        }
+
+	    return newImg ;
     }
 }
