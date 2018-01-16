@@ -124,18 +124,21 @@ public class SeamCarvingLauncher {
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
 
-        int[][] maping   = SeamCarving.readpgm(file[SOURCE]) ; // get pixels from image
+        int[][] imgPx   = SeamCarving.readpgm(file[SOURCE]) ; // get pixels from image
 
-        assert maping != null ;
-        int[][] interest = SeamCarving.interest(maping) ; // evaluates interest of each pixel from maping
+        assert imgPx != null ;
+        int[][] interest = SeamCarving.interest(imgPx) ; // evaluates interest of each pixel from imgPx
 
         Graph imgGraph = SeamCarving.tograph(interest) ;  // build graph from interest array
         int[] shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
 
-        int finalImage[][] = null ;
         for (int i = 0; i < ROW_REMOVED; ++i) {
-            finalImage = SeamCarving.run(maping, shortestPath) ; // re-evaluates image with one less row
+            imgPx = SeamCarving.run(imgPx, shortestPath) ; // re-evaluates image with one less row
+
+            interest = SeamCarving.interest(imgPx) ;
+            imgGraph = SeamCarving.tograph(interest) ;
+            shortestPath = SeamCarving.getShortestPath(imgGraph) ;
         }
-        SeamCarving.writepgm(finalImage, file[OUTPUT]) ; // write the new image
+        SeamCarving.writepgm(imgPx, file[OUTPUT]) ; // write the new image
     }
 }
