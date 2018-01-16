@@ -12,6 +12,8 @@ public class SeamCarvingLauncher {
     private final static char OPT_SIMPLE   = 's'  ;
     private final static char OPT_VERBOSE  = 'v' ;
 
+    private final static int ENTRY  = 0 ;
+    private final static int OUTPUT = 1 ;
 
     private boolean  simple  ; /* if using the simple algorithm instead of the double one */
     private boolean  verbose ;
@@ -122,11 +124,18 @@ public class SeamCarvingLauncher {
         boolean  simple  = launcher.useSimple()  ;
         boolean  verbose = launcher.useVerbose() ;
 
-        int[][] maping   = SeamCarving.readpgm(file[0]) ;
+        int[][] maping   = SeamCarving.readpgm(file[ENTRY]) ;
 
         assert maping != null ;
         int[][] interest = SeamCarving.interest(maping) ;
 
         Graph imgGraph = SeamCarving.tograph(interest) ;
+        int[] shortestPath = SeamCarving.getShortestPath(imgGraph) ;
+
+        int img[][] = null ;
+        for (int i = 0; i < ROW_REMOVED; ++i) {
+            img = SeamCarving.run(maping, shortestPath) ;
+        }
+        SeamCarving.writepgm(img, file[OUTPUT]) ;
     }
 }
