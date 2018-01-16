@@ -1,7 +1,7 @@
 import graph.Graph;
 
 /**
- * Entrypoint for SeamCarving
+ * Seam Carving launcher
  *
  * @version 1.0
  */
@@ -34,7 +34,13 @@ public class SeamCarvingLauncher {
         verbose = false ;
     }
 
-    public void displayHelp (String msg, int ret) {
+    /**
+     * Prints helper with a specific message
+     *
+     * @param msg message to include
+     * @param ret returned code
+     */
+    private void displayHelp(String msg, int ret) {
         String helper_msg = "" +
                 PROG_NAME +" : " + msg + "\n" +
                 "   -" + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
@@ -55,12 +61,13 @@ public class SeamCarvingLauncher {
      * @param args : program arguments
      */
     private void parse(String[] args) {
-        int file_args = -1 ;
+        int file_args = -1 ; // count files
+
         for (String arg : args) {
             if (arg.charAt(0) == '-') {
                 switch (arg.charAt(1)) {
                     case OPT_COMPRESS :
-                        if (file_args < 0) {
+                        if (file_args < 0) { // if -c is not set
                             file_args++ ;
                         }
                         else {
@@ -80,24 +87,26 @@ public class SeamCarvingLauncher {
                         displayHelp("Missing parameters", -1) ;
                 }
             }
-            else if (file_args >= 0){
-                if (file_args > 1) {
+            else if (file_args >= 0){ // if -c is set
+                if (file_args > 1) {  // if the user provided more than 2 files
                     displayHelp("Too many arguments", -1) ;
                 }
-                this.files[file_args] = arg ;
-                file_args++ ;
+                this.files[file_args] = arg ; // add file to args
+                file_args++ ; // increment known files
             }
             else {
                 displayHelp("Missing arguments", -1) ;
             }
         }
 
-        if (file_args < 2) {
+        if (file_args < 2) { // if at the end we have less than 2 files known
             displayHelp("Missing files arguments", -1) ;
         }
     }
 
     /**
+     * Get the files the user provided
+     *
      * @return String{source, dest}
      */
     private String[] getFiles() {
@@ -105,6 +114,8 @@ public class SeamCarvingLauncher {
     }
 
     /**
+     * Get the chosed method
+     *
      * @return simple
      */
     private boolean useSimple() {
@@ -112,6 +123,8 @@ public class SeamCarvingLauncher {
     }
 
     /**
+     * Get if the user wants progression
+     *
      * @return verbose
      */
     private boolean useVerbose() {
@@ -126,25 +139,25 @@ public class SeamCarvingLauncher {
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
 
-        if (!simple) { // comming in v2
+        if (!simple) { // coming in v2
             System.out.println ("Warning: Simple method used by default (version < 2.0)\n") ;
         }
 
         int[][] imgPixels ;
-        if ((imgPixels  = SeamCarving.readpgmv2(file[SOURCE])) == null) {
+        if ((imgPixels  = SeamCarving.readpgmv2(file[SOURCE])) == null) { // check if the file is readable
             System.out.println("Unable to read the source") ;
             System.exit(-1) ;
         }
 
-        if (verbose){
+        if (verbose) {
             System.out.println("PGM values acquired") ;
         }
 
-        Graph imgGraph ;
+        Graph   imgGraph ;
         int[][] interest ;
         int[]   shortestPath ;
 
-        if (verbose){
+        if (verbose) {
             System.out.println("Beginning of the resize") ;
             System.out.print("Progression:\n\t0% ... ") ;
         }
@@ -167,7 +180,7 @@ public class SeamCarvingLauncher {
                 }
             }
             interest = SeamCarving.interest(imgPixels) ;                 // evaluates interest of each pixel from imgPixels
-            imgGraph = SeamCarving.tograph(interest) ;                   // build graph from interest array
+            imgGraph = SeamCarving.tograph(interest)   ;                 // build graph from interest array
             shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph
             imgPixels    = SeamCarving.resize(imgPixels, shortestPath) ; // delete one column of imgPixels
         }
