@@ -1,28 +1,24 @@
 import graph.Graph;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
-import java.io.File;
-import java.io.IOException;
-
 /**
  * Entrypoint for SeamCarving
  *
  * @version 1.0
  */
 public class SeamCarvingLauncher {
-    private final static String PROG_NAME    = "SeamCarving" ;
-    private final static int    ROW_REMOVED  = 50 ;
+    private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
+    private final static int    ROW_REMOVED  = 50 ;             /* number of rows to be removed */
 
-    private final static char OPT_COMPRESS = 'c' ;
-    private final static char OPT_HELP     = 'h' ;
-    private final static char OPT_SIMPLE   = 's'  ;
-    private final static char OPT_VERBOSE  = 'v' ;
+    private final static char OPT_COMPRESS = 'c' ; /* compression option */
+    private final static char OPT_HELP     = 'h' ; /* displays help */
+    private final static char OPT_SIMPLE   = 's' ; /* chose method */
+    private final static char OPT_VERBOSE  = 'v' ; /* displays progress */
 
-    private final static int SOURCE = 0 ;
-    private final static int OUTPUT = 1 ;
+    private final static int SOURCE = 0 ; /* position of output file in arg list for -c */
+    private final static int OUTPUT = 1 ; /* position of output file in arg list for -c */
 
     private boolean  simple  ; /* if using the simple algorithm instead of the double one */
-    private boolean  verbose ;
+    private boolean  verbose ; /* enable verbose mode */
     private String[] files   ; /* will contain String{source, dest} */
 
     /**
@@ -122,20 +118,6 @@ public class SeamCarvingLauncher {
         return verbose ;
     }
 
-
-    /**
-     * @param tab
-     */
-    public static void showTab(int[][] tab) {
-        for (int[] x : tab) {
-            for (int y : x) {
-                System.out.print(y +" ") ;
-            }
-            System.out.println() ;
-        }
-        System.out.println() ;
-    }
-
     public static void main(String[] args) {
         SeamCarvingLauncher launcher = new SeamCarvingLauncher() ;
         launcher.parse(args) ; // check prog args
@@ -144,52 +126,56 @@ public class SeamCarvingLauncher {
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
 
-        if (!simple) {
-            System.out.println ("Simple method used by default (version < 2.0)\n") ;
+        if (!simple) { // comming in v2
+            System.out.println ("Warning: Simple method used by default (version < 2.0)\n") ;
         }
 
-        int[][] imgPx = SeamCarving.readpgmv2(file[SOURCE]) ;
-        if (imgPx == null) {
+        int[][] imgPixels ;
+        if ((imgPixels  = SeamCarving.readpgmv2(file[SOURCE])) == null) {
             System.out.println("Unable to read the source") ;
             System.exit(-1) ;
         }
+
         if (verbose){
             System.out.println("PGM values acquired") ;
-//            showTab(imgPx) ;
         }
 
         Graph imgGraph ;
         int[][] interest ;
         int[]   shortestPath ;
 
-        for (int i = 0; i < ROW_REMOVED; ++i) {
-            interest = SeamCarving.interest(imgPx) ; // evaluates interest of each pixel from imgPx
-            if (verbose){
-                System.out.println("Interest tab evaluated") ;
-//                showTab(interest) ;
-            }
-
-            imgGraph = SeamCarving.tograph(interest) ;  // build graph from interest array
-            imgGraph.writeFile("test_sc_alg.dot");
-
-            shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
-            if (verbose){
-                System.out.println("Shortest path found") ;
-//                for (int vertice : shortestPath) {
-//                    System.out.print(vertice+" ") ;
-//                }
-//                System.out.println("\n") ;
-            }
-
-            imgPx = SeamCarving.run(imgPx, shortestPath) ;
-            if (verbose) {
-                System.out.println("New PGM values calculated") ;
-//                showTab(imgPx) ;
-            }
+        if (verbose){
+            System.out.println("Beginning of the resize") ;
+            System.out.print("Progression:\n\t0% ... ") ;
         }
 
-        SeamCarving.writepgm(imgPx, file[OUTPUT]) ; // write the new image
+        int state = 0 ;
+        for (int i = 0; i < ROW_REMOVED; ++i) {
+            if (verbose) {
+                int progression = 100 * i / ROW_REMOVED ;
+                if (progression > 75 && state < 3) {
+                    System.out.print(" 75% ... ") ;
+                    ++state ;
+                }
+                else if (progression > 50 && state < 2) {
+                    System.out.print("50% ... ") ;
+                    ++state ;
+                }
+                else if (progression > 25 && state < 1) {
+                    System.out.print("25% ... ") ;
+                    ++state ;
+                }
+            }
+            interest = SeamCarving.interest(imgPixels) ;                 // evaluates interest of each pixel from imgPixels
+            imgGraph = SeamCarving.tograph(interest) ;                   // build graph from interest array
+            shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph
+            imgPixels    = SeamCarving.resize(imgPixels, shortestPath) ; // delete one column of imgPixels
+        }
+
+        SeamCarving.writepgm(imgPixels, file[OUTPUT]) ; // write the new image
+
         if (verbose) {
+            System.out.println("Done !") ;
             System.out.println("Successfully saved in " + file[OUTPUT]) ;
         }
     }

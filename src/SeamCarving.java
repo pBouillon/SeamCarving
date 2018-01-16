@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class SeamCarving {
 
-	private static final String BASE_PATH = "src/greymaps/" ;
+	private static final String BASE_PATH = "./" ;
 	private static final String SEPARATOR = "  " ;
 
 	private static final int x = 0 ;
@@ -348,7 +348,7 @@ public class SeamCarving {
      * @param vertices
      * @return
      */
-	public static int[][] run (int[][] img, int[] vertices) {
+	public static int[][] resize(int[][] img, int[] vertices) {
 		int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
 		System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
 
