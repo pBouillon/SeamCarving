@@ -32,3 +32,4 @@ hs_err_pid*
 *.pgm
 src/.classpath
 src/.project
+src/greymaps
