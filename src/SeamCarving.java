@@ -77,19 +77,25 @@ public class SeamCarving {
 	public static int[] getShortestPath (Graph g) {
 		int[] path = Dijkstra(g, g.vertices() - 1, g.vertices() - 2 ) ;
 
-		boolean parsed = false ;
+		ArrayList<Integer> res = new ArrayList<>() ;
 		int i = g.vertices() - 2 ; // final vertice to reach
 
-		System.out.println(i);
+		// System.out.println(i);
+		res.add(i) ;
+		boolean parsed = false ;
 		while (!parsed) {
 			if (path[i] == 0) {
 				parsed = true ;
 			} else {
-				System.out.println(path[i]) ;
+				// System.out.print(path[i]+ " ") ;
+				res.add(path[i]) ;
 				i = path[i] ;
 			}
 		}
-		return path ;
+
+		return res.stream()
+				.mapToInt(Integer::valueOf)
+				.toArray() ;
 	}
 
 	/**
@@ -172,6 +178,52 @@ public class SeamCarving {
 			t.printStackTrace (System.err) ;
 			return null ;
 		}
+	}
+
+	/**
+	 * @param fn
+	 * @return
+	 */
+	public static int[][] readpgmv2 (String fn) {
+		int[][] img = null ;
+
+		BufferedReader br ;
+		Scanner scan ;
+
+		File source = new File(fn) ;
+		if (!source.exists()) {
+			return null ;
+		}
+
+		try {
+			br = new BufferedReader(new FileReader(source)) ;
+
+			String magic = br.readLine() ;
+			String line  = br.readLine() ;
+			while (line.startsWith("#")) {
+				line = br.readLine() ;
+			}
+
+			scan = new Scanner(line) ;
+			int width  = scan.nextInt() ;
+			int height = scan.nextInt() ;
+
+			line = br.readLine() ;
+			scan = new Scanner(line) ;
+			int maxVal = scan.nextInt() ;
+
+			img = new int[height][width] ;
+
+			scan = new Scanner(br) ;
+			for (int count = 0; count < height * width; ++count) {
+				img[count / width][count % width] = scan.nextInt() ;
+			}
+		} catch (IOException e) {
+			e.printStackTrace() ;
+			System.exit(-1) ;
+		}
+
+		return img ;
 	}
 
 	/**
@@ -297,28 +349,32 @@ public class SeamCarving {
      * @return
      */
 	public static int[][] run (int[][] img, int[] vertices) {
-	    for (int vertice : vertices) {
+		int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
+		System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
+
+		// set each designated pixels to -1
+	    for (int vertice : pixels) {
 	        int coord[] = edge2coord(vertice, img[0].length) ;
 	        img[coord[x]][coord[y]] = -1 ;
         }
 
-        int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
-        ArrayList<Integer> row = new ArrayList<>() ;
+		int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
 
-        for (int x = 0; x < img.length; ++x) {
-            for (int y = 0; y < img[0].length; ++y) {
-                if (img[x][y] != -1) {
-                    row.add(img[x][y]) ;
-                }
-            }
+		ArrayList<Integer> newRow = new ArrayList<>() ; // row with vals != -1
 
-            int[] rowTab = new int[row.size()] ;
-            for (int i = 0; i < rowTab.length; ++i) {
-                rowTab[i] = row.get(i);
-            }
-            newImg[x] = rowTab ;
-        }
-
-	    return newImg ;
+		for (int x = 0; x < img.length; ++x) {
+			// parsing the row:
+			for (int val : img[x]) {
+				if (val != -1) {
+					newRow.add(val) ;
+				}
+			}
+			// adding row to the new image and cleaning list
+			newImg[x] = newRow.stream()
+							.mapToInt(Integer::valueOf)
+							.toArray() ;
+			newRow.clear() ;
+		}
+		return newImg ;
     }
 }
