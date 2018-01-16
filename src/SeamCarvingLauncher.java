@@ -1,5 +1,9 @@
 import graph.Graph;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Entrypoint for SeamCarving
  *
@@ -34,7 +38,7 @@ public class SeamCarvingLauncher {
         verbose = false ;
     }
 
-    private void displayHelp (String msg, int ret) {
+    public void displayHelp (String msg, int ret) {
         String helper_msg = "" +
                 PROG_NAME +" : " + msg + "\n" +
                 "   -" + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
@@ -118,6 +122,20 @@ public class SeamCarvingLauncher {
         return verbose ;
     }
 
+
+    /**
+     * @param tab
+     */
+    public static void showTab(int[][] tab) {
+        for (int[] x : tab) {
+            for (int y : x) {
+                System.out.print(y +" ") ;
+            }
+            System.out.println() ;
+        }
+        System.out.println() ;
+    }
+
     public static void main(String[] args) {
         SeamCarvingLauncher launcher = new SeamCarvingLauncher() ;
         launcher.parse(args) ; // check prog args
@@ -127,25 +145,52 @@ public class SeamCarvingLauncher {
         boolean  verbose = launcher.useVerbose() ; // check if verbose
 
         if (!simple) {
-            System.out.println ("Simple version used by default (v < 2.0)") ;
+            System.out.println ("Simple method used by default (version < 2.0)\n") ;
         }
 
+        int[][] imgPx = SeamCarving.readpgmv2(file[SOURCE]) ;
+        if (imgPx == null) {
+            System.out.println("Unable to read the source") ;
+            System.exit(-1) ;
+        }
+        if (verbose){
+            System.out.println("PGM values acquired") ;
+//            showTab(imgPx) ;
+        }
 
-        int[][] imgPx   = SeamCarving.readpgm(file[SOURCE]) ; // get pixels from image
-
-        assert imgPx != null ;
-        int[][] interest = SeamCarving.interest(imgPx) ; // evaluates interest of each pixel from imgPx
-
-        Graph imgGraph = SeamCarving.tograph(interest) ;  // build graph from interest array
-        int[] shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
+        Graph imgGraph ;
+        int[][] interest ;
+        int[]   shortestPath ;
 
         for (int i = 0; i < ROW_REMOVED; ++i) {
-            imgPx = SeamCarving.run(imgPx, shortestPath) ; // re-evaluates image with one less row
+            interest = SeamCarving.interest(imgPx) ; // evaluates interest of each pixel from imgPx
+            if (verbose){
+                System.out.println("Interest tab evaluated") ;
+//                showTab(interest) ;
+            }
 
-            interest = SeamCarving.interest(imgPx) ;
-            imgGraph = SeamCarving.tograph(interest) ;
-            shortestPath = SeamCarving.getShortestPath(imgGraph) ;
+            imgGraph = SeamCarving.tograph(interest) ;  // build graph from interest array
+            imgGraph.writeFile("test_sc_alg.dot");
+
+            shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
+            if (verbose){
+                System.out.println("Shortest path found") ;
+//                for (int vertice : shortestPath) {
+//                    System.out.print(vertice+" ") ;
+//                }
+//                System.out.println("\n") ;
+            }
+
+            imgPx = SeamCarving.run(imgPx, shortestPath) ;
+            if (verbose) {
+                System.out.println("New PGM values calculated") ;
+//                showTab(imgPx) ;
+            }
         }
+
         SeamCarving.writepgm(imgPx, file[OUTPUT]) ; // write the new image
+        if (verbose) {
+            System.out.println("Successfully saved in " + file[OUTPUT]) ;
+        }
     }
 }
