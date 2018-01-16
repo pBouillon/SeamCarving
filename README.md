@@ -1,35 +1,36 @@
 # Seam carving project
 
-Authors :
-* Pierre Bouillon 
-* Yoan Fath
+Resize an image using the seam carving method. 
 
-
-## TASKS REPARTITION
-
+## Tasks repartition
 ### Pierre Bouillon
 * .pgm saving function
-* interest evaluation function
-* entrypoint and CLI
+* CLI
+* Dijkstra implementation
+* Documentation
+* Interest evaluation function
+* Seam Carving global implementation
 
 ### Yoan Fath
-* array to graph translation
+* Array to graph translation
+* Dijkstra implementation
+* Documentation
+* Seam Carving global implementation
 
-
-## SOFTWARE USAGE
+## Usage
 ```shell
-usage: SeamCarvingLauncher
- -c,--compress <source> <dest>   Compress image source into dest
- -h,--help                       Displays help
- -s,--simple                     Uses the 'simple' method instead of the
-                                 double
- -v,--verbose                    Shows program's progression
- 
-$~ SeamCarvingLauncher -c <source> <dest> [-v] [-c]
+SeamCarving : 
+   -c <img> <out.pgm> ... compress an image to a pgm file
+   -h ................... displays help
+   -s ................... use simple method instead of double (v2.0)
+   -v ................... enable verbose mode
 ```
 
-## IMPROVEMENTS BROUGHT
+## Short term goals
 - [ ] handles rvb images
 - [ ] mark pixels as "to delete"
 - [ ] mark pixels as "to keep"
 
+## Authors
+* [Pierre Bouillon](https://pierrebouillon.tech/)
+* [Yoan Fath](https://github.com/yoanFath)

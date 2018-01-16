@@ -6,6 +6,11 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * Seam Carving methods
+ *
+ * @version 1.0
+ */
 public class SeamCarving {
 
 	private static final String BASE_PATH = "src/greymaps/" ;

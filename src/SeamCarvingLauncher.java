@@ -2,6 +2,8 @@ import graph.Graph;
 
 /**
  * Entrypoint for SeamCarving
+ *
+ * @version 1.0
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;
@@ -123,6 +125,11 @@ public class SeamCarvingLauncher {
         String[] file    = launcher.getFiles()   ; // get files as {source, output}
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
+
+        if (!simple) {
+            System.out.println ("Simple version used by default (v < 2.0)") ;
+        }
+
 
         int[][] imgPx   = SeamCarving.readpgm(file[SOURCE]) ; // get pixels from image
 

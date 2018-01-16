@@ -3,8 +3,8 @@ import graph.Graph;
 import java.util.ArrayList;
 
 /**
- * From SeamCarving > PACKAGE_NAME
- * Created on 09/01/2018
+ * @deprecated Only for immediate testing purpose
+ * @version 1.0
  */
 public class dummy {
     public static void main(String[] args) {

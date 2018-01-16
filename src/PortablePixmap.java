@@ -1,5 +1,7 @@
 /**
  * References for portable pixmaps
+ *
+ * @version 1.0
  */
 
 class PortablePixmap {
