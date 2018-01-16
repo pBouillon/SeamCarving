@@ -10,7 +10,7 @@ public class dummy {
     public static void main(String[] args) {
         //writepgm_try() ;
         //interest_try() ;
-        //tograpg_test();
+        tograpg_test();
         shortestPathTest() ;
     }
 
@@ -42,7 +42,10 @@ public class dummy {
                 {8,   21, 29, 39},
                 {200, 60, 25, 0}
         } ;
-
+//    	int[][] image = {
+//                {3,   11, 24},
+//                {8,   5, 29},
+//        } ;
         int[][] itr = SeamCarving.interest(image) ;
         Graph g = SeamCarving.tograph(itr);
         g.writeFile("test_graph.dot");
@@ -55,13 +58,18 @@ public class dummy {
                 {200, 60, 25, 0}
         } ;
 
+//    	int[][] image = {
+//                {3,   11, 24},
+//                {8,   5, 29},
+//        } ;
         int[][] itr = SeamCarving.interest(image) ;
         Graph g = SeamCarving.tograph(itr);
 
         int [] path = SeamCarving.getShortestPath(g) ;
         boolean bool = false;
         
-        int i = g.vertices()-2; // final vertice
+        int i = g.vertices()-2; // final vertice to reach
+        System.out.println(i);
         while(bool == false) {
         	if(path[i] == 0) {
         		bool = true;
@@ -70,6 +78,7 @@ public class dummy {
         		i = path[i] ;
         	}
         }
+
     }
 
     private static void writepgm_try() {

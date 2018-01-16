@@ -20,34 +20,31 @@ public class SeamCarving {
      * @return sequence of edges for the shortest path
      */
 	private static int [] Dijkstra (Graph g, int s, int t) {
-        ArrayList<Integer> sp = new ArrayList<>() ;
         
-        Heap pq   = new Heap(g.vertices()) ; // priority queue pq
-        int[] dist = new int[g.vertices()];
+        Heap pq   = new Heap(g.vertices()) ; // priority queue to ensure that every vertice is reached
+        int[] dist = new int[g.vertices()]; // array with shortest path to each vertex
         int [] prev = new int[g.vertices()]; // array with previous node
         
         for ( int i = 0 ; i < dist.length ; i++) {
         	dist[i] = Integer.MAX_VALUE ;
         }
-        dist[s] = 0 ;
+        dist[s] = 0 ; // no cost because origin
         pq.decreaseKey(s, 0) ; // origin
 
         do { // while we don't end our path at the goal
-
             int shortest_v = pq.pop() ;
-            System.out.println("lowest sommet  : " + shortest_v);
-            sp.add(shortest_v) ;              // add shortest vertice to path
-                      
-            for (Edge e : g.adj(shortest_v)) { // for each edge
+            // System.out.println("lowest sommet  : " + shortest_v);
+             
+            for (Edge e : g.next(shortest_v)) { // for each edge
                 int newDist = dist[shortest_v] + e.getCost() ;    // evaluate the new cost
-                if( dist[e.getTo()] > newDist ) {
+                if( dist[e.getTo()] > newDist ) { // if new cost is less than previously
                 	dist[e.getTo()] = newDist ;
-                	System.out.println(" decrease  : " + e.getTo() + " with : " + newDist);
-                	prev[e.getTo()] = shortest_v ;
+                	// System.out.println(" decrease  : " + e.getTo() + " with : " + newDist);
+                	prev[e.getTo()] = shortest_v ; // update predecessor 
                     pq.decreaseKey(e.getTo(), newDist) ; // update the priority of the element
                 }
             }
-        } while (!pq.isEmpty()) ;
+        } while (!pq.isEmpty()) ; // we try each node to be sure that there is no better path
         return prev ;
     }
 
@@ -140,28 +137,27 @@ public class SeamCarving {
      *
 	 * @return the translated graph
 	 */
-    public static Graph tograph(int[][] itr){
+    public static Graph tograph(int[][] itr) {
         int i, j ;
 
         int height = itr.length ;
         int width  = itr[0].length ;
 
-        Graph graph = new Graph (height * width + 2) ; // height * width + first node + last node
-
+        Graph graph = new Graph (height * width + 2) ; // height * width + first node + last node 
+        // graph's core
         for (i = 0; i < height - 1; i++) {
-            int  c_val ; // current value
-
+            int  c_val ; // current value           
             for (j = 0; j < width ; j++) {
                 c_val = itr[i][j] ;
 
                 graph.addEdge( new Edge (
-                        width * i + j,
+                        width * i + j ,
                         width * (i + 1) + j,
                         c_val
                 )) ;
                 if (!(j - 1 < 0)) {
                 	graph.addEdge( new Edge (
-                            width * i + j,
+                            width * i + j  ,
                             width * (i + 1) + j - 1,
                             c_val
                     )) ;
@@ -175,7 +171,7 @@ public class SeamCarving {
                 }
             }
         }
-
+        // edge to final vertex
         for (j = 0; j < width ; j++) {
             graph.addEdge (
                     new Edge (
@@ -185,12 +181,13 @@ public class SeamCarving {
                     )
             ) ;
         }
-
+        // edge from origin vertex 
         for (j = 0; j < width; j++) {
             graph.addEdge (
                     new Edge (width * height + 1, j, 0)
             ) ;
         }
+
 
         return graph ;
     }
@@ -251,6 +248,6 @@ public class SeamCarving {
 	}
 
     public static int [] getShortestPath (Graph g) {
-	    return Dijkstra(g, g.vertices() -1, g.vertices()-2 ) ;
+	    return Dijkstra(g, g.vertices() - 1, g.vertices() - 2 ) ;
     }
 }
