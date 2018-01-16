@@ -9,13 +9,13 @@ Resize an image using the seam carving method.
 * Dijkstra implementation
 * Documentation
 * Interest evaluation function
-* Seam Carving global implementation
+* Seam Carving final implementation
 
 ### Yoan Fath
 * Array to graph translation
 * Dijkstra implementation
 * Documentation
-* Seam Carving global implementation
+* Seam Carving final implementation
 
 ## Usage
 ```shell
