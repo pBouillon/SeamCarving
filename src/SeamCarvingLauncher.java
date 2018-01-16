@@ -12,7 +12,7 @@ public class SeamCarvingLauncher {
     private final static char OPT_SIMPLE   = 's'  ;
     private final static char OPT_VERBOSE  = 'v' ;
 
-    private final static int ENTRY  = 0 ;
+    private final static int SOURCE = 0 ;
     private final static int OUTPUT = 1 ;
 
     private boolean  simple  ; /* if using the simple algorithm instead of the double one */
@@ -118,24 +118,24 @@ public class SeamCarvingLauncher {
 
     public static void main(String[] args) {
         SeamCarvingLauncher launcher = new SeamCarvingLauncher() ;
-        launcher.parse(args) ;
+        launcher.parse(args) ; // check prog args
 
-        String[] file    = launcher.getFiles()   ;
-        boolean  simple  = launcher.useSimple()  ;
-        boolean  verbose = launcher.useVerbose() ;
+        String[] file    = launcher.getFiles()   ; // get files as {source, output}
+        boolean  simple  = launcher.useSimple()  ; // check requested version
+        boolean  verbose = launcher.useVerbose() ; // check if verbose
 
-        int[][] maping   = SeamCarving.readpgm(file[ENTRY]) ;
+        int[][] maping   = SeamCarving.readpgm(file[SOURCE]) ; // get pixels from image
 
         assert maping != null ;
-        int[][] interest = SeamCarving.interest(maping) ;
+        int[][] interest = SeamCarving.interest(maping) ; // evaluates interest of each pixel from maping
 
-        Graph imgGraph = SeamCarving.tograph(interest) ;
-        int[] shortestPath = SeamCarving.getShortestPath(imgGraph) ;
+        Graph imgGraph = SeamCarving.tograph(interest) ;  // build graph from interest array
+        int[] shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
 
-        int img[][] = null ;
+        int finalImage[][] = null ;
         for (int i = 0; i < ROW_REMOVED; ++i) {
-            img = SeamCarving.run(maping, shortestPath) ;
+            finalImage = SeamCarving.run(maping, shortestPath) ; // re-evaluates image with one less row
         }
-        SeamCarving.writepgm(img, file[OUTPUT]) ;
+        SeamCarving.writepgm(finalImage, file[OUTPUT]) ; // write the new image
     }
 }
