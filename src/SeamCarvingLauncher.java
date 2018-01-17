@@ -11,6 +11,7 @@ public class SeamCarvingLauncher {
 
     private final static char OPT_COMPRESS = 'c' ; /* compression option */
     private final static char OPT_HELP     = 'h' ; /* displays help */
+    private final static char OPT_PROP     = 'p' ; /* apply pixel special properties */
     private final static char OPT_SIMPLE   = 's' ; /* chose method */
     private final static char OPT_VERBOSE  = 'v' ; /* displays progress */
 
@@ -19,6 +20,7 @@ public class SeamCarvingLauncher {
 
     private boolean  simple  ; /* if using the simple algorithm instead of the double one */
     private boolean  verbose ; /* enable verbose mode */
+    private String   prop    ; /* source for pixel special properties*/
     private String[] files   ; /* will contain String{source, dest} */
 
     /**
@@ -29,7 +31,8 @@ public class SeamCarvingLauncher {
      *  - boolean are false
      */
     private SeamCarvingLauncher() {
-        files   = new String[]{"", ""};
+        files   = new String[]{"", ""} ;
+        prop    = null ;
         simple  = false ;
         verbose = false ;
     }
@@ -45,6 +48,7 @@ public class SeamCarvingLauncher {
                 PROG_NAME +" : " + msg + "\n" +
                 "   -" + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
                 "   -" + OPT_HELP      + " ................... displays help\n" +
+                "   -" + OPT_PROP      + " <filename>......... apply properties on pixel\n" +
                 "   -" + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
                 "   -" + OPT_VERBOSE   + " ................... enable verbose mode" ;
         System.out.println(helper_msg) ;
@@ -62,8 +66,16 @@ public class SeamCarvingLauncher {
      */
     private void parse(String[] args) {
         int file_args = -1 ; // count files
+        boolean waiting_prop = false ;
 
         for (String arg : args) {
+            if (waiting_prop) {
+                if (arg.charAt(0) == '-') {
+                    displayHelp ("Bad usage of property", -1) ;
+                }
+                prop = arg ;
+                waiting_prop = false ;
+            }
             if (arg.charAt(0) == '-') {
                 switch (arg.charAt(1)) {
                     case OPT_COMPRESS :
@@ -75,6 +87,10 @@ public class SeamCarvingLauncher {
                         }
                         break ;
                     case OPT_HELP :
+                        displayHelp("Available options", 0) ;
+                        break ;
+                    case OPT_PROP :
+                        waiting_prop = true ;
                         displayHelp("Available options", 0) ;
                         break ;
                     case OPT_SIMPLE :
@@ -113,6 +129,10 @@ public class SeamCarvingLauncher {
         return files ;
     }
 
+    private String getPropFile() {
+        return prop ;
+    }
+
     /**
      * Get the chosed method
      *
@@ -135,6 +155,7 @@ public class SeamCarvingLauncher {
         SeamCarvingLauncher launcher = new SeamCarvingLauncher() ;
         launcher.parse(args) ; // check prog args
 
+        String   prop    = launcher.getPropFile() ;
         String[] file    = launcher.getFiles()   ; // get files as {source, output}
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
@@ -162,6 +183,11 @@ public class SeamCarvingLauncher {
             System.out.print("Progression:\n\t0% ... ") ;
         }
 
+        int[][] restrictions = null ;
+        if (prop != null) {
+            restrictions = SeamCarving.readvalues(prop) ;
+        }
+
         int state = 0 ;
         for (int i = 0; i < ROW_REMOVED; ++i) {
             if (verbose) {
@@ -179,7 +205,10 @@ public class SeamCarvingLauncher {
                     ++state ;
                 }
             }
-            interest = SeamCarving.interest(imgPixels) ;                 // evaluates interest of each pixel from imgPixels
+
+            interest = (restrictions == null) ? SeamCarving.interest(imgPixels)
+                                              : SeamCarving.interest(imgPixels, restrictions);
+
             imgGraph = SeamCarving.tograph(interest)   ;                 // build graph from interest array
             shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph
             imgPixels    = SeamCarving.resize(imgPixels, shortestPath) ; // delete one column of imgPixels

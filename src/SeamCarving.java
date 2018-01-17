@@ -3,7 +3,6 @@ import graph.Graph;
 import graph.Heap;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -20,6 +19,35 @@ public class SeamCarving {
 	private static final int y = 1 ; // axis for .pgm writing
 
     private static final int TO_REMOVE = -1 ; // designate values to be erased
+
+    private static final int PX_DEL     = -1 ;
+    private static final int PX_DEL_VAL = -1 ;
+    private static final int PX_KEEP    =  1 ;
+    private static final int PX_KEEP_VAL = Integer.MAX_VALUE ;
+    private static final int PX_NO_OP    = 0 ;
+
+    /**
+     *
+     */
+    private static int getFileLines (String filename) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean endsWithoutNewLine = false;
+            while ((readChars = is.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n')
+                        ++count;
+                }
+                endsWithoutNewLine = (c[readChars - 1] != '\n');
+            }
+            if (endsWithoutNewLine) {
+                ++count;
+            }
+            return count;
+        }
+    }
 
     /**
 	 * Give the coordinates of an axis in the pixel tab
@@ -138,7 +166,34 @@ public class SeamCarving {
 		return interest_grid ;
 	}
 
-	/**
+    /**
+     * Build a double array with interest for each pixel
+     * for an array :[x] [y] [z]
+     * interest = y - avg(x, z)
+     *
+     * @param image     : pixels of a .pgm files
+     * @return interest : average val of adjacent pixels
+     */
+    public static int[][] interest (int[][] image, int[][] restrictions) {
+        int[][] interest_grid = interest(image) ;
+
+        for (int x = 0; x < restrictions.length; ++x) {
+            for (int y = 0; y < restrictions[0].length; ++y) {
+                switch (restrictions[x][y]) {
+                    case SeamCarving.PX_DEL:
+                        interest_grid[x][y] = SeamCarving.PX_DEL_VAL;
+                        break ;
+                    case SeamCarving.PX_KEEP:
+                        interest_grid[x][y] = SeamCarving.PX_KEEP_VAL ;
+                        break ;
+                }
+            }
+        }
+
+        return interest_grid ;
+    }
+
+    /**
      * Method provided by the subject
      *
 	 * @param fn
@@ -183,16 +238,16 @@ public class SeamCarving {
 	/**
      * Read values from a File
      *
-	 * @param fn : file name
+	 * @param filename : file name
 	 * @return int[][] pgm values for each pixel
 	 */
-	public static int[][] readpgmv2 (String fn) {
+	public static int[][] readpgmv2 (String filename) {
 		int[][] img = null ;
 
-		BufferedReader br ;
+		BufferedReader br = null;
 		Scanner scan ;
 
-		File source = new File(fn) ;
+		File source = new File(filename) ;
 		if (!source.exists()) {
 			return null ;
 		}
@@ -223,7 +278,69 @@ public class SeamCarving {
 			e.printStackTrace() ;
 			System.exit(-1) ;
 		}
+		finally {
+            try {
+                if (br != null)
+                    br.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
 		return img ;
+	}
+
+	public static int[][] readvalues (String filename) {
+		int[][] values = null ;
+
+        BufferedReader br = null ;
+
+        File source = new File(filename) ;
+        if (!source.exists()) {
+            return null ;
+        }
+
+        try {
+            br = new BufferedReader(new FileReader(filename));
+
+            String currentLine ;
+            int x = 0 ;
+            int y = 0 ;
+            while ((currentLine = br.readLine()) != null) {
+                if (values == null) {
+                    values = new int[getFileLines(filename)][currentLine.length()] ;
+                }
+
+                for (String value : currentLine.split(" ")) {
+                    int val = Integer.parseInt(value) ;
+                    if (
+                        val    != PX_KEEP_VAL
+                        && val != PX_DEL_VAL
+                        && val != PX_NO_OP
+                    ) {
+                        System.out.println (
+                                "Incorrect value " + value +
+                                " should be in " + PX_KEEP_VAL + " | " + PX_DEL_VAL + " | " + PX_NO_OP) ;
+                        System.exit(-1) ;
+                    }
+                    values[x][y] = val ;
+                    ++y ;
+                }
+                ++x ;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace() ;
+            System.exit(-1) ;
+        } finally {
+            try {
+                if (br != null)
+                    br.close() ;
+            } catch (IOException ex) {
+                ex.printStackTrace() ;
+                System.exit(-1) ;
+            }
+        }
+		return values ;
 	}
 
 	/**
@@ -360,9 +477,7 @@ public class SeamCarving {
 
 		int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
 
-
 		ArrayList<Integer> newRow = new ArrayList<>() ; // list of all accepted values
-
 		for (int x = 0; x < img.length; ++x) {
 			for (int val : img[x]) {
 				if (val != TO_REMOVE) {
