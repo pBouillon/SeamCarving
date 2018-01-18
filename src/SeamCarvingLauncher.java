@@ -7,7 +7,7 @@ import graph.Graph;
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
-    private final static int    ROW_REMOVED  = 50 ;             /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 1/*50*/ ;             /* number of rows to be removed */
 
     private final static char OPT_COMPRESS = 'c' ; /* compression option */
     private final static char OPT_HELP     = 'h' ; /* displays help */
@@ -214,7 +214,7 @@ public class SeamCarvingLauncher {
             }
 
             interest = (restrictions == null) ? SeamCarving.interest(imgPixels)
-                                              : SeamCarving.interest(imgPixels, restrictions);
+                                              : SeamCarving.interest(imgPixels, restrictions) ;
 
             imgGraph = SeamCarving.tograph(interest)   ;                 // build graph from interest array
             shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph

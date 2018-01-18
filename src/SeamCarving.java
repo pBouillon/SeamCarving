@@ -22,9 +22,9 @@ public class SeamCarving {
     private static final int TO_REMOVE = -1 ; // designate values to be erased
 
     private static final int PX_DEL     = -1 ;
-    private static final int PX_DEL_VAL = -1 ;
+    private static final int PX_DEL_VAL = -2 ;
     private static final int PX_KEEP    =  1 ;
-    private static final int PX_KEEP_VAL = Integer.MAX_VALUE ;
+    private static final int PX_KEEP_VAL = PortablePixmap.PGM_MAX_VAL ;
     private static final int PX_NO_OP    = 0 ;
 
     /**
@@ -178,6 +178,12 @@ public class SeamCarving {
     public static int[][] interest (int[][] image, int[][] restrictions) {
         int[][] interest_grid = interest(image) ;
 
+		if (interest_grid.length != restrictions.length
+				|| interest_grid[0].length != restrictions[0].length) {
+			System.out.println("Error: Image and Exclusion are not compatible") ;
+			System.exit(-1) ;
+		}
+
         for (int x = 0; x < restrictions.length; ++x) {
             for (int y = 0; y < restrictions[0].length; ++y) {
                 switch (restrictions[x][y]) {
@@ -308,13 +314,10 @@ public class SeamCarving {
             int y = 0 ;
             while ((currentLine = br.readLine()) != null) {
                 if (values == null) {
-                    values = new int[getFileLines(filename)][currentLine.length()] ;
+                    values = new int[getFileLines(filename)][currentLine.split(" ").length] ;
                 }
 
-                for (String value : currentLine.split(" ")) {
-                	if (value.equals("")) {
-                		continue ;
-					}
+				for (String value : currentLine.split(" ")) {
                     int val = Integer.parseInt(value) ;
                     if (
                         val    != PX_KEEP
@@ -496,6 +499,8 @@ public class SeamCarving {
 							.toArray() ;
 			newRow.clear() ;
 		}
+
+		// TODO: patch newImg: bad format
 		return newImg ;
     }
 }
