@@ -30,6 +30,7 @@ hs_err_pid*
 # project
 *.dot
 *.pgm
+*.txt
 src/.classpath
 src/.project
 src/greymaps

@@ -1,6 +1,7 @@
 import graph.Edge;
 import graph.Graph;
 import graph.Heap;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.*;
 import java.util.*;
@@ -311,24 +312,28 @@ public class SeamCarving {
                 }
 
                 for (String value : currentLine.split(" ")) {
+                	if (value.equals("")) {
+                		continue ;
+					}
                     int val = Integer.parseInt(value) ;
                     if (
-                        val    != PX_KEEP_VAL
-                        && val != PX_DEL_VAL
+                        val    != PX_KEEP
+                        && val != PX_DEL
                         && val != PX_NO_OP
                     ) {
                         System.out.println (
                                 "Incorrect value " + value +
-                                " should be in " + PX_KEEP_VAL + " | " + PX_DEL_VAL + " | " + PX_NO_OP) ;
+                                " should be in " + PX_KEEP + " | " + PX_DEL + " | " + PX_NO_OP) ;
                         System.exit(-1) ;
                     }
                     values[x][y] = val ;
                     ++y ;
                 }
                 ++x ;
+                y = 0 ;
             }
 
-        } catch (IOException e) {
+        } catch (IOException|NumberFormatException e) {
             e.printStackTrace() ;
             System.exit(-1) ;
         } finally {

@@ -76,7 +76,7 @@ public class SeamCarvingLauncher {
                 prop = arg ;
                 waiting_prop = false ;
             }
-            if (arg.charAt(0) == '-') {
+            else if (arg.charAt(0) == '-') {
                 switch (arg.charAt(1)) {
                     case OPT_COMPRESS :
                         if (file_args < 0) { // if -c is not set
@@ -91,7 +91,6 @@ public class SeamCarvingLauncher {
                         break ;
                     case OPT_PROP :
                         waiting_prop = true ;
-                        displayHelp("Available options", 0) ;
                         break ;
                     case OPT_SIMPLE :
                         this.simple = true ;
@@ -178,14 +177,22 @@ public class SeamCarvingLauncher {
         int[][] interest ;
         int[]   shortestPath ;
 
-        if (verbose) {
-            System.out.println("Beginning of the resize") ;
-            System.out.print("Progression:\n\t0% ... ") ;
-        }
-
         int[][] restrictions = null ;
         if (prop != null) {
             restrictions = SeamCarving.readvalues(prop) ;
+
+            if (verbose && restrictions != null) {
+                System.out.println("Contraints acquired") ;
+            }
+            else if (restrictions == null) {
+                System.out.println("Unable to read constraint file: " + prop) ;
+                System.exit(-1) ;
+            }
+        }
+
+        if (verbose) {
+            System.out.println("Beginning of the resize") ;
+            System.out.print("Progression:\n\t0% ... ") ;
         }
 
         int state = 0 ;
