@@ -473,6 +473,7 @@ public class SeamCarving {
      * @param vertices
      * @return
      */
+    // FIXME: bad resizing
 	public static int[][] resize(int[][] img, int[] vertices) {
 		int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
 		System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
@@ -499,8 +500,6 @@ public class SeamCarving {
 							.toArray() ;
 			newRow.clear() ;
 		}
-
-		// TODO: patch newImg: bad format
 		return newImg ;
     }
 }
