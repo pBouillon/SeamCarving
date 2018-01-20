@@ -22,7 +22,7 @@ public class SeamCarving {
     private static final int TO_REMOVE = -1 ; // designate values to be erased
 
     private static final int PX_DEL     = -1 ;
-    private static final int PX_DEL_VAL = -2 ;
+    private static final int PX_DEL_VAL =  0 ;
     private static final int PX_KEEP    =  1 ;
     private static final int PX_KEEP_VAL = PortablePixmap.PGM_MAX_VAL ;
     private static final int PX_NO_OP    = 0 ;
@@ -175,23 +175,39 @@ public class SeamCarving {
      * @param image     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
      */
-    public static int[][] interest (int[][] image, int[] restrictions) {
+    public static int[][] interest (int[][] image, int[] keep, int[] delete) {
         int[][] interest_grid = interest(image) ;
 
-        if (restrictions[0] < 0 || restrictions[1] > interest_grid[0].length) {
-        	System.out.println("Error: columns are not matching the current image") ;
-        	System.exit(-1) ;
+        if (keep != SeamCarvingLauncher.NO_PROP) {
+            if (keep[0] < 0 || keep[1] > interest_grid[0].length) {
+                System.out.println("Error: columns are not matching the current image") ;
+                System.exit(-1) ;
+            }
+            interest_grid = alterInterest(interest_grid, keep) ;
         }
 
-        for (int x = 0; x < interest_grid.length; ++x) {
-			for (int y = 0; y < interest_grid[x].length; ++y) {
-				if (y > restrictions[0] && y < restrictions[1]) {
-					interest_grid[x][y] = PX_KEEP_VAL ;
-				}
-			}
-		}
-
+        if (delete != SeamCarvingLauncher.NO_PROP) {
+            if (delete[0] < 0 || delete[1] > interest_grid[0].length) {
+                System.out.println("Error: columns are not matching the current image") ;
+                System.exit(-1) ;
+            }
+            interest_grid = alterInterest(interest_grid, delete) ;
+        }
         return interest_grid ;
+    }
+
+    /**
+     *
+     */
+    private static int[][] alterInterest(int[][] interest, int[] toAlter) {
+        for (int x = 0; x < interest.length; ++x) {
+            for (int y = 0; y < interest[x].length; ++y) {
+                if (y > toAlter[0] && y < toAlter[1]) {
+                    interest[x][y] = PX_DEL_VAL ;
+                }
+            }
+        }
+        return interest;
     }
 
     /**
