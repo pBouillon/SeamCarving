@@ -183,7 +183,7 @@ public class SeamCarving {
                 System.out.println("Error: columns are not matching the current image") ;
                 System.exit(-1) ;
             }
-            interest_grid = alterInterest(interest_grid, keep) ;
+            interest_grid = alterInterest(interest_grid, keep, PX_KEEP_VAL) ;
         }
 
         if (delete != SeamCarvingLauncher.NO_PROP) {
@@ -191,7 +191,7 @@ public class SeamCarving {
                 System.out.println("Error: columns are not matching the current image") ;
                 System.exit(-1) ;
             }
-            interest_grid = alterInterest(interest_grid, delete) ;
+            interest_grid = alterInterest(interest_grid, delete, PX_DEL_VAL) ;
         }
         return interest_grid ;
     }
@@ -199,11 +199,11 @@ public class SeamCarving {
     /**
      *
      */
-    private static int[][] alterInterest(int[][] interest, int[] toAlter) {
+    private static int[][] alterInterest(int[][] interest, int[] toAlter, int change) {
         for (int x = 0; x < interest.length; ++x) {
             for (int y = 0; y < interest[x].length; ++y) {
                 if (y > toAlter[0] && y < toAlter[1]) {
-                    interest[x][y] = PX_DEL_VAL ;
+                    interest[x][y] = change ;
                 }
             }
         }
