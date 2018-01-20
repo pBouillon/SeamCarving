@@ -175,27 +175,21 @@ public class SeamCarving {
      * @param image     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
      */
-    public static int[][] interest (int[][] image, int[][] restrictions) {
+    public static int[][] interest (int[][] image, int[] restrictions) {
         int[][] interest_grid = interest(image) ;
 
-		if (interest_grid.length != restrictions.length
-				|| interest_grid[0].length != restrictions[0].length) {
-			System.out.println("Error: Image and Exclusion are not compatible") ;
-			System.exit(-1) ;
-		}
-
-        for (int x = 0; x < restrictions.length; ++x) {
-            for (int y = 0; y < restrictions[0].length; ++y) {
-                switch (restrictions[x][y]) {
-                    case SeamCarving.PX_DEL:
-                        interest_grid[x][y] = SeamCarving.PX_DEL_VAL;
-                        break ;
-                    case SeamCarving.PX_KEEP:
-                        interest_grid[x][y] = SeamCarving.PX_KEEP_VAL ;
-                        break ;
-                }
-            }
+        if (restrictions[0] < 0 || restrictions[1] > interest_grid[0].length) {
+        	System.out.println("Error: columns are not matching the current image") ;
+        	System.exit(-1) ;
         }
+
+        for (int x = 0; x < interest_grid.length; ++x) {
+			for (int y = 0; y < interest_grid[x].length; ++y) {
+				if (y > restrictions[0] && y < restrictions[1]) {
+					interest_grid[x][y] = PX_KEEP_VAL ;
+				}
+			}
+		}
 
         return interest_grid ;
     }
@@ -294,61 +288,6 @@ public class SeamCarving {
             }
         }
 		return img ;
-	}
-
-	public static int[][] readvalues (String filename) {
-		int[][] values = null ;
-
-        BufferedReader br = null ;
-
-        File source = new File(filename) ;
-        if (!source.exists()) {
-            return null ;
-        }
-
-        try {
-            br = new BufferedReader(new FileReader(filename));
-
-            String currentLine ;
-            int x = 0 ;
-            int y = 0 ;
-            while ((currentLine = br.readLine()) != null) {
-                if (values == null) {
-                    values = new int[getFileLines(filename)][currentLine.split(" ").length] ;
-                }
-
-				for (String value : currentLine.split(" ")) {
-                    int val = Integer.parseInt(value) ;
-                    if (
-                        val    != PX_KEEP
-                        && val != PX_DEL
-                        && val != PX_NO_OP
-                    ) {
-                        System.out.println (
-                                "Incorrect value " + value +
-                                " should be in " + PX_KEEP + " | " + PX_DEL + " | " + PX_NO_OP) ;
-                        System.exit(-1) ;
-                    }
-                    values[x][y] = val ;
-                    ++y ;
-                }
-                ++x ;
-                y = 0 ;
-            }
-
-        } catch (IOException|NumberFormatException e) {
-            e.printStackTrace() ;
-            System.exit(-1) ;
-        } finally {
-            try {
-                if (br != null)
-                    br.close() ;
-            } catch (IOException ex) {
-                ex.printStackTrace() ;
-                System.exit(-1) ;
-            }
-        }
-		return values ;
 	}
 
 	/**

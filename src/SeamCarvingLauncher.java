@@ -7,21 +7,23 @@ import graph.Graph;
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
-    private final static int    ROW_REMOVED  = 1/*50*/ ;             /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 50 ;             /* number of rows to be removed */
 
-    private final static char OPT_COMPRESS = 'c' ; /* compression option */
-    private final static char OPT_HELP     = 'h' ; /* displays help */
-    private final static char OPT_PROP     = 'p' ; /* apply pixel special properties */
-    private final static char OPT_SIMPLE   = 's' ; /* chose method */
-    private final static char OPT_VERBOSE  = 'v' ; /* displays progress */
+    private final static char   OPT_SYMBOL   = '-' ; /* */
+    private final static char   OPT_COMPRESS = 'c' ; /* compression option */
+    private final static char   OPT_HELP     = 'h' ; /* displays help */
+    private final static char   OPT_KEEP     = 'k' ; /* apply pixel special properties */
+    private final static char   OPT_SIMPLE   = 's' ; /* chose method */
+    private final static char   OPT_VERBOSE  = 'v' ; /* displays progress */
 
-    private final static int SOURCE = 0 ; /* position of output file in arg list for -c */
-    private final static int OUTPUT = 1 ; /* position of output file in arg list for -c */
+    private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
+    private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
+    private final static int[]  NO_PROP = {-1, -1}; /* */
 
     private boolean  simple  ; /* if using the simple algorithm instead of the double one */
     private boolean  verbose ; /* enable verbose mode */
-    private String   prop    ; /* source for pixel special properties*/
     private String[] files   ; /* will contain String{source, dest} */
+    private int[]    col     ; /* source for pixel special properties*/
 
     /**
      * Default constructor
@@ -31,8 +33,8 @@ public class SeamCarvingLauncher {
      *  - boolean are false
      */
     private SeamCarvingLauncher() {
-        files   = new String[]{"", ""} ;
-        prop    = null ;
+        col   = new int[]{0, 0};
+        files = new String[]{"", ""} ;
         simple  = false ;
         verbose = false ;
     }
@@ -46,11 +48,11 @@ public class SeamCarvingLauncher {
     private void displayHelp(String msg, int ret) {
         String helper_msg = "" +
                 PROG_NAME +" : " + msg + "\n" +
-                "   -" + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
-                "   -" + OPT_HELP      + " ................... displays help\n" +
-                "   -" + OPT_PROP      + " <filename>......... apply properties on pixel\n" +
-                "   -" + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
-                "   -" + OPT_VERBOSE   + " ................... enable verbose mode" ;
+                "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
+                "   " + OPT_SYMBOL + OPT_HELP      + " ................... displays help\n" +
+                "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end>...... keep pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
+                "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
         System.out.println(helper_msg) ;
         System.exit(ret) ;
     }
@@ -65,57 +67,63 @@ public class SeamCarvingLauncher {
      * @param args : program arguments
      */
     private void parse(String[] args) {
-        int file_args = -1 ; // count files
-        boolean waiting_prop = false ;
+        int file = -1 ;
+        int dim  = -1 ;
 
         for (String arg : args) {
-            if (waiting_prop) {
-                if (arg.charAt(0) == '-') {
-                    displayHelp ("Bad usage of property", -1) ;
+
+            if (file > -1 && file < 2) {
+                if (arg.charAt(0) == OPT_SYMBOL) {
+                    displayHelp("File expected", -1);
                 }
-                prop = arg ;
-                waiting_prop = false ;
+                files[file++] = arg ;
             }
-            else if (arg.charAt(0) == '-') {
+
+            else if (dim > -1 && dim < 2) {
+                if (arg.charAt(0) == OPT_SYMBOL) {
+                    displayHelp("Column expected", -1) ;
+                }
+                try {
+                    col[dim++] = Integer.parseInt(arg) ;
+                } catch (NumberFormatException e) {
+                    displayHelp("Column id should be a number", -1) ;
+                }
+            }
+
+            else if (arg.charAt(0) == OPT_SYMBOL) {
                 switch (arg.charAt(1)) {
-                    case OPT_COMPRESS :
-                        if (file_args < 0) { // if -c is not set
-                            file_args++ ;
+                    case OPT_COMPRESS:
+                        if (file < 0) { // if -c is not set
+                            ++file ;
+                        } else {
+                            displayHelp("Duplicated option", -1) ;
                         }
-                        else {
+                        break;
+                    case OPT_HELP:
+                        displayHelp("Available options", 0) ;
+                        break;
+                    case OPT_KEEP:
+                        if (dim < 0) { // if -k is not set
+                            ++dim;
+                        } else {
                             displayHelp("Duplicated option", -1) ;
                         }
                         break ;
-                    case OPT_HELP :
-                        displayHelp("Available options", 0) ;
-                        break ;
-                    case OPT_PROP :
-                        waiting_prop = true ;
-                        break ;
-                    case OPT_SIMPLE :
-                        this.simple = true ;
-                        break ;
-                    case OPT_VERBOSE :
-                        this.verbose = true ;
+                    case OPT_SIMPLE:
+                        simple = true ;
+                        break;
+                    case OPT_VERBOSE:
+                        verbose = true ;
                         break ;
                     default:
                         displayHelp("Missing parameters", -1) ;
                 }
             }
-            else if (file_args >= 0){ // if -c is set
-                if (file_args > 1) {  // if the user provided more than 2 files
-                    displayHelp("Too many arguments", -1) ;
-                }
-                this.files[file_args] = arg ; // add file to args
-                file_args++ ; // increment known files
-            }
-            else {
-                displayHelp("Missing arguments", -1) ;
-            }
         }
 
-        if (file_args < 2) { // if at the end we have less than 2 files known
-            displayHelp("Missing files arguments", -1) ;
+        if (dim > 0 && dim < 2 ||
+                file > 0 && file < 2 ) {
+            displayHelp("Missing arguments", -1) ;
         }
     }
 
@@ -128,8 +136,8 @@ public class SeamCarvingLauncher {
         return files ;
     }
 
-    private String getPropFile() {
-        return prop ;
+    private int[] getPropCol() {
+        return col ;
     }
 
     /**
@@ -154,7 +162,7 @@ public class SeamCarvingLauncher {
         SeamCarvingLauncher launcher = new SeamCarvingLauncher() ;
         launcher.parse(args) ; // check prog args
 
-        String   prop    = launcher.getPropFile() ;
+        int[]    keep    = launcher.getPropCol() ; // get cols
         String[] file    = launcher.getFiles()   ; // get files as {source, output}
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
@@ -177,22 +185,9 @@ public class SeamCarvingLauncher {
         int[][] interest ;
         int[]   shortestPath ;
 
-        int[][] restrictions = null ;
-        if (prop != null) {
-            restrictions = SeamCarving.readvalues(prop) ;
-
-            if (verbose && restrictions != null) {
-                System.out.println("Contraints acquired") ;
-            }
-            else if (restrictions == null) {
-                System.out.println("Unable to read constraint file: " + prop) ;
-                System.exit(-1) ;
-            }
-        }
-
         if (verbose) {
             System.out.println("Beginning of the resize") ;
-            System.out.print("Progression:\n\t0% ... ") ;
+            System.out.print("Progression:\n\t0% ") ;
         }
 
         int state = 0 ;
@@ -200,21 +195,24 @@ public class SeamCarvingLauncher {
             if (verbose) {
                 int progression = 100 * i / ROW_REMOVED ;
                 if (progression > 75 && state < 3) {
-                    System.out.print(" 75% ... ") ;
+                    System.out.print(" 75% ") ;
                     ++state ;
                 }
                 else if (progression > 50 && state < 2) {
-                    System.out.print("50% ... ") ;
+                    System.out.print(" 50% ") ;
                     ++state ;
                 }
                 else if (progression > 25 && state < 1) {
-                    System.out.print("25% ... ") ;
+                    System.out.print(" 25% ") ;
                     ++state ;
+                }
+                else if (progression % 4 == 0) {
+                    System.out.print(".") ;
                 }
             }
 
-            interest = (restrictions == null) ? SeamCarving.interest(imgPixels)
-                                              : SeamCarving.interest(imgPixels, restrictions) ;
+            interest = (keep == NO_PROP) ? SeamCarving.interest(imgPixels)
+                                         : SeamCarving.interest(imgPixels, keep) ;
 
             imgGraph = SeamCarving.tograph(interest)   ;                 // build graph from interest array
             shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph
@@ -224,7 +222,7 @@ public class SeamCarvingLauncher {
         SeamCarving.writepgm(imgPixels, file[OUTPUT]) ; // write the new image
 
         if (verbose) {
-            System.out.println("Done !") ;
+            System.out.println(" Done !") ;
             System.out.println("Successfully saved in " + file[OUTPUT]) ;
         }
     }
