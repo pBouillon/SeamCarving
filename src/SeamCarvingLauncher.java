@@ -53,6 +53,7 @@ public class SeamCarvingLauncher {
                 PROG_NAME +" : " + msg + "\n" +
                 "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
                 "   " + OPT_SYMBOL + OPT_HELP      + " ................... displays help\n" +
+                "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end>...... delete pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end>...... keep pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
                 "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
