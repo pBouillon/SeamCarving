@@ -7,7 +7,7 @@ import graph.Graph;
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
-    private final static int    ROW_REMOVED  = 50 ;             /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 1 ;             /* number of rows to be removed */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
@@ -195,14 +195,36 @@ public class SeamCarvingLauncher {
         boolean  simple  = launcher.useSimple()  ; // check requested version
         boolean  verbose = launcher.useVerbose() ; // check if verbose
 
+
         if (!simple) { // coming in v2
             System.out.println ("Warning: Simple method used by default (version < 2.0)\n") ;
         }
 
-        int[][] imgPixels ;
-        if ((imgPixels  = SeamCarving.readpgmv2(file[SOURCE])) == null) { // check if the file is readable
-            System.out.println("Unable to read the source") ;
-            System.exit(-1) ;
+        String  magicNumber = SeamCarving.readFileType(file[SOURCE]) ;
+        if (magicNumber == null) {
+            System.out.println ("Unable to read file format") ;
+            System.exit (-1) ;
+        }
+
+        int[][]   imgPGM = null ;
+        int[][][] imgPPM = null ;
+
+        switch (magicNumber) {
+            case PortableAnymap.P_PGM :
+                if ((imgPGM  = SeamCarving.readPGM(file[SOURCE])) == null) {
+                    System.out.println("Unable to read the source") ;
+                    System.exit(-1) ;
+                }
+                break ;
+            case PortableAnymap.P_PPM :
+                if ((imgPPM  = SeamCarving.readPPM(file[SOURCE])) == null) {
+                    System.out.println("Unable to read the source") ;
+                    System.exit(-1) ;
+                }
+                break ;
+            default:
+                System.out.println ("Unable to read this format: " + magicNumber) ;
+                System.exit (-1) ;
         }
 
         if (verbose) {
@@ -239,14 +261,33 @@ public class SeamCarvingLauncher {
                 }
             }
 
-            interest = SeamCarving.interest(imgPixels, keep, delete) ;
+            switch (magicNumber) {
+                case PortableAnymap.P_PGM :
+                    interest = SeamCarving.interest(imgPGM, keep, delete) ;
+                    imgGraph     = SeamCarving.tograph(interest) ;            // build graph from interest array
+                    shortestPath = SeamCarving.getShortestPath(imgGraph) ;    // evaluates shortest path from graph
+                    imgPGM       = SeamCarving.resize(imgPGM, shortestPath) ; // delete one column of imgPixels
+                    break ;
 
-            imgGraph = SeamCarving.tograph(interest)   ;                 // build graph from interest array
-            shortestPath = SeamCarving.getShortestPath(imgGraph) ;       // evaluates shortest path from graph
-            imgPixels    = SeamCarving.resize(imgPixels, shortestPath) ; // delete one column of imgPixels
+                case PortableAnymap.P_PPM :
+                    interest = SeamCarving.interest(imgPPM, keep, delete) ;
+                    imgGraph     = SeamCarving.tograph(interest) ;            // build graph from interest array
+                    shortestPath = SeamCarving.getShortestPath(imgGraph) ;    // evaluates shortest path from graph
+                    imgPPM       = SeamCarving.resize(imgPPM, shortestPath) ; // delete one column of imgPixels
+                    break ;
+            }
+
+
         }
 
-        SeamCarving.writepgm(imgPixels, file[OUTPUT]) ; // write the new image
+        switch (magicNumber) {
+            case PortableAnymap.P_PGM :
+                SeamCarving.writepgm(imgPGM, file[OUTPUT]) ; // write the new image
+                break ;
+            case PortableAnymap.P_PPM :
+                SeamCarving.writeppm(imgPPM, file[OUTPUT]) ; // write the new image
+                break ;
+        }
 
         if (verbose) {
             System.out.println(" Done !") ;

@@ -1,7 +1,6 @@
 import graph.Edge;
 import graph.Graph;
 import graph.Heap;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.*;
 import java.util.*;
@@ -13,16 +12,18 @@ import java.util.*;
  */
 public class SeamCarving {
 
-    private static final String BASE_PATH = "./" ; // default path
-    private static final String SEPARATOR = "  " ; // .pgm separator
+    private static final String BASE_PATH      = "./" ; // default path
+    private static final String SEPARATOR      = " " ;  // pixel anymap separator
+    private static final String LONG_SEPARATOR = "  " ; // pixel anymap long separator
 
-    private static final int x = 0 ; // axis for .pgm writing
-    private static final int y = 1 ; // axis for .pgm writing
+    private static final int x   = 0 ; // axis for .pgm writing
+    private static final int y   = 1 ; // axis for .pgm writing
+    private static final int RGB = 3 ;
 
     private static final int TO_REMOVE = -1 ; // designate values to be erased
 
     private static final int PX_DEL_VAL =  0 ;
-    private static final int PX_KEEP_VAL = PortablePixmap.PGM_MAX_VAL ;
+    private static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
 
     /**
      *
@@ -98,6 +99,27 @@ public class SeamCarving {
         return prev ;
     }
 
+    private static File getDestination(String filename) {
+        File destination = new File(BASE_PATH + filename) ;
+        try {
+            boolean ret = true ;
+
+            if (!destination.exists()) {
+                ret = destination.createNewFile();
+            }
+            if (!ret) {
+                System.out.println("Failed to create file: " + BASE_PATH + filename) ;
+                System.exit(-1) ;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace() ;
+            System.exit(-1) ;
+        }
+
+        return destination ;
+    }
+
     /**
      * @param g
      * @return
@@ -130,32 +152,32 @@ public class SeamCarving {
      * for an array :[x] [y] [z]
      * interest = y - avg(x, z)
      *
-     * @param image     : pixels of a .pgm files
+     * @param img     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
      */
-    public static int[][] interest (int[][] image) {
-        int height = image.length ;
-        int width  = image[0].length ;
+    static int[][] interest(int[][] img) {
+        int height = img.length ;
+        int width  = img[0].length ;
 
         int[][] interest_grid = new int[height][width] ;
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++){
-                int px_c = image[i][j] ;   // current pixel
+                int px_c = img[i][j] ;   // current pixel
 
                 if (j - 1 < 0) { // no right neighbor
-                    interest_grid[i][j] = Math.abs(px_c - image[i][j + 1]) ;
+                    interest_grid[i][j] = Math.abs(px_c - img[i][j + 1]) ;
                     continue ;
                 }
 
                 if (j + 1 == width) { // no left neighbor
-                    interest_grid[i][j] = Math.abs(px_c - image[i][j - 1]) ;
+                    interest_grid[i][j] = Math.abs(px_c - img[i][j - 1]) ;
                     continue ;
                 }
 
                 // both neighbors
-                int px_l = image[i][j - 1] ; // left  pixel
-                int px_r = image[i][j + 1] ; // right pixel
+                int px_l = img[i][j - 1] ; // left  pixel
+                int px_r = img[i][j + 1] ; // right pixel
                 int neighbors_avg = (px_l + px_r) / 2 ;
 
                 interest_grid[i][j] = Math.abs(px_c - neighbors_avg) ;
@@ -165,16 +187,69 @@ public class SeamCarving {
     }
 
     /**
+     *
+     */
+    private static int[][] colorInterest(int[][][] ppmImg) {
+        int height = ppmImg.length ;
+        int width  = ppmImg[0].length ;
+
+        int[][] interest_grid = new int[height][width] ;
+
+        int[][] analyzed_img = new int[height][width] ;
+        for (int color_id = 0; color_id < RGB; ++color_id) { // RGB
+
+            // build map for one color
+            for (int x = 0; x < height; ++x) {
+                for (int y = 0; y < width; ++y) {
+                    analyzed_img[x][y] += ppmImg[x][y][color_id] ;
+                }
+            }
+
+            // getting interest
+            analyzed_img = interest(analyzed_img) ;
+
+            // cumulate interests
+            for (int x = 0; x < height; ++x) {
+                for (int y = 0; y < width; ++y) {
+                    interest_grid[x][y] += analyzed_img[x][y] ;
+                }
+            }
+        }
+
+        return interest_grid ;
+    }
+
+    /**
      * Build a double array with interest for each pixel
      * for an array :[x] [y] [z]
      * interest = y - avg(x, z)
      *
-     * @param image     : pixels of a .pgm files
+     * @param pgmImage     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
      */
-    public static int[][] interest (int[][] image, int[] keep, int[] delete) {
-        int[][] interest_grid = interest(image) ;
+    public static int[][] interest (int[][] pgmImage, int[] keep, int[] delete) {
+        return applyChanges (
+                interest(pgmImage),
+                keep,
+                delete
+        ) ;
+    }
 
+    /**
+     *
+     */
+    public static int[][] interest(int[][][] ppmImage, int[] keep, int[] delete) {
+        return applyChanges (
+                colorInterest(ppmImage),
+                keep,
+                delete
+        ) ;
+    }
+
+    /**
+     *
+     */
+    private static int[][] applyChanges (int[][] interest_grid, int[] keep, int[] delete) {
         if (keep != SeamCarvingLauncher.NO_PROP) {
             if (keep[0] < 0 || keep[1] > interest_grid[0].length) {
                 System.out.println("Error: columns to keep are not matching the current image") ;
@@ -190,6 +265,7 @@ public class SeamCarving {
             }
             interest_grid = alterInterest (interest_grid, delete, PX_DEL_VAL) ;
         }
+
         return interest_grid ;
     }
 
@@ -204,7 +280,39 @@ public class SeamCarving {
                 }
             }
         }
-        return interest;
+        return interest ;
+    }
+
+    /**
+     *
+     */
+    public static String readFileType(String filename) {
+        BufferedReader br = null ;
+        String magic = "" ;
+
+        File source = new File(filename) ;
+        if (!source.exists()) {
+            return null ;
+        }
+
+        try {
+            br = new BufferedReader(new FileReader(source)) ;
+            magic = br.readLine() ;
+
+        } catch (IOException e) {
+            e.printStackTrace() ;
+            System.exit(-1) ;
+        }
+        finally {
+            try {
+                if (br != null)
+                    br.close() ;
+            } catch (IOException ex) {
+                ex.printStackTrace() ;
+            }
+        }
+
+        return magic ;
     }
 
     /**
@@ -255,7 +363,7 @@ public class SeamCarving {
      * @param filename : file name
      * @return int[][] pgm values for each pixel
      */
-    public static int[][] readpgmv2 (String filename) {
+    public static int[][] readPGM(String filename) {
         int[][] img = null ;
 
         BufferedReader br = null;
@@ -271,7 +379,7 @@ public class SeamCarving {
 
             String magic = br.readLine() ;  // getting magic number (http://netpbm.sourceforge.net/doc/pgm.html)
             String line  = br.readLine() ;
-            while (line.startsWith("#")) {  // ignoring comments
+            while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
                 line = br.readLine() ;
             }
 
@@ -282,6 +390,10 @@ public class SeamCarving {
             line = br.readLine() ;
             scan = new Scanner(line) ;
             int maxVal = scan.nextInt() ;
+            if (maxVal > PortableAnymap.PGM_MAX_VAL) {
+                return null ;
+            }
+
 
             img = new int[height][width] ;
             scan = new Scanner(br) ;
@@ -300,6 +412,66 @@ public class SeamCarving {
                 ex.printStackTrace();
             }
         }
+        return img ;
+    }
+
+    /**
+     *
+     */
+    public static int[][][] readPPM(String filename) {
+        int[][][] img = null ;
+
+        BufferedReader br = null;
+        Scanner scan ;
+
+        File source = new File(filename) ;
+        if (!source.exists()) {
+            return null ;
+        }
+
+        try {
+            br = new BufferedReader(new FileReader(source)) ;
+
+            String magic = br.readLine() ;
+            String line  = br.readLine() ;
+            while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
+                line = br.readLine() ;
+            }
+
+            scan = new Scanner(line) ;      // getting dimensions
+            int width  = scan.nextInt() ;
+            int height = scan.nextInt() ;
+
+            line = br.readLine() ;
+            scan = new Scanner(line) ;
+
+            int maxVal = scan.nextInt() ;
+            if (maxVal > PortableAnymap.PPM_MAX_VAL) {
+                return null ;
+            }
+
+            img = new int[height][width][RGB] ;
+            scan = new Scanner(br) ;
+
+            for (int count = 0; count < height * width; ++count) {   // getting image values
+                int i = 0 ;
+                img[count / width][count % width][i++] = scan.nextInt() ; // red
+                img[count / width][count % width][i++] = scan.nextInt() ; // green
+                img[count / width][count % width][i]   = scan.nextInt() ; // blue
+            }
+        } catch (IOException e) {
+            e.printStackTrace() ;
+            System.exit(-1) ;
+        }
+        finally {
+            try {
+                if (br != null)
+                    br.close() ;
+            } catch (IOException ex) {
+                ex.printStackTrace() ;
+            }
+        }
+
         return img ;
     }
 
@@ -372,34 +544,20 @@ public class SeamCarving {
      * @param filename destination
      */
     public static void writepgm (int[][] image, String filename) {
-        File destination ;
-        PrintWriter pw    = null ;
-
-        // Create file if not exists
+        PrintWriter pw = null ;
         try {
-            boolean ret = true ;
-            destination = new File(BASE_PATH + filename) ;
-
-            if (!destination.exists()) {
-                ret = destination.createNewFile();
-            }
-            if (!ret) {
-                System.out.println("Failed to create file: " + BASE_PATH + filename) ;
-                System.exit(-1) ;
-            }
-            pw = new PrintWriter(destination) ;
-        } catch (IOException e) {
+            pw = new PrintWriter(getDestination(filename)) ;
+        } catch (FileNotFoundException e) {
             e.printStackTrace() ;
-            System.exit(-1) ;
         }
 
-        pw.write("");
+        pw.write("") ;
         pw.flush() ;
 
         // Write plain pgm header
-        pw.println(PortablePixmap.P_PGM + SEPARATOR) ;
+        pw.println(PortableAnymap.P_PGM + SEPARATOR) ;
         pw.println(image[0].length + SEPARATOR + image.length + SEPARATOR) ;
-        pw.println(PortablePixmap.PGM_MAX_VAL) ;
+        pw.println(PortableAnymap.PGM_MAX_VAL) ;
 
         // write the value for each table cell
         for (int[] row : image) {
@@ -408,7 +566,7 @@ public class SeamCarving {
             for (int val : row) {
                 String written = val + SEPARATOR ;
 
-                if (line_len + written.length() > PortablePixmap.PGM_MAX_PGM_LEN) {
+                if (line_len + written.length() > PortableAnymap.PGM_MAX_PGM_LEN) {
                     pw.print("\n") ;
                     line_len = 0 ;
                 }
@@ -416,6 +574,42 @@ public class SeamCarving {
                 pw.print(written) ;
             }
             pw.print("\n");
+        }
+        pw.close() ;
+    }
+
+    /**
+     * Save greyscale values into a .pgm file
+     *
+     * @param image    greyscale per pixels
+     * @param filename destination
+     */
+    public static void writeppm (int[][][] image, String filename) {
+        PrintWriter pw = null ;
+        try {
+            pw = new PrintWriter(getDestination(filename)) ;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace() ;
+        }
+
+        // clean the file
+        pw.write("") ;
+        pw.flush() ;
+
+        // Write plain ppm header
+        pw.println(PortableAnymap.P_PPM + SEPARATOR) ;
+        pw.println(image[0].length + SEPARATOR + image.length + SEPARATOR) ;
+        pw.println(PortableAnymap.PPM_MAX_VAL) ;
+
+        // write the value for each table cell
+        for (int[][] row : image) {
+            for (int[] pixel : row) {
+                for (int val : pixel) {
+                    pw.print(val + SEPARATOR) ;
+                }
+                pw.print(LONG_SEPARATOR) ;
+            }
+            pw.print("\n") ;
         }
         pw.close() ;
     }
@@ -449,6 +643,57 @@ public class SeamCarving {
             newImg[x] = newRow.stream()
                     .mapToInt(Integer::valueOf)
                     .toArray() ;
+            newRow.clear() ;
+        }
+        return newImg ;
+    }
+
+    /**
+     * @param img
+     * @param vertices
+     * @return
+     *
+     * TODO
+     */
+    public static int[][][] resize (int[][][] img, int[] vertices) {
+        int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
+        System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
+
+        // set each pixel associated to a vertice to -1
+        for (int vertice : pixels) {
+            int coord[] = edge2coord(vertice, img[0].length) ;
+            for (int i = 0; i < RGB; ++i) {
+                img[coord[x]][coord[y]][i] = TO_REMOVE ;
+            }
+        }
+
+        // one column less and RGB
+        int[][][] newImg = new int[img.length][img[0].length - 1][RGB] ;
+
+        // list of all accepted values
+        ArrayList<Integer> newPx  = new ArrayList<>() ;
+        ArrayList<int[]>   newRow = new ArrayList<>() ;
+
+        //
+        for (int row = 0; row < img.length; ++row) {
+            for (int[] col : img[row]) {
+                for (int val : col) {
+                    // add R | G | B val if expected
+                    if (val != TO_REMOVE) {
+                        newPx.add(val) ;
+                    }
+                }
+                // if RGB values found - add it
+                if (newPx.size() > 0) {
+                    newRow.add(newPx.stream()
+                            .mapToInt(Integer::valueOf)
+                            .toArray()) ;
+                    newPx.clear() ;
+                }
+            }
+
+            // add the row to the new image and cleaning list
+            img[row] = (int[][]) newRow.toArray() ;
             newRow.clear() ;
         }
         return newImg ;

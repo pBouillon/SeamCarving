@@ -1,7 +1,5 @@
 import graph.Graph;
 
-import java.util.ArrayList;
-
 /**
  * @deprecated Only for immediate testing purpose
  * @version 1.0
@@ -10,8 +8,11 @@ public class dummy {
     public static void main(String[] args) {
         //writepgm_try() ;
         //interest_try() ;
-        tograpg_test();
-        shortestPathTest() ;
+        //tograpg_test();
+        //shortestPathTest() ;
+
+        //readppm_try() ;
+        writeppm_try() ;
     }
 
     private static void interest_try() {
@@ -34,6 +35,20 @@ public class dummy {
 
         System.out.println("\n------\nexpected\n------\n");
         System.out.println("8 2 1 15\n13 3 1 10\n140 52 5 25");
+    }
+
+    private static void readppm_try() {
+        int[][][] img = SeamCarving.readPPM("PortablePixmaps/ppm/dummy.ppm") ;
+
+        for (int x[][] : img) {
+            for (int y[] : x) {
+                for(int v : y) {
+                    System.out.print(v + " ") ;
+                }
+                System.out.print("   ") ;
+            }
+            System.out.println() ;
+        }
     }
 
     private static void tograpg_test() {
@@ -92,5 +107,36 @@ public class dummy {
         String dest = "dummy.pgm" ;
 
         SeamCarving.writepgm(p_pgm, dest) ;
+    }
+
+    private static void writeppm_try() {
+        int[][][] test =
+                {
+                    {
+                        {0,0,0},
+                        {0,0,0},
+                        {0,0,0},
+                        {15,0,15}
+                    },
+                    {
+                        {0,0,0},
+                        {0,15,7},
+                        {0,0,0},
+                        {0,0,0}
+                    },
+                    {
+                        {0,0,0},
+                        {0,0,0},
+                        {0,15,7},
+                        {0,0,0}
+                    },
+                    {
+                        {15,0,15},
+                        {0,0,0},
+                        {0,0,0},
+                        {0,0,0}
+                    }
+                } ;
+        SeamCarving.writeppm(test, "PortablePixmaps/ppm/test.ppm") ;
     }
 }
