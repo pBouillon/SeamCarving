@@ -8,8 +8,11 @@ Resize an image using the seam carving method.
 * CLI
 * Dijkstra implementation
 * Documentation
-* Interest evaluation function
+* Interest evaluation functions
 * Seam Carving final implementation
+* PPM reading function
+* PPM saving function
+* Seam Carving implementation for PPM
 
 ### Yoan Fath
 * Array to graph translation
@@ -27,9 +30,10 @@ SeamCarving :
 ```
 
 ## Short term goals
-- [ ] handles rvb images
-- [ ] mark pixels as "to delete"
-- [ ] mark pixels as "to keep"
+- [ ] handles lines and columns
+- [ ] handles rgb images
+- [x] mark pixels as "to delete"
+- [x] mark pixels as "to keep"
 
 ## Authors
 * [Pierre Bouillon](https://pierrebouillon.tech/)
