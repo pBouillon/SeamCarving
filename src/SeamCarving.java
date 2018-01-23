@@ -26,29 +26,6 @@ public class SeamCarving {
     private static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
 
     /**
-     *
-     */
-    private static int getFileLines (String filename) throws IOException {
-        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
-            byte[] c = new byte[1024];
-            int count = 0;
-            int readChars = 0;
-            boolean endsWithoutNewLine = false;
-            while ((readChars = is.read(c)) != -1) {
-                for (int i = 0; i < readChars; ++i) {
-                    if (c[i] == '\n')
-                        ++count;
-                }
-                endsWithoutNewLine = (c[readChars - 1] != '\n');
-            }
-            if (endsWithoutNewLine) {
-                ++count;
-            }
-            return count;
-        }
-    }
-
-    /**
      * Give the coordinates of an axis in the pixel tab
      *
      * @param verticeID id of the vertice
@@ -73,8 +50,8 @@ public class SeamCarving {
      * @return sequence of edges for the shortest path
      */
     private static int[] Dijkstra (Graph g, int s, int t) {
-
         Heap pq = new Heap(g.vertices()) ;   // priority queue to ensure that every vertice is reached
+
         int[] dist = new int[g.vertices()] ; // array with shortest path to each vertex
         int[] prev = new int[g.vertices()] ; // array with previous node
 
@@ -121,10 +98,9 @@ public class SeamCarving {
     }
 
     /**
-     * @param g
-     * @return
+     *
      */
-    public static int[] getShortestPath (Graph g) {
+    static int[] getShortestPath(Graph g) {
         int[] path = Dijkstra(g, g.vertices() - 1, g.vertices() - 2 ) ;
 
         boolean parsed = false ;
@@ -154,6 +130,8 @@ public class SeamCarving {
      *
      * @param img     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
+     *
+     * TODO: patch for flower.pgm
      */
     static int[][] interest(int[][] img) {
         int height = img.length ;
@@ -165,12 +143,12 @@ public class SeamCarving {
             for (int j = 0; j < width; j++){
                 int px_c = img[i][j] ;   // current pixel
 
-                if (j - 1 < 0) { // no right neighbor
+                if (j - 1 < 0) { // no left neighbor
                     interest_grid[i][j] = Math.abs(px_c - img[i][j + 1]) ;
                     continue ;
                 }
 
-                if (j + 1 == width) { // no left neighbor
+                if (j + 1 == width) { // no right neighbor
                     interest_grid[i][j] = Math.abs(px_c - img[i][j - 1]) ;
                     continue ;
                 }
@@ -227,7 +205,7 @@ public class SeamCarving {
      * @param pgmImage     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
      */
-    public static int[][] interest (int[][] pgmImage, int[] keep, int[] delete) {
+    static int[][] interest(int[][] pgmImage, int[] keep, int[] delete) {
         return applyChanges (
                 interest(pgmImage),
                 keep,
@@ -238,7 +216,7 @@ public class SeamCarving {
     /**
      *
      */
-    public static int[][] interest(int[][][] ppmImage, int[] keep, int[] delete) {
+    static int[][] interest(int[][][] ppmImage, int[] keep, int[] delete) {
         return applyChanges (
                 colorInterest(ppmImage),
                 keep,
@@ -286,7 +264,7 @@ public class SeamCarving {
     /**
      *
      */
-    public static String readFileType(String filename) {
+    static String readFileType(String filename) {
         BufferedReader br = null ;
         String magic = "" ;
 
@@ -311,50 +289,7 @@ public class SeamCarving {
                 ex.printStackTrace() ;
             }
         }
-
         return magic ;
-    }
-
-    /**
-     * Method provided by the subject
-     *
-     * @param fn
-     * @return
-     */
-    public static int[][] readpgm (String fn) {
-        try {
-            InputStream f = ClassLoader.getSystemClassLoader()
-                    .getResourceAsStream(fn) ;
-
-            BufferedReader d = new BufferedReader (new InputStreamReader(f)) ;
-
-            String magic = d.readLine() ;
-            String line  = d.readLine() ;
-            while (line.startsWith("#")) {
-                line = d.readLine() ;
-            }
-
-            Scanner s  = new Scanner(line) ;
-            int width  = s.nextInt() ;
-            int height = s.nextInt() ;
-
-            line = d.readLine() ;
-            s    = new Scanner(line) ;
-
-            int maxVal = s.nextInt() ;
-            int[][] im = new int[height][width] ;
-            s = new Scanner(d) ;
-            int count = 0 ;
-            while (count < height*width) {
-                im[count / width][count % width] = s.nextInt() ;
-                count++ ;
-            }
-            return im ;
-        }
-        catch (Throwable t) {
-            t.printStackTrace (System.err) ;
-            return null ;
-        }
     }
 
     /**
@@ -363,7 +298,7 @@ public class SeamCarving {
      * @param filename : file name
      * @return int[][] pgm values for each pixel
      */
-    public static int[][] readPGM(String filename) {
+    static int[][] readPGM(String filename) {
         int[][] img = null ;
 
         BufferedReader br = null;
@@ -377,7 +312,7 @@ public class SeamCarving {
         try {
             br = new BufferedReader(new FileReader(source)) ;
 
-            String magic = br.readLine() ;  // getting magic number (http://netpbm.sourceforge.net/doc/pgm.html)
+            br.readLine() ;  // magic number (http://netpbm.sourceforge.net/doc/pgm.html)
             String line  = br.readLine() ;
             while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
                 line = br.readLine() ;
@@ -418,7 +353,7 @@ public class SeamCarving {
     /**
      *
      */
-    public static int[][][] readPPM(String filename) {
+    static int[][][] readPPM(String filename) {
         int[][][] img = null ;
 
         BufferedReader br = null;
@@ -432,7 +367,7 @@ public class SeamCarving {
         try {
             br = new BufferedReader(new FileReader(source)) ;
 
-            String magic = br.readLine() ;
+            br.readLine() ;
             String line  = br.readLine() ;
             while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
                 line = br.readLine() ;
@@ -482,7 +417,7 @@ public class SeamCarving {
      *
      * @return the translated graph
      */
-    public static Graph tograph (int[][] itr) {
+    static Graph toGraph (int[][] itr) {
         int i, j ;
 
         int height = itr.length ;
@@ -532,8 +467,6 @@ public class SeamCarving {
                     new Edge (width * height + 1, j, 0)
             ) ;
         }
-
-
         return graph ;
     }
 
@@ -543,7 +476,7 @@ public class SeamCarving {
      * @param image    greyscale per pixels
      * @param filename destination
      */
-    public static void writepgm (int[][] image, String filename) {
+    static void writepgm(int[][] image, String filename) {
         PrintWriter pw = null ;
         try {
             pw = new PrintWriter(getDestination(filename)) ;
@@ -551,6 +484,7 @@ public class SeamCarving {
             e.printStackTrace() ;
         }
 
+        assert pw != null;
         pw.write("") ;
         pw.flush() ;
 
@@ -584,7 +518,7 @@ public class SeamCarving {
      * @param image    greyscale per pixels
      * @param filename destination
      */
-    public static void writeppm (int[][][] image, String filename) {
+    static void writeppm(int[][][] image, String filename) {
         PrintWriter pw = null ;
         try {
             pw = new PrintWriter(getDestination(filename)) ;
@@ -593,6 +527,7 @@ public class SeamCarving {
         }
 
         // clean the file
+        assert pw != null;
         pw.write("") ;
         pw.flush() ;
 
@@ -615,11 +550,9 @@ public class SeamCarving {
     }
 
     /**
-     * @param img
-     * @param vertices
-     * @return
+     *
      */
-    public static int[][] resize(int[][] img, int[] vertices) {
+    static int[][] resize(int[][] img, int[] vertices) {
         int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
         System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
 
@@ -655,7 +588,7 @@ public class SeamCarving {
      *
      * TODO
      */
-    public static int[][][] resize (int[][][] img, int[] vertices) {
+    static int[][][] resize(int[][][] img, int[] vertices) {
         int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
         System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
 

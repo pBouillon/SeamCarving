@@ -24,7 +24,7 @@ public class dummy {
 
         int[][] ret = SeamCarving.interest(image) ;
 
-        SeamCarving.tograph(ret) ;
+        SeamCarving.toGraph(ret) ;
 
         for (int[] row : ret) {
             for (int col : row) {
@@ -62,7 +62,7 @@ public class dummy {
 //                {8,   5, 29},
 //        } ;
         int[][] itr = SeamCarving.interest(image) ;
-        Graph g = SeamCarving.tograph(itr);
+        Graph g = SeamCarving.toGraph(itr);
         g.writeFile("test_graph.dot");
     }
 
@@ -78,7 +78,7 @@ public class dummy {
 //                {8,   5, 29},
 //        } ;
         int[][] itr = SeamCarving.interest(image) ;
-        Graph g = SeamCarving.tograph(itr);
+        Graph g = SeamCarving.toGraph(itr);
 
         int [] path = SeamCarving.getShortestPath(g) ;
         boolean parsed = false;
