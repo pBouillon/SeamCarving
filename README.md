@@ -22,9 +22,11 @@ Resize an image using the seam carving method.
 
 ## Usage
 ```shell
-SeamCarving : 
+SeamCarving : Available options
    -c <img> <out.pgm> ... compress an image to a pgm file
    -h ................... displays help
+   -d <begin> <end>...... delete pixel between those columns
+   -k <begin> <end>...... keep pixel between those columns
    -s ................... use simple method instead of double (v2.0)
    -v ................... enable verbose mode
 ```
