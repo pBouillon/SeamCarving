@@ -7,7 +7,7 @@ import graph.Graph;
  */
 public class SeamCarvingLauncher {
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
-    private final static int    ROW_REMOVED  = 1 ;             /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 50 ;             /* number of rows to be removed */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
@@ -209,22 +209,21 @@ public class SeamCarvingLauncher {
         int[][]   imgPGM = null ;
         int[][][] imgPPM = null ;
 
-        switch (magicNumber) {
-            case PortableAnymap.P_PGM :
-                if ((imgPGM  = SeamCarving.readPGM(file[SOURCE])) == null) {
-                    System.out.println("Unable to read the source") ;
-                    System.exit(-1) ;
-                }
-                break ;
-            case PortableAnymap.P_PPM :
-                if ((imgPPM  = SeamCarving.readPPM(file[SOURCE])) == null) {
-                    System.out.println("Unable to read the source") ;
-                    System.exit(-1) ;
-                }
-                break ;
-            default:
-                System.out.println ("Unable to read this format: " + magicNumber) ;
-                System.exit (-1) ;
+        if (magicNumber.contains(PortableAnymap.P_PGM)) {
+            if ((imgPGM  = SeamCarving.readPGM(file[SOURCE])) == null) {
+                System.out.println("Unable to read the source") ;
+                System.exit(-1) ;
+            }
+        }
+        else if (magicNumber.contains(PortableAnymap.P_PPM)) {
+            if ((imgPPM  = SeamCarving.readPPM(file[SOURCE])) == null) {
+                System.out.println("Unable to read the source") ;
+                System.exit(-1) ;
+            }
+        }
+        else {
+            System.out.println ("Unable to read this format: " + magicNumber) ;
+            System.exit (-1) ;
         }
 
         if (verbose) {
