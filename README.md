@@ -22,6 +22,7 @@ Resize an image using the seam carving method.
 
 ## Usage
 ```shell
+~$ java SeamCarvingLauncher -h
 SeamCarving : Available options
    -c <img> <out.pgm> ... compress an image to a pgm file
    -h ................... displays help
@@ -29,6 +30,15 @@ SeamCarving : Available options
    -k <begin> <end>...... keep pixel between those columns
    -s ................... use simple method instead of double (v2.0)
    -v ................... enable verbose mode
+
+~$ java SeamCarvingLauncher -c path/to/image.pgm output.pgm -v
+Warning: Simple method used by default (version < 2.0)
+
+PGM values acquired
+Beginning of the resize
+Progression:
+	0% ....... 25% ...... 50% ..... 75% ..... Done !
+Successfully saved in output.pgm
 ```
 
 ## Short term goals
