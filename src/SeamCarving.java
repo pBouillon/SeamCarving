@@ -226,7 +226,7 @@ public class SeamCarving {
      *
      */
     private static int[][] applyChanges (int[][] interest_grid, int[] keep, int[] delete) {
-        if (keep != SeamCarvingLauncher.NO_PROP) {
+        if (isSet(keep)) {
             if (keep[0] < 0 || keep[1] > interest_grid[0].length) {
                 System.out.println("Error: columns to keep are not matching the current image") ;
                 System.exit(-1) ;
@@ -234,7 +234,7 @@ public class SeamCarving {
             interest_grid = alterInterest (interest_grid, keep, PX_KEEP_VAL) ;
         }
 
-        if (delete != SeamCarvingLauncher.NO_PROP) {
+        if (isSet(delete)) {
             if (delete[0] < 0 || delete[1] > interest_grid[0].length) {
                 System.out.println("Error: columns to delete are not matching the current image") ;
                 System.exit(-1) ;
@@ -243,6 +243,18 @@ public class SeamCarving {
         }
 
         return interest_grid ;
+    }
+
+    /**
+     *
+     */
+    private static boolean isSet(int[] property) {
+        for (int v : property) {
+            if (v == -1) {
+                return false ;
+            }
+        }
+        return true ;
     }
 
     /**

@@ -5,20 +5,20 @@ Resize an image using the seam carving method.
 ## Tasks repartition
 ### Pierre Bouillon
 * .pgm saving function
+* .ppm reading function
+* .ppm saving function
 * CLI
 * Dijkstra implementation
 * Documentation
 * Interest evaluation functions
-* Seam Carving final implementation
-* PPM reading function
-* PPM saving function
-* Seam Carving implementation for PPM
+* Seam Carving implementation for .pgm
+* Seam Carving implementation for .ppm
 
 ### Yoan Fath
 * Array to graph translation
 * Dijkstra implementation
 * Documentation
-* Seam Carving final implementation
+* Seam Carving implementation for .pgm
 
 ## Usage
 ```shell
