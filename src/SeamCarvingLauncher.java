@@ -10,7 +10,7 @@ public class SeamCarvingLauncher {
 
     private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
     private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
-    final static int[]  NO_PROP = {-1, -1};   /* */
+    final static int[]          NO_PROP = {-1, -1} ; /* */
 
     private static void exitSeamCarving (String reason) {
         exitSeamCarving (reason, -1) ;
@@ -20,7 +20,6 @@ public class SeamCarvingLauncher {
         System.out.println (reason) ;
         System.exit (errcode) ;
     }
-
 
     public static void main(String[] args) {
         Parser launcher = new Parser() ;

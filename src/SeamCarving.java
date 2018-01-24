@@ -498,7 +498,7 @@ public class SeamCarving {
             for (int val : row) {
                 String written = val + SEPARATOR ;
 
-                if (line_len + written.length() > PortableAnymap.PGM_MAX_PGM_LEN) {
+                if (line_len + written.length() > PortableAnymap.PGM_MAX_LEN) {
                     pw.print("\n") ;
                     line_len = 0 ;
                 }
@@ -511,12 +511,12 @@ public class SeamCarving {
     }
 
     /**
-     * Save greyscale values into a .pgm file
+     * Save pixel values into a .ppm file
      *
      * @param image    greyscale per pixels
      * @param filename destination
      */
-    static void writeppm(int[][][] image, String filename) {
+    static void writeppm (int[][][] image, String filename) {
         PrintWriter pw = null ;
         try {
             pw = new PrintWriter(getDestination(filename)) ;
@@ -535,14 +535,29 @@ public class SeamCarving {
         pw.println(PortableAnymap.PPM_MAX_VAL) ;
 
         // write the value for each table cell
-        for (int[][] row : image) {
-            for (int[] pixel : row) {
-                for (int val : pixel) {
-                    pw.print(val + SEPARATOR) ;
+        int line_len = 0 ;
+        StringBuilder buff ;
+        for (int row[][] : image) {
+            for (int px[] : row) {
+                // clear buff
+                buff = new StringBuilder() ;
+
+                // add rgb vals to line
+                for (int rgb : px) {
+                    buff.append(rgb).append(SEPARATOR) ;
                 }
-                pw.print(LONG_SEPARATOR) ;
+
+                // separate rgb vals
+                buff.append(LONG_SEPARATOR) ;
+
+                // ensure ppm line limit
+                if (buff.length() + line_len > PortableAnymap.PPM_MAX_LEN) {
+                    line_len = 0 ;
+                    pw.write("\n") ;
+                }
+                line_len += buff.length() ;
+                pw.write(buff.toString()) ;
             }
-            pw.print("\n") ;
         }
         pw.close() ;
     }
@@ -590,6 +605,7 @@ public class SeamCarving {
         // set each pixel associated to a vertice to -1
         for (int vertice : pixels) {
             int coord[] = edge2coord(vertice, img[0].length) ;
+
             for (int i = 0; i < RGB; ++i) {
                 img[coord[x]][coord[y]][i] = TO_REMOVE ;
             }

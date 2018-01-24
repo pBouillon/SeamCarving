@@ -20,12 +20,12 @@ class PortableAnymap {
     /**
      * Portable grey maps constraints
      */
-    public static final int PGM_MAX_PGM_LEN  =   70 ;
-    public static final int PGM_MAX_VAL      =  255 ;
+    public static final int PGM_MAX_LEN =   70 ;
+    public static final int PGM_MAX_VAL =  255 ;
 
     /**
      * Portable pixel map constraints
      */
-    public static final int PPM_MAX_PGM_LEN  =   70 ;
-    public static final int PPM_MAX_VAL      =  255 ;
+    public static final int PPM_MAX_LEN =   70 ;
+    public static final int PPM_MAX_VAL =  255 ;
 }
