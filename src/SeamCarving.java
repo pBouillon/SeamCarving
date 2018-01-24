@@ -172,11 +172,10 @@ public class SeamCarving {
         int width  = ppmImg[0].length ;
 
         int[][] interest_grid = new int[height][width] ;
+        int[][] analyzed_img  = new int[height][width] ;
 
-        int[][] analyzed_img = new int[height][width] ;
-        for (int color_id = 0; color_id < RGB; ++color_id) { // RGB
-
-            // build map for one color
+        for (int color_id = 0; color_id < RGB; ++color_id) { // for each color
+            // build map
             for (int x = 0; x < height; ++x) {
                 for (int y = 0; y < width; ++y) {
                     analyzed_img[x][y] += ppmImg[x][y][color_id] ;
@@ -186,14 +185,13 @@ public class SeamCarving {
             // getting interest
             analyzed_img = interest(analyzed_img) ;
 
-            // cumulate interests
+            // cumulate interest
             for (int x = 0; x < height; ++x) {
                 for (int y = 0; y < width; ++y) {
                     interest_grid[x][y] += analyzed_img[x][y] ;
                 }
             }
         }
-
         return interest_grid ;
     }
 
@@ -564,20 +562,19 @@ public class SeamCarving {
 
         int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
 
-        ArrayList<Integer> newRow = new ArrayList<>() ; // list of all accepted values
-        for (int x = 0; x < img.length; ++x) {
-            for (int val : img[x]) {
-                if (val != TO_REMOVE) {
-                    newRow.add(val) ; // create new row with remaining values
+        int _x = 0 ;
+        int _y = 0 ;
+        for (int[] x : img) {
+            for (int y : x) {
+                if (y == TO_REMOVE) {
+                    continue ;
                 }
+                newImg[_x][_y++] = y ;
             }
-
-            // add the row to the new image and cleaning list
-            newImg[x] = newRow.stream()
-                    .mapToInt(Integer::valueOf)
-                    .toArray() ;
-            newRow.clear() ;
+            _y = 0 ;
+            ++_x   ;
         }
+
         return newImg ;
     }
 
@@ -585,10 +582,8 @@ public class SeamCarving {
      * @param img
      * @param vertices
      * @return
-     *
-     * TODO
      */
-    static int[][][] resize(int[][][] img, int[] vertices) {
+    static int[][][] resize (int[][][] img, int[] vertices) {
         int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
         System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
 
@@ -603,32 +598,19 @@ public class SeamCarving {
         // one column less and RGB
         int[][][] newImg = new int[img.length][img[0].length - 1][RGB] ;
 
-        // list of all accepted values
-        ArrayList<Integer> newPx  = new ArrayList<>() ;
-        ArrayList<int[]>   newRow = new ArrayList<>() ;
-
-        //
-        for (int row = 0; row < img.length; ++row) {
-            for (int[] col : img[row]) {
-                for (int val : col) {
-                    // add R | G | B val if expected
-                    if (val != TO_REMOVE) {
-                        newPx.add(val) ;
-                    }
+        int _x = 0 ;
+        int _y = 0 ;
+        for (int[][] x : img) {
+            for (int[] y : x) {
+                if (y[0] == TO_REMOVE) {
+                    continue ;
                 }
-                // if RGB values found - add it
-                if (newPx.size() > 0) {
-                    newRow.add(newPx.stream()
-                            .mapToInt(Integer::valueOf)
-                            .toArray()) ;
-                    newPx.clear() ;
-                }
+                newImg[_x][_y++] = y ;
             }
-
-            // add the row to the new image and cleaning list
-            img[row] = (int[][]) newRow.toArray() ;
-            newRow.clear() ;
+            _y = 0 ;
+            ++_x   ;
         }
+
         return newImg ;
     }
 }

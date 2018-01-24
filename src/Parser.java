@@ -24,8 +24,8 @@ public class Parser {
      *  - boolean are false
      */
     Parser() {
-        col_k = new int[]{0, 0};
-        col_d = new int[]{0, 0};
+        col_k = SeamCarvingLauncher.NO_PROP ;
+        col_d = SeamCarvingLauncher.NO_PROP ;
         files = new String[]{"", ""} ;
         simple  = false ;
         verbose = false ;

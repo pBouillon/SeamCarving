@@ -12,7 +12,8 @@ public class dummy {
         //shortestPathTest() ;
 
         //readppm_try() ;
-        writeppm_try() ;
+        //writeppm_try() ;
+        purged() ;
     }
 
     private static void interest_try() {
@@ -138,5 +139,60 @@ public class dummy {
                     }
                 } ;
         SeamCarving.writeppm(test, "PortablePixmaps/ppm/test.ppm") ;
+    }
+
+    private static void purged() {
+        int[][][] test =
+                {
+                    {
+                        {-1, -1, -1},
+                        {0, 0, 0},
+                        {0, 0, 0},
+                        {15, 0, 15}
+                    },
+                    {
+                        {-1, -1, -1},
+                        {0, 15, 7},
+                        {0, 0, 0},
+                        {0, 0, 0}
+                    },
+                    {
+                        {0, 0, 0},
+                        {-1, -1, -1},
+                        {0, 15, 7},
+                        {0, 0, 0}
+                    },
+                    {
+                        {15, 0, 15},
+                        {0, 0, 0},
+                        {-1, -1, -1},
+                        {0, 0, 0}
+                    }
+                } ;
+
+        int[][][] cleared = new int[test.length][test[0].length - 1][3] ;
+
+        int _x = 0 ;
+        int _y = 0 ;
+        for (int[][] x : test) {
+            for (int[] y : x) {
+                if (y[0] == -1) {
+                    continue ;
+                }
+                cleared[_x][_y++] = y ;
+            }
+            _y = 0 ;
+            ++_x   ;
+        }
+
+        for (int[][] x : cleared) {
+            for (int[] y : x) {
+                for (int v : y) {
+                    System.out.print(v + " ") ;
+                }
+                System.out.print("   ") ;
+            }
+            System.out.println("") ;
+        }
     }
 }
