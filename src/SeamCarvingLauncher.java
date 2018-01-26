@@ -50,9 +50,10 @@ public class SeamCarvingLauncher {
 
         int[]    keep    = launcher.getKeep() ; // get cols
         int[]    delete  = launcher.getDel()  ; // get cols
-        String[] file    = launcher.getFiles()   ; // get files as {source, output}
-        boolean  simple  = launcher.useSimple()  ; // check requested version
-        boolean  verbose = launcher.useVerbose() ; // check if verbose
+        String[] file    = launcher.getFiles()  ; // get files as {source, output}
+        boolean  simple  = launcher.isSimple()  ; // check requested version
+        boolean  toggle  = launcher.isToggle()  ; // toggle grey values
+        boolean  verbose = launcher.isVerbose() ; // check if verbose
 
         if (!simple) { // coming in v2
             System.out.println ("Warning: Simple method used by default (version < 2.0)\n") ;
@@ -120,6 +121,10 @@ public class SeamCarvingLauncher {
 
         switch (magicNumber) {
             case PortableAnymap.P_PGM :
+                if (toggle) {
+                    imgPGM = SeamCarving.toggleppm(imgPGM) ;
+                    System.out.println( "\t| Values correctly inverted") ;
+                }
                 SeamCarving.writepgm(imgPGM, file[OUTPUT]) ;
                 break ;
             case PortableAnymap.P_PPM :
@@ -128,7 +133,11 @@ public class SeamCarvingLauncher {
         }
 
         if (verbose) {
-            System.out.println("\t| Compression successful in " + (System.currentTimeMillis() - begin) + " ms") ;
+            System.out.println(
+                    "\t| Successfully removed " +
+                            ROW_REMOVED + " columuns in " +
+                            (System.currentTimeMillis() - begin) + " ms"
+            ) ;
             System.out.println("\t| New image saved in: " + file[OUTPUT]) ;
         }
     }

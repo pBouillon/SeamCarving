@@ -481,6 +481,18 @@ public class SeamCarving {
     }
 
     /**
+     *
+     */
+    static int[][] toggleppm (int[][] img) {
+        for (int x = 0; x < img.length; ++x) {
+            for (int y = 0; y < img[0].length; ++y) {
+                img[x][y] = PortableAnymap.PGM_MAX_VAL - img[x][y] ;
+            }
+        }
+        return img ;
+    }
+
+    /**
      * Save greyscale values into a .pgm file
      *
      * @param image    greyscale per pixels
@@ -578,12 +590,10 @@ public class SeamCarving {
      *
      */
     static int[][] resize(int[][] img, int[] vertices) {
-        int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
-        System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
-
-        // set each pixel associated to a vertice to -1
-        for (int vertice : pixels) {
-            int coord[] = edge2coord(vertice, img[0].length) ;
+        // marking each nodes as to remove except for the first and the last ones
+        int[] coord ;
+        for (int i = 1; i < vertices.length - 1; ++i) {
+            coord = edge2coord(vertices[i], img[0].length) ;
             img[coord[x]][coord[y]] = TO_REMOVE ;
         }
 
@@ -596,7 +606,8 @@ public class SeamCarving {
                 if (y == TO_REMOVE) {
                     continue ;
                 }
-                newImg[_x][_y++] = y ;
+                newImg[_x][_y] = y ;
+                ++_y ;
             }
             _y = 0 ;
             ++_x   ;
@@ -609,22 +620,30 @@ public class SeamCarving {
      * @param img
      * @param vertices
      * @return
+     *
+     * TODO
      */
     static int[][][] resize (int[][][] img, int[] vertices) {
-        int[] pixels = new int[vertices.length - 2] ; // removing first and last vertice
-        System.arraycopy (vertices, 1, pixels, 0, vertices.length - 1 - 1) ;
-
-        // set each pixel associated to a vertice to -1
-        for (int vertice : pixels) {
-            int coord[] = edge2coord(vertice, img[0].length) ;
-
-            for (int i = 0; i < RGB; ++i) {
-                img[coord[x]][coord[y]][i] = TO_REMOVE ;
-            }
+        int k ;
+        int[] coord ;
+        for (int i = 1; i < vertices.length - 1; ++i) {
+            coord = edge2coord(vertices[i], img[0].length) ;
+            img[coord[x]][coord[y]][k = 0] = TO_REMOVE ;
+            img[coord[x]][coord[y]][ ++k ] = TO_REMOVE ;
+            img[coord[x]][coord[y]][ ++k ] = TO_REMOVE ;
         }
 
         // one column less and RGB
         int[][][] newImg = new int[img.length][img[0].length - 1][RGB] ;
+
+        /* for test purposes
+        for (int[][] x : img) {
+            for (int[] y : x) {
+                System.out.print(y[0] + " " + y [1] + " " + y[2] + "   ");
+            }
+            System.out.println("");
+        }
+        */
 
         int _x = 0 ;
         int _y = 0 ;
@@ -633,7 +652,8 @@ public class SeamCarving {
                 if (y[0] == TO_REMOVE) {
                     continue ;
                 }
-                newImg[_x][_y++] = y ;
+                newImg[_x][_y] = y ;
+                ++_y ;
             }
             _y = 0 ;
             ++_x   ;
