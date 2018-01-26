@@ -13,7 +13,7 @@ import java.util.*;
 public class SeamCarving {
 
     private static final String BASE_PATH      = "./" ; // default path
-    private static final String SEPARATOR      = " " ;  // pixel anymap separator
+    private static final String SEPARATOR      = " "  ; // pixel anymap separator
     private static final String LONG_SEPARATOR = "  " ; // pixel anymap long separator
 
     private static final int x   = 0 ; // axis for .pgm writing
@@ -49,6 +49,7 @@ public class SeamCarving {
      *
      * @return sequence of edges for the shortest path
      */
+    @SuppressWarnings("unused")
     private static int[] Dijkstra (Graph g, int s, int t) {
         Heap pq = new Heap(g.vertices()) ;   // priority queue to ensure that every vertice is reached
 
@@ -130,8 +131,6 @@ public class SeamCarving {
      *
      * @param img     : pixels of a .pgm files
      * @return interest : average val of adjacent pixels
-     *
-     * TODO: patch for flower.pgm
      */
     static int[][] interest(int[][] img) {
         int height = img.length ;
@@ -246,13 +245,11 @@ public class SeamCarving {
     }
 
     /**
-     *
+     * If any value is unset, return false
      */
     private static boolean isSet(int[] property) {
         for (int v : property) {
-            if (v == -1) {
-                return false ;
-            }
+            if (v < 0) return false ;
         }
         return true ;
     }
@@ -587,41 +584,39 @@ public class SeamCarving {
     }
 
     /**
-     *
+     * FIXME
      */
     static int[][] resize(int[][] img, int[] vertices) {
         // marking each nodes as to remove except for the first and the last ones
-        int[] coord ;
+        int[] coord;
         for (int i = 1; i < vertices.length - 1; ++i) {
-            coord = edge2coord(vertices[i], img[0].length) ;
-            img[coord[x]][coord[y]] = TO_REMOVE ;
+            coord = edge2coord(vertices[i], img[0].length);
+            img[coord[x]][coord[y]] = TO_REMOVE;
         }
 
-        int[][] newImg = new int[img.length][img[0].length - 1] ; // new image has one column less
+        int[][] newImg = new int[img.length][img[0].length - 1]; // new image has one column less
 
-        int _x = 0 ;
-        int _y = 0 ;
+        int _x = 0;
+        int _y = 0;
         for (int[] x : img) {
             for (int y : x) {
                 if (y == TO_REMOVE) {
-                    continue ;
+                    continue;
                 }
-                newImg[_x][_y] = y ;
-                ++_y ;
+                newImg[_x][_y++] = y;
             }
-            _y = 0 ;
-            ++_x   ;
+            _y = 0;
+            ++_x;
         }
-
         return newImg ;
     }
 
     /**
-     * @param img
-     * @param vertices
+     * @param img      image pixels
+     * @param vertices vertices composing the shortest path
      * @return
      *
-     * TODO
+     * FIXME
      */
     static int[][][] resize (int[][][] img, int[] vertices) {
         int k ;
