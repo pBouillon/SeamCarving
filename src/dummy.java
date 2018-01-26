@@ -12,8 +12,8 @@ public class dummy {
         //shortestPathTest() ;
 
         //readppm_try() ;
-        //writeppm_try() ;
-        purged() ;
+        writeppm_try() ;
+        //purged() ;
     }
 
     private static void interest_try() {
@@ -98,7 +98,6 @@ public class dummy {
     }
 
     private static void writepgm_try() {
-        // same values as src/greymaps/test.pgm to check differences
         int[][] p_pgm = {
                 {3,   11, 24, 39},
                 {8,   21, 29, 39},

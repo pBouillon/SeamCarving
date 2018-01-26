@@ -226,7 +226,7 @@ public class SeamCarving {
      *
      */
     private static int[][] applyChanges (int[][] interest_grid, int[] keep, int[] delete) {
-        if (keep != SeamCarvingLauncher.NO_PROP) {
+        if (isSet(keep)) {
             if (keep[0] < 0 || keep[1] > interest_grid[0].length) {
                 System.out.println("Error: columns to keep are not matching the current image") ;
                 System.exit(-1) ;
@@ -234,7 +234,7 @@ public class SeamCarving {
             interest_grid = alterInterest (interest_grid, keep, PX_KEEP_VAL) ;
         }
 
-        if (delete != SeamCarvingLauncher.NO_PROP) {
+        if (isSet(delete)) {
             if (delete[0] < 0 || delete[1] > interest_grid[0].length) {
                 System.out.println("Error: columns to delete are not matching the current image") ;
                 System.exit(-1) ;
@@ -243,6 +243,18 @@ public class SeamCarving {
         }
 
         return interest_grid ;
+    }
+
+    /**
+     *
+     */
+    private static boolean isSet(int[] property) {
+        for (int v : property) {
+            if (v == -1) {
+                return false ;
+            }
+        }
+        return true ;
     }
 
     /**
@@ -498,7 +510,7 @@ public class SeamCarving {
             for (int val : row) {
                 String written = val + SEPARATOR ;
 
-                if (line_len + written.length() > PortableAnymap.PGM_MAX_PGM_LEN) {
+                if (line_len + written.length() > PortableAnymap.PGM_MAX_LEN) {
                     pw.print("\n") ;
                     line_len = 0 ;
                 }
@@ -511,12 +523,12 @@ public class SeamCarving {
     }
 
     /**
-     * Save greyscale values into a .pgm file
+     * Save pixel values into a .ppm file
      *
      * @param image    greyscale per pixels
      * @param filename destination
      */
-    static void writeppm(int[][][] image, String filename) {
+    static void writeppm (int[][][] image, String filename) {
         PrintWriter pw = null ;
         try {
             pw = new PrintWriter(getDestination(filename)) ;
@@ -535,14 +547,29 @@ public class SeamCarving {
         pw.println(PortableAnymap.PPM_MAX_VAL) ;
 
         // write the value for each table cell
-        for (int[][] row : image) {
-            for (int[] pixel : row) {
-                for (int val : pixel) {
-                    pw.print(val + SEPARATOR) ;
+        int line_len = 0 ;
+        StringBuilder buff ;
+        for (int row[][] : image) {
+            for (int px[] : row) {
+                // clear buff
+                buff = new StringBuilder() ;
+
+                // add rgb vals to line
+                for (int rgb : px) {
+                    buff.append(rgb).append(SEPARATOR) ;
                 }
-                pw.print(LONG_SEPARATOR) ;
+
+                // separate rgb vals
+                buff.append(LONG_SEPARATOR) ;
+
+                // ensure ppm line limit
+                if (buff.length() + line_len > PortableAnymap.PPM_MAX_LEN) {
+                    line_len = 0 ;
+                    pw.write("\n") ;
+                }
+                line_len += buff.length() ;
+                pw.write(buff.toString()) ;
             }
-            pw.print("\n") ;
         }
         pw.close() ;
     }
@@ -590,6 +617,7 @@ public class SeamCarving {
         // set each pixel associated to a vertice to -1
         for (int vertice : pixels) {
             int coord[] = edge2coord(vertice, img[0].length) ;
+
             for (int i = 0; i < RGB; ++i) {
                 img[coord[x]][coord[y]][i] = TO_REMOVE ;
             }

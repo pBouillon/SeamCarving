@@ -37,7 +37,7 @@ public class Parser {
      * @param msg message to include
      * @param ret returned code
      */
-    void displayHelp(String msg, int ret) {
+    private void displayHelp(String msg, int ret) {
         String helper_msg = "" +
                 PROG_NAME +" : " + msg + "\n" +
                 "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
