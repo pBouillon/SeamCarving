@@ -21,10 +21,32 @@ public class SeamCarvingLauncher {
         System.exit (errcode) ;
     }
 
+    private static void progressPercentage(int remain, int total) {
+        if (remain > total) {
+            throw new IllegalArgumentException();
+        }
+        int maxBareSize = 20;
+        int remainProcent = ((200 * remain) / total) / maxBareSize;
+        char defaultChar = ' ';
+        String icon = "==";
+        String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
+        StringBuilder bareDone = new StringBuilder();
+        bareDone.append("[");
+        for (int i = 0; i < remainProcent; i++) {
+            bareDone.append(icon);
+        }
+        String bareRemain = bare.substring(remainProcent * 2, bare.length());
+        System.out.print("\r\t" + bareDone + bareRemain  + " " + remainProcent * 10 + "%");
+        if (remain == total) {
+            System.out.print("\n");
+        }
+    }
 
     public static void main(String[] args) {
         Parser launcher = new Parser() ;
         launcher.parse(args) ; // check prog args
+
+        long     begin   = System.currentTimeMillis() ;
 
         int[]    keep    = launcher.getKeep() ; // get cols
         int[]    delete  = launcher.getDel()  ; // get cols
@@ -44,6 +66,7 @@ public class SeamCarvingLauncher {
         int[][]   imgPGM = null ;
         int[][][] imgPPM = null ;
 
+        assert magicNumber != null ;
         if (magicNumber.contains(PortableAnymap.P_PGM)) {
             if ((imgPGM  = SeamCarving.readPGM(file[SOURCE])) == null) {
                 exitSeamCarving ("Unable to read the PGM file") ;
@@ -58,44 +81,30 @@ public class SeamCarvingLauncher {
             exitSeamCarving ("Unable read format: " + magicNumber) ;
         }
 
-        if (verbose) {
-            System.out.println("PGM values acquired") ;
+        if (verbose) System.out.println("Progress:") ;
+
+        switch (magicNumber) {
+            case PortableAnymap.P_PGM:
+                System.out.println("\tPGM values acquired") ;
+                break ;
+            case PortableAnymap.P_PPM:
+                System.out.println("\tPPM values acquired") ;
+                break ;
         }
 
         Graph   imgGraph ;
         int[][] interest ;
         int[]   shortestPath ;
 
-        if (verbose) {
-            System.out.println("Beginning of the resize") ;
-            System.out.print("Progression:\n\t0% ") ;
-        }
-
-        int state = 0 ;
         for (int i = 0; i < ROW_REMOVED; ++i) {
             if (verbose) {
-                int progression = 100 * i / ROW_REMOVED ;
-                if (progression > 75 && state < 3) {
-                    System.out.print(" 75% ") ;
-                    ++state ;
-                }
-                else if (progression > 50 && state < 2) {
-                    System.out.print(" 50% ") ;
-                    ++state ;
-                }
-                else if (progression > 25 && state < 1) {
-                    System.out.print(" 25% ") ;
-                    ++state ;
-                }
-                else if (progression % 4 == 0) {
-                    System.out.print(".") ;
-                }
+                progressPercentage(i, ROW_REMOVED - 1) ;
             }
 
             switch (magicNumber) {
                 case PortableAnymap.P_PGM :
                     interest = SeamCarving.interest (imgPGM, keep, delete) ;
-                    imgGraph = SeamCarving.toGraph(interest) ;             // build graph from interest array
+                    imgGraph = SeamCarving.toGraph(interest) ;              // build graph from interest array
                     shortestPath = SeamCarving.getShortestPath (imgGraph) ; // evaluates shortest path from graph
                     imgPGM = SeamCarving.resize (imgPGM, shortestPath) ;    // delete one column of imgPixels
                     break ;
@@ -119,8 +128,8 @@ public class SeamCarvingLauncher {
         }
 
         if (verbose) {
-            System.out.println(" Done !") ;
-            System.out.println("Successfully saved in " + file[OUTPUT]) ;
+            System.out.println("\t| Compression successful in " + (System.currentTimeMillis() - begin) + " ms") ;
+            System.out.println("\t| New image saved in: " + file[OUTPUT]) ;
         }
     }
 }
