@@ -2,6 +2,9 @@ public class Parser {
 
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
 
+    private final int EXIT_FAILURE = -1 ; /* */
+    private final int EXIT_SUCCESS =  0 ; /* */
+
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
     private final static char   OPT_DELETE   = 'd' ; /* property "delete" on pixels */
@@ -68,34 +71,37 @@ public class Parser {
         int dim_d = -1 ;
         int dim_k = -1 ;
 
-        for (String arg : args) {
+        if (args.length < 2) {
+            displayHelp("Args required, see -h", EXIT_SUCCESS) ;
+        }
 
+        for (String arg : args) {
             if (file > -1 && file < 2) {
                 if (arg.charAt(0) == OPT_SYMBOL) {
-                    displayHelp("File expected", -1);
+                    displayHelp("File expected", EXIT_FAILURE) ;
                 }
                 files[file++] = arg ;
             }
 
             else if (dim_k > -1 && dim_k < 2) {
                 if (arg.charAt(0) == OPT_SYMBOL) {
-                    displayHelp("Column expected", -1) ;
+                    displayHelp("Column expected", EXIT_FAILURE) ;
                 }
                 try {
                     col_k[dim_k++] = Integer.parseInt(arg) ;
                 } catch (NumberFormatException e) {
-                    displayHelp("Column id should be a number", -1) ;
+                    displayHelp("Column id should be a number", EXIT_FAILURE) ;
                 }
             }
 
             else if (dim_d > -1 && dim_d < 2) {
                 if (arg.charAt(0) == OPT_SYMBOL) {
-                    displayHelp("Column expected", -1) ;
+                    displayHelp("Column expected", EXIT_FAILURE) ;
                 }
                 try {
                     col_d[dim_d++] = Integer.parseInt(arg) ;
                 } catch (NumberFormatException e) {
-                    displayHelp("Column id should be a number", -1) ;
+                    displayHelp("Column id should be a number", EXIT_FAILURE) ;
                 }
             }
 
@@ -105,24 +111,24 @@ public class Parser {
                         if (file < 0) { // if -c is not set
                             ++file ;
                         } else {
-                            displayHelp("Duplicated option", -1) ;
+                            displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break;
                     case OPT_DELETE:
                         if (dim_d < 0) { // if -k is not set
                             ++dim_d;
                         } else {
-                            displayHelp("Duplicated option", -1) ;
+                            displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break ;
                     case OPT_HELP:
-                        displayHelp("Available options", 0) ;
+                        displayHelp("Available options", EXIT_SUCCESS) ;
                         break;
                     case OPT_KEEP:
                         if (dim_k < 0) { // if -k is not set
                             ++dim_k;
                         } else {
-                            displayHelp("Duplicated option", -1) ;
+                            displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break ;
                     case OPT_SIMPLE:
@@ -135,7 +141,7 @@ public class Parser {
                         verbose = true ;
                         break ;
                     default:
-                        displayHelp("Missing parameters", -1) ;
+                        displayHelp("Missing parameters", EXIT_FAILURE) ;
                 }
             }
         }
