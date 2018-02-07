@@ -478,6 +478,89 @@ public class SeamCarving {
     }
 
     /**
+     * Convert the image to a graph doubled
+     *
+     * @param  itr   interest per pixel (see SeamCarving.interest(...))
+     *
+     * @return the translated graph
+     */
+    static Graph toDoubleGraph (int[][] itr) {
+        int i, j;
+        int cpt = 0;
+
+        int height = itr.length ;
+        int width  = itr[0].length ;
+
+        int nbTotal = height * width +(height-2) * width + 2; // height * width + first node + last node + double every inside line
+
+        Graph graph = new Graph (nbTotal) ;
+        // graph's core
+        for (i = 0; i < height + (height-2) - 1; i++) {
+            int  c_val ; // current value
+
+            if(i%2 != 0){
+                cpt++; // count how many 0 line we crossed
+            }
+
+            for (j = 0; j < width ; j++) {
+
+                c_val = itr[i-cpt][j] ; // keep the right interest -> ignore 0 line
+
+                if( i %2 == 0){ // 1 line on 2 is a 0 line
+                    graph.addEdge( new Edge (
+                            width * i + j ,
+                            width * (i + 1) + j,
+                            c_val
+                    )) ;
+                    // check right - left boundary
+                    if (!(j - 1 < 0)) {
+                        graph.addEdge( new Edge (
+                                width * i + j  ,
+                                width * (i + 1) + j - 1,
+                                c_val
+                        )) ;
+                    }
+                    if (j + 1 < width) {
+                        graph.addEdge( new Edge (
+                                width * i + j,
+                                width * (i + 1) + j + 1,
+                                c_val
+                        )) ;
+                    }
+                }else{
+                    // we are in 0 line so only edge with 0
+                    graph.addEdge( new Edge (
+                            width * i + j ,
+                            width * (i + 1) + j,
+                            0
+                    )) ;
+                }
+
+            }
+        }
+
+        // edge from origin vertex
+        for (j = 0; j < width; j++) {
+            graph.addEdge (
+                    new Edge (nbTotal-1, j, 0) // from the initial vertex to first line
+            ) ;
+        }
+
+        for (j = 0; j < width ; j++) {
+            graph.addEdge (
+                    new Edge (
+                            nbTotal - width - 2 + j, // from the last line of the graph
+                            nbTotal-2, // to the final vertex
+                            itr[i-cpt][j]
+                    )
+            ) ;
+        }
+
+        return graph ;
+    }
+
+    
+    /**
      *
      */
     static int[][] toggleppm (int[][] img) {

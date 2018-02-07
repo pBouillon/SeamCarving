@@ -9,10 +9,11 @@ public class dummy {
         //writepgm_try() ;
         //interest_try() ;
         //tograpg_test();
+        to_graph_double();
         //shortestPathTest() ;
 
         //readppm_try() ;
-        writeppm_try() ;
+        //writeppm_try() ;
         //purged() ;
     }
 
@@ -66,13 +67,29 @@ public class dummy {
         Graph g = SeamCarving.toGraph(itr);
         g.writeFile("test_graph.dot");
     }
-
+    private static void to_graph_double(){
+        int[][] image = {
+                {3,   11, 24, 39},
+                {8,   21, 29, 39},
+                {200, 60, 25, 0}
+        } ;
+       /** int[][] image = {
+                {3,   11, 24, 39},
+                {8,   21, 29, 39},
+                {20, 6, 2, 0},
+                {200, 60, 25, 0}
+        } ;**/
+        int[][] itr = SeamCarving.interest(image) ;
+        Graph g = SeamCarving.toDoubleGraph(itr);
+        g.writeFile("test_graph_double.dot");
+    }
     private static void shortestPathTest() {
         int[][] image = {
                 {3,   11, 24, 39},
                 {8,   21, 29, 39},
                 {200, 60, 25, 0}
         } ;
+
 
 //    	int[][] image = {
 //                {3,   11, 24},
