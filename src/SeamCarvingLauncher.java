@@ -26,17 +26,17 @@ public class SeamCarvingLauncher {
             throw new IllegalArgumentException();
         }
         int maxBareSize = 20;
-        int remainProcent = ((200 * remain) / total) / maxBareSize;
+        int remainPercent = ((200 * remain) / total) / maxBareSize;
         char defaultChar = ' ';
         String icon = "==";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
         StringBuilder bareDone = new StringBuilder();
         bareDone.append("[");
-        for (int i = 0; i < remainProcent; i++) {
+        for (int i = 0; i < remainPercent; i++) {
             bareDone.append(icon);
         }
-        String bareRemain = bare.substring(remainProcent * 2, bare.length());
-        System.out.print("\r\t" + bareDone + bareRemain  + " " + remainProcent * 10 + "%");
+        String bareRemain = bare.substring(remainPercent * 2, bare.length());
+        System.out.print("\r\t" + bareDone + bareRemain  + " " + remainPercent * 10 + "%");
         if (remain == total) {
             System.out.print("\n");
         }
@@ -82,15 +82,17 @@ public class SeamCarvingLauncher {
             exitSeamCarving ("Unable read format: " + magicNumber) ;
         }
 
-        if (verbose) System.out.println("Progress:") ;
+        if (verbose) {
+            System.out.println("Progress:") ;
 
-        switch (magicNumber) {
-            case PortableAnymap.P_PGM:
-                System.out.println("\tPGM values acquired") ;
-                break ;
-            case PortableAnymap.P_PPM:
-                System.out.println("\tPPM values acquired") ;
-                break ;
+            switch (magicNumber) {
+                case PortableAnymap.P_PGM:
+                    System.out.println("\tPGM values acquired") ;
+                    break ;
+                case PortableAnymap.P_PPM:
+                    System.out.println("\tPPM values acquired") ;
+                    break ;
+            }
         }
 
         Graph   imgGraph ;

@@ -561,7 +561,7 @@ public class SeamCarving {
 
     
     /**
-     *
+     * Switch all ppm pixels to their invert
      */
     static int[][] toggleppm (int[][] img) {
         for (int x = 0; x < img.length; ++x) {
@@ -667,7 +667,12 @@ public class SeamCarving {
     }
 
     /**
-     * FIXME
+     * Resize image with one less column
+     *
+     * @param img      pixels tab
+     * @param vertices vertices to remove in the graph (see SeamCarving.toGraph(...))
+     *
+     * @return the shortened image
      */
     static int[][] resize(int[][] img, int[] vertices) {
         // marking each nodes as to remove except for the first and the last ones
@@ -695,33 +700,22 @@ public class SeamCarving {
     }
 
     /**
-     * @param img      image pixels
-     * @param vertices vertices composing the shortest path
-     * @return
+     * Resize a ppm image with one less column
      *
-     * FIXME
+     * @param  img      image pixels
+     * @param  vertices vertices composing the shortest path
+     * @return the shortened image
      */
     static int[][][] resize (int[][][] img, int[] vertices) {
         int k ;
         int[] coord ;
         for (int i = 1; i < vertices.length - 1; ++i) {
             coord = edge2coord(vertices[i], img[0].length) ;
-            img[coord[x]][coord[y]][k = 0] = TO_REMOVE ;
-            img[coord[x]][coord[y]][ ++k ] = TO_REMOVE ;
-            img[coord[x]][coord[y]][ ++k ] = TO_REMOVE ;
+            img[coord[x]][coord[y]] = new int[]{TO_REMOVE, TO_REMOVE, TO_REMOVE} ;
         }
 
         // one column less and RGB
         int[][][] newImg = new int[img.length][img[0].length - 1][RGB] ;
-
-        /* for test purposes
-        for (int[][] x : img) {
-            for (int[] y : x) {
-                System.out.print(y[0] + " " + y [1] + " " + y[2] + "   ");
-            }
-            System.out.println("");
-        }
-        */
 
         int _x = 0 ;
         int _y = 0 ;

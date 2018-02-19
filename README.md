@@ -10,6 +10,7 @@ Resize an image using the seam carving method.
 * CLI
 * Dijkstra implementation
 * Documentation
+* GUI
 * Interest evaluation functions
 * Seam Carving implementation for .pgm
 * Seam Carving implementation for .ppm
@@ -21,6 +22,7 @@ Resize an image using the seam carving method.
 * Seam Carving implementation for .pgm
 
 ## Usage
+Helper
 ```shell
 ~$ java SeamCarvingLauncher -h
 SeamCarving : Available options
@@ -29,21 +31,26 @@ SeamCarving : Available options
    -d <begin> <end>...... delete pixel between those columns
    -k <begin> <end>...... keep pixel between those columns
    -s ................... use simple method instead of double (v2.0)
+   -t ................... toggle grey values (for pgm only)
    -v ................... enable verbose mode
-
-~$ java SeamCarvingLauncher -c path/to/image.pgm output.pgm -v
+```
+Example
+```shell
+~$ java SeamCarvingLauncher -c PortablePixmaps/pgm/totem.pgm totem_out.ppm -v
 Warning: Simple method used by default (version < 2.0)
 
-PGM values acquired
-Beginning of the resize
-Progression:
-	0% ....... 25% ...... 50% ..... 75% ..... Done !
-Successfully saved in output.pgm
+Progress:
+	PGM values acquired
+	[====================] 100%
+	| Successfully removed 50 columuns in 7189 ms
+	| New image saved in: PortablePixmaps/pgm/totem_out.pgm
 ```
 
 ## Short term goals
+- [ ] GUI
+- [ ] path removed trace
 - [ ] handles lines and columns
-- [ ] handles rgb images
+- [x] handles rgb images
 - [x] mark pixels as "to delete"
 - [x] mark pixels as "to keep"
 
