@@ -27,4 +27,16 @@ public class Edge {
     public int getTo() {
         return to;
     }
+
+    public void setTo(int i){
+	    this.to = i ;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public void setFrom(int i ){
+	    this.from = i ;
+    }
 }

@@ -24,7 +24,7 @@ public class SeamCarving {
 
     private static final int PX_DEL_VAL =  0 ;
     private static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
-
+    private static int[] vertices ;
     /**
      * Give the coordinates of an axis in the pixel tab
      *
@@ -74,7 +74,12 @@ public class SeamCarving {
                 }
             }
         } while (!pq.isEmpty()) ; // evaluate each paths to validate solution
+        vertices = dist;
         return prev ;
+    }
+
+    private static int[] doubleDjikstra(Graph g, int s, int t){
+        return null;
     }
 
     private static File getDestination(String filename) {
@@ -559,7 +564,7 @@ public class SeamCarving {
         return graph ;
     }
 
-    
+
     /**
      * Switch all ppm pixels to their invert
      */
@@ -732,5 +737,9 @@ public class SeamCarving {
         }
 
         return newImg ;
+    }
+
+    public static int[] getVertices() {
+        return vertices;
     }
 }

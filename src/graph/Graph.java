@@ -44,6 +44,20 @@ public class Graph {
     }
 
     /**
+     * Custom method to revert an edge
+     * @param from
+     * @param to
+     * invert the edge -> to 'to' from
+     */
+    public void revertEdge(int from, int to){
+        for(Edge e : edges()){
+            if(e.to ==  to && e.from == from){
+                e.setTo(from);
+                e.setFrom(to);
+            }
+        }
+    }
+    /**
      *
      * @param v
      * @return
@@ -72,14 +86,14 @@ public class Graph {
      * @return
      */
     public Iterable<Edge> edges() {
-        ArrayList<Edge> list = new ArrayList<>() ;
-        for (int v = 0; v < V; v++) {
-            for (Edge e : adj(v)) {
-                if (e.to != v) {
-                    list.add(e) ;
+            ArrayList<Edge> list = new ArrayList<>() ;
+            for (int v = 0; v < V; v++) {
+                for (Edge e : adj(v)) {
+                    if (e.to != v) {
+                        list.add(e) ;
+                    }
                 }
             }
-        }
         return list ;
     }
 

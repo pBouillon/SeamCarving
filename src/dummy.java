@@ -1,3 +1,4 @@
+import graph.Edge;
 import graph.Graph;
 
 /**
@@ -9,9 +10,9 @@ public class dummy {
         //writepgm_try() ;
         //interest_try() ;
         //tograpg_test();
-        to_graph_double();
+        //to_graph_double();
         //shortestPathTest() ;
-
+        shortestPathDouble();
         //readppm_try() ;
         //writeppm_try() ;
         //purged() ;
@@ -67,7 +68,7 @@ public class dummy {
         Graph g = SeamCarving.toGraph(itr);
         g.writeFile("test_graph.dot");
     }
-    private static void to_graph_double(){
+    private static Graph to_graph_double(){
         int[][] image = {
                 {3,   11, 24, 39},
                 {8,   21, 29, 39},
@@ -82,6 +83,7 @@ public class dummy {
         int[][] itr = SeamCarving.interest(image) ;
         Graph g = SeamCarving.toDoubleGraph(itr);
         g.writeFile("test_graph_double.dot");
+        return g;
     }
     private static void shortestPathTest() {
         int[][] image = {
@@ -112,6 +114,34 @@ public class dummy {
         	}
         }
 
+    }
+
+    private static void shortestPathDouble(){
+        Graph newGraph  = to_graph_double();
+        // find shortest path
+        int[] shortestPath = SeamCarving.getShortestPath(newGraph);
+        int[] vertices = SeamCarving.getVertices();
+
+        // update new cost : OK costs are ok
+        for(Edge e : newGraph.edges()){
+            // for each edge u v add difference between shortest path to get to u with shortest path to get to v
+            e.setCost(e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()]) );
+        }
+        // revert edges : OK but render is ... not fine for debugg
+        for(int i = 1; i< shortestPath.length   ; i++){
+            newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
+            //System.out.println("new edge " + shortestPath[i-1] + " " + shortestPath[i]);
+        }
+        // find shortest path : OK good path as shown on example
+        int[] secondShortestPath = SeamCarving.getShortestPath(newGraph);
+
+        for(int i : secondShortestPath){
+            System.out.println(i);
+        }
+        // remove edge used by both path
+        // maybe revert again edges ?
+
+        newGraph.writeFile("graph_djikstra.dot");
     }
 
     private static void writepgm_try() {
