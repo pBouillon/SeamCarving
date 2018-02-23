@@ -1,4 +1,4 @@
-public class Parser {
+class Parser {
 
     private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
 
