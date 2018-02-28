@@ -44,20 +44,18 @@ public class SeamCarvingLauncher {
 
     public static void main(String[] args) {
         Parser launcher = new Parser() ;
-        launcher.parse(args) ; // check prog args
+        launcher.parse(args) ;
 
         long     begin   = System.currentTimeMillis() ;
 
-        int[]    keep    = launcher.getKeep() ; // get cols
-        int[]    delete  = launcher.getDel()  ; // get cols
+        int[]    keep    = launcher.getKeep() ;   // get cols
+        int[]    delete  = launcher.getDel()  ;   // get cols
+
         String[] file    = launcher.getFiles()  ; // get files as {source, output}
+
         boolean  simple  = launcher.isSimple()  ; // check requested version
         boolean  toggle  = launcher.isToggle()  ; // toggle grey values
         boolean  verbose = launcher.isVerbose() ; // check if verbose
-
-        if (!simple) { // coming in v2
-            System.out.println ("Warning: Simple method used by default (version < 2.0)\n") ;
-        }
 
         String  magicNumber = SeamCarving.readFileType(file[SOURCE]) ;
         if (magicNumber == null) {
@@ -83,6 +81,8 @@ public class SeamCarvingLauncher {
         }
 
         if (verbose) {
+            if (!simple) System.out.println( "\t| Using Double Dijkstra") ;
+
             System.out.println("Progress:") ;
 
             switch (magicNumber) {
@@ -100,20 +100,18 @@ public class SeamCarvingLauncher {
         int[]   shortestPath ;
 
         for (int i = 0; i < ROW_REMOVED; ++i) {
-            if (verbose) {
-                progressPercentage(i, ROW_REMOVED - 1) ;
-            }
+            if (verbose) progressPercentage(i, ROW_REMOVED - 1) ;
 
             switch (magicNumber) {
                 case PortableAnymap.P_PGM :
                     interest = SeamCarving.interest (imgPGM, keep, delete) ;
-                    imgGraph = SeamCarving.toGraph(interest) ;              // build graph from interest array
+                    imgGraph = SeamCarving.toGraph(interest) ;
                     if (!simple) {
                         shortestPath = SeamCarving.getDoublePath(interest) ;
                     } else {
-                        shortestPath = SeamCarving.getShortestPath (imgGraph) ; // evaluates shortest path from graph
+                        shortestPath = SeamCarving.getShortestPath (imgGraph) ;
                     }
-                    imgPGM = SeamCarving.resize (imgPGM, shortestPath) ;    // delete one column of imgPixels
+                    imgPGM = SeamCarving.resize (imgPGM, shortestPath) ;
                     break ;
 
                 case PortableAnymap.P_PPM :
@@ -121,10 +119,10 @@ public class SeamCarvingLauncher {
                     if (!simple) {
                         shortestPath = SeamCarving.getDoublePath(interest) ;
                     } else {
-                        imgGraph = SeamCarving.toGraph(interest) ;             // build graph from interest array
-                        shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
+                        imgGraph = SeamCarving.toGraph(interest) ;
+                        shortestPath = SeamCarving.getShortestPath(imgGraph) ;
                     }
-                    imgPPM   = SeamCarving.resize(imgPPM, shortestPath)  ; // delete one column of imgPixels
+                    imgPPM   = SeamCarving.resize(imgPPM, shortestPath)  ;
                     break ;
             }
         }
