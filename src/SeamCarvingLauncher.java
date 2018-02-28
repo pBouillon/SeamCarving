@@ -108,14 +108,22 @@ public class SeamCarvingLauncher {
                 case PortableAnymap.P_PGM :
                     interest = SeamCarving.interest (imgPGM, keep, delete) ;
                     imgGraph = SeamCarving.toGraph(interest) ;              // build graph from interest array
-                    shortestPath = SeamCarving.getShortestPath (imgGraph) ; // evaluates shortest path from graph
+                    if (!simple) {
+                        shortestPath = SeamCarving.getDoublePath(interest) ;
+                    } else {
+                        shortestPath = SeamCarving.getShortestPath (imgGraph) ; // evaluates shortest path from graph
+                    }
                     imgPGM = SeamCarving.resize (imgPGM, shortestPath) ;    // delete one column of imgPixels
                     break ;
 
                 case PortableAnymap.P_PPM :
                     interest = SeamCarving.interest(imgPPM, keep, delete) ;
-                    imgGraph = SeamCarving.toGraph(interest) ;             // build graph from interest array
-                    shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
+                    if (!simple) {
+                        shortestPath = SeamCarving.getDoublePath(interest) ;
+                    } else {
+                        imgGraph = SeamCarving.toGraph(interest) ;             // build graph from interest array
+                        shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
+                    }
                     imgPPM   = SeamCarving.resize(imgPPM, shortestPath)  ; // delete one column of imgPixels
                     break ;
             }
