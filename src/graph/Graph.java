@@ -113,4 +113,8 @@ public class Graph {
         }
         catch (IOException ignored) {}
     }
+
+    public int getV() {
+        return V;
+    }
 }

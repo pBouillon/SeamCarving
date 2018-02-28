@@ -20,6 +20,8 @@ Resize an image using the seam carving method.
 * Dijkstra implementation
 * Documentation
 * Seam Carving implementation for .pgm
+* Seam Carving graph transformation with double vertices
+* Seam carving double Dijkstra 
 
 ## Usage
 Helper

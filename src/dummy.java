@@ -1,6 +1,8 @@
 import graph.Edge;
 import graph.Graph;
 
+import java.util.ArrayList;
+
 /**
  * @deprecated Only for immediate testing purpose
  * @version 1.0
@@ -116,7 +118,7 @@ public class dummy {
 
     }
 
-    private static void shortestPathDouble(){
+    private static  ArrayList<Integer>  shortestPathDouble(){
         Graph newGraph  = to_graph_double();
         // find shortest path
         int[] shortestPath = SeamCarving.getShortestPath(newGraph);
@@ -130,18 +132,27 @@ public class dummy {
         // revert edges : OK but render is ... not fine for debugg
         for(int i = 1; i< shortestPath.length   ; i++){
             newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
-            //System.out.println("new edge " + shortestPath[i-1] + " " + shortestPath[i]);
         }
         // find shortest path : OK good path as shown on example
         int[] secondShortestPath = SeamCarving.getShortestPath(newGraph);
 
-        for(int i : secondShortestPath){
-            System.out.println(i);
+        ArrayList<Integer> allVertice = new ArrayList<>() ;
+        for(int i : shortestPath){
+            if( i != newGraph.getV()-2 && i != newGraph.getV()-1){
+                allVertice.add(i);
+            }
+
         }
-        // remove edge used by both path
-        // maybe revert again edges ?
+        for(int i : secondShortestPath){
+            if(!allVertice.contains(i) && i != newGraph.getV()-2 && i != newGraph.getV()-1 ){
+                allVertice.add(i);
+            }
+        }
 
         newGraph.writeFile("graph_djikstra.dot");
+
+        return allVertice;
+
     }
 
     private static void writepgm_try() {

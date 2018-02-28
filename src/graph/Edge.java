@@ -1,5 +1,7 @@
 package graph;
 
+import java.util.Objects;
+
 public class Edge {
 	int cost ;
 	int from ;
@@ -39,4 +41,14 @@ public class Edge {
     public void setFrom(int i ){
 	    this.from = i ;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Edge edge = (Edge) o;
+        return from == edge.from &&
+                to == edge.to;
+    }
+
 }
