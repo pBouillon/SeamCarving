@@ -1,10 +1,12 @@
+package seamcarving;
+
 /**
  * References for portable anymap
  *
  * @version 1.0
  */
 
-class PortableAnymap {
+public class PortableAnymap {
 
     public static final char COMMENT = '#' ;
 

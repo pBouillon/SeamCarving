@@ -1,15 +1,14 @@
 import graph.Graph;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import seamcarving.PortableAnymap;
+import seamcarving.SeamCarving;
 
 import java.io.File;
 
@@ -67,67 +66,6 @@ public class App extends Application {
     }
 
     static void resize() {
-        String magicNumber = SeamCarving.readFileType(source) ;
-        if (magicNumber == null) {
-            // TODO ERR MSG
-        }
-
-        int[][]   imgPGM = null ;
-        int[][][] imgPPM = null ;
-
-        assert magicNumber != null ;
-        if (magicNumber.contains(PortableAnymap.P_PGM)) {
-            if ((imgPGM  = SeamCarving.readPGM(source)) == null) {
-                // TODO ERR MSG
-            }
-        }
-        else if (magicNumber.contains(PortableAnymap.P_PPM)) {
-            if ((imgPPM  = SeamCarving.readPPM(source)) == null) {
-                // TODO ERR MSG
-            }
-        }
-        else {
-            // TODO ERR MSG
-        }
-
-        Graph imgGraph ;
-        int[][] interest ;
-        int[]   shortestPath ;
-
-        for (int i = 0; i < ROW_REMOVED; ++i) {
-            switch (magicNumber) {
-                case PortableAnymap.P_PGM :
-                    interest = SeamCarving.interest (
-                            imgPGM,
-                            SeamCarvingLauncher.NO_PROP,
-                            SeamCarvingLauncher.NO_PROP
-                    ) ;
-                    imgGraph = SeamCarving.toGraph(interest) ;              // build graph from interest array
-                    shortestPath = SeamCarving.getShortestPath (imgGraph) ; // evaluates shortest path from graph
-                    imgPGM = SeamCarving.resize (imgPGM, shortestPath) ;    // delete one column of imgPixels
-                    break ;
-
-                case PortableAnymap.P_PPM :
-                    interest = SeamCarving.interest(
-                            imgPPM,
-                            SeamCarvingLauncher.NO_PROP,
-                            SeamCarvingLauncher.NO_PROP
-                    ) ;
-                    imgGraph = SeamCarving.toGraph(interest) ;             // build graph from interest array
-                    shortestPath = SeamCarving.getShortestPath(imgGraph) ; // evaluates shortest path from graph
-                    imgPPM   = SeamCarving.resize(imgPPM, shortestPath)  ; // delete one column of imgPixels
-                    break ;
-            }
-        }
-
-        switch (magicNumber) {
-            case PortableAnymap.P_PGM :
-                SeamCarving.writepgm(imgPGM, "./out_fx.pgm") ;
-                break ;
-            case PortableAnymap.P_PPM :
-                SeamCarving.writeppm(imgPPM, "./out_fx.ppm") ;
-                break ;
-        }
     }
 
     public static void main(String[] args) {

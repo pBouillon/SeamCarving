@@ -1,0 +1,167 @@
+package seamcarving;
+
+import static seamcarving.Graph.*;
+import static seamcarving.IO.*;
+import static seamcarving.Resize.resize;
+
+/**
+ * Seam Carving methods
+ *
+ * @version 1.0
+ */
+public class SeamCarving {
+
+    static final int RGB = 3 ;
+
+    private final static int    ROW_REMOVED  = 50 ; /* number of rows to be removed */
+    private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
+    private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
+
+    private static int[]    keep    ;   // get cols
+    private static int[]    delete  ;   // get cols
+
+    private static boolean  simple  ; // check requested version
+
+    private static graph.Graph imgGraph ;
+    private static int[][] interest ;
+    private static int[]   shortestPath ;
+
+    private static int[][]   imgPGM ;
+    private static int[][][] imgPPM ;
+
+    private static void exitSeamCarving (String reason) {
+        exitSeamCarving (reason, -1) ;
+    }
+
+    private static void exitSeamCarving(String reason, int errcode) {
+        System.out.println (reason) ;
+        System.exit (errcode) ;
+    }
+
+    private static void progressPercentage(int remain, int total) {
+        if (remain > total) {
+            throw new IllegalArgumentException();
+        }
+        int maxBareSize = 20;
+        int remainPercent = ((200 * remain) / total) / maxBareSize;
+        char defaultChar = ' ';
+        String icon = "==";
+        String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
+        StringBuilder bareDone = new StringBuilder();
+        bareDone.append("[");
+        for (int i = 0; i < remainPercent; i++) {
+            bareDone.append(icon);
+        }
+        String bareRemain = bare.substring(remainPercent * 2, bare.length());
+        System.out.print("\r\t" + bareDone + bareRemain  + " " + remainPercent * 10 + "%");
+        if (remain == total) {
+            System.out.print("\n");
+        }
+    }
+
+    public static void resizeImage (
+            int[] _keep,
+            int[] _del,
+            String[] _files,
+            boolean _simpl,
+            boolean _toggle,
+            boolean _verb ) {
+        keep    = _keep   ;
+        delete  = _del    ;
+        simple  = _simpl  ;
+
+        long begin = System.currentTimeMillis() ;
+
+        String  magicNumber = readFileType(_files[SOURCE]) ;
+        if (magicNumber == null) exitSeamCarving ("Unable to read file format") ;
+
+        assert magicNumber != null ;
+        if (magicNumber.contains(PortableAnymap.P_PGM)) {
+            imgPGM  = readPGM(_files[SOURCE]) ;
+            if (imgPGM == null) exitSeamCarving ("Unable to read the PGM file") ;
+        }
+        else if (magicNumber.contains(PortableAnymap.P_PPM)) {
+            imgPPM  = readPPM(_files[SOURCE]) ;
+            if (imgPPM == null) exitSeamCarving ("Unable to read the PPM file") ;
+        }
+        else {
+            exitSeamCarving ("Unable read format: " + magicNumber) ;
+        }
+
+        if (_verb) System.out.println("Progress (Simple: " + simple + "):") ;
+        for (int i = 0; i < ROW_REMOVED; ++i) {
+            if (_verb) progressPercentage(i, ROW_REMOVED - 1) ;
+
+            assert magicNumber != null;
+            switch (magicNumber) {
+                case PortableAnymap.P_PGM :
+                    imgPGM = resizePGM (imgPGM) ;
+                    break ;
+                case PortableAnymap.P_PPM :
+                    imgPPM = resizePPM(imgPPM) ;
+                    break ;
+            }
+        }
+
+        if (_verb && !simple) System.out.println( "\t| Using Double Dijkstra") ;
+
+        if (_verb && _toggle && imgPGM != null) {
+            imgPGM = toggleppm (imgPGM) ;
+            System.out.println( "\t| Values correctly inverted") ;
+        }
+
+        if (_verb) {
+            System.out.println(
+                    "\t| Successfully removed " +
+                            ROW_REMOVED + " columuns in " +
+                            (System.currentTimeMillis() - begin) + " ms"
+            ) ;
+            System.out.println("\t| New image saved in: " + _files[OUTPUT]) ;
+        }
+
+        assert magicNumber != null;
+        switch (magicNumber) {
+            case PortableAnymap.P_PGM :
+                writepgm(imgPGM, _files[OUTPUT]) ;
+                break ;
+            case PortableAnymap.P_PPM :
+                writeppm(imgPPM, _files[OUTPUT]);
+                break ;
+        }
+    }
+
+    private static int[][][] resizePPM(int[][][] imgPPM) {
+        interest = Interest.ppmInterest(imgPPM, keep, delete) ;
+        if (simple) {
+            imgGraph = toGraph(interest) ;
+            shortestPath = getShortestPath(imgGraph) ;
+        } else {
+            shortestPath = getDoublePath(interest) ;
+        }
+        return resize (imgPPM, shortestPath)  ;
+    }
+
+    private static int[][] resizePGM(int[][] imgPGM) {
+        interest = Interest.pgmInterest (imgPGM, keep, delete) ;
+        if (simple) {
+            imgGraph = toGraph(interest) ;
+            shortestPath = getShortestPath (imgGraph) ;
+        }
+        else {
+            shortestPath = getDoublePath(interest) ;
+        }
+        return resize (imgPGM, shortestPath) ;
+    }
+
+    /**
+     * Switch all ppm pixels to their invert
+     */
+    private static int[][] toggleppm (int[][] img) {
+        for (int x = 0; x < img.length; ++x) {
+            for (int y = 0; y < img[0].length; ++y) {
+                img[x][y] = PortableAnymap.PGM_MAX_VAL - img[x][y] ;
+            }
+        }
+        return img ;
+    }
+}

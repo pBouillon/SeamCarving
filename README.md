@@ -21,13 +21,14 @@ Resize an image using the seam carving method.
 * Documentation
 * Seam Carving implementation for .pgm
 * Seam Carving graph transformation with double vertices
-* Seam carving double Dijkstra 
+* Seam carving double Dijkstra
+* Seam carving double graph generation
 
 ## Usage
 Helper
 ```shell
 ~$ java SeamCarvingLauncher -h
-SeamCarving : Available options
+seamcarving.SeamCarving : Available options
    -c <img> <out.pgm> ... compress an image to a pgm file
    -h ................... displays help
    -d <begin> <end>...... delete pixel between those columns

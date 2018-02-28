@@ -3,6 +3,12 @@ import graph.Graph;
 
 import java.util.ArrayList;
 
+import static seamcarving.Graph.*;
+import static seamcarving.IO.readPPM;
+import static seamcarving.IO.writepgm;
+import static seamcarving.IO.writeppm;
+import static seamcarving.Interest.interest;
+
 /**
  * @deprecated Only for immediate testing purpose
  * @version 1.0
@@ -27,9 +33,9 @@ public class dummy {
                 {200, 60, 25, 0}
         } ;
 
-        int[][] ret = SeamCarving.interest(image) ;
+        int[][] ret = interest(image) ;
 
-        SeamCarving.toGraph(ret) ;
+        toGraph(ret) ;
 
         for (int[] row : ret) {
             for (int col : row) {
@@ -43,7 +49,7 @@ public class dummy {
     }
 
     private static void readppm_try() {
-        int[][][] img = SeamCarving.readPPM("PortablePixmaps/ppm/dummy.ppm") ;
+        int[][][] img = readPPM("PortablePixmaps/ppm/dummy.ppm") ;
 
         for (int x[][] : img) {
             for (int y[] : x) {
@@ -66,8 +72,8 @@ public class dummy {
 //                {3,   11, 24},
 //                {8,   5, 29},
 //        } ;
-        int[][] itr = SeamCarving.interest(image) ;
-        Graph g = SeamCarving.toGraph(itr);
+        int[][] itr = interest(image) ;
+        Graph g = toGraph(itr);
         g.writeFile("test_graph.dot");
     }
     private static Graph to_graph_double(){
@@ -82,8 +88,8 @@ public class dummy {
                 {20, 6, 2, 0},
                 {200, 60, 25, 0}
         } ;**/
-        int[][] itr = SeamCarving.interest(image) ;
-        Graph g = SeamCarving.toDoubleGraph(itr);
+        int[][] itr = interest(image) ;
+        Graph g = toDoubleGraph(itr);
         g.writeFile("test_graph_double.dot");
         return g;
     }
@@ -99,10 +105,10 @@ public class dummy {
 //                {3,   11, 24},
 //                {8,   5, 29},
 //        } ;
-        int[][] itr = SeamCarving.interest(image) ;
-        Graph g = SeamCarving.toGraph(itr);
+        int[][] itr = interest(image) ;
+        Graph g = toGraph(itr);
 
-        int [] path = SeamCarving.getShortestPath(g) ;
+        int [] path = getShortestPath(g) ;
         boolean parsed = false;
         
         int i = g.vertices()-2; // final vertice to reach
@@ -118,11 +124,11 @@ public class dummy {
 
     }
 
-    private static  ArrayList<Integer>  shortestPathDouble(){
+    private static void shortestPathDouble(){
         Graph newGraph  = to_graph_double();
         // find shortest path
-        int[] shortestPath = SeamCarving.getShortestPath(newGraph);
-        int[] vertices = SeamCarving.getVertices();
+        int[] shortestPath = getShortestPath(newGraph);
+        int[] vertices = getVertices();
 
         // update new cost : OK costs are ok
         for(Edge e : newGraph.edges()){
@@ -134,7 +140,7 @@ public class dummy {
             newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
         }
         // find shortest path : OK good path as shown on example
-        int[] secondShortestPath = SeamCarving.getShortestPath(newGraph);
+        int[] secondShortestPath = getShortestPath(newGraph);
 
         ArrayList<Integer> allVertice = new ArrayList<>() ;
         for(int i : shortestPath){
@@ -151,8 +157,6 @@ public class dummy {
 
         newGraph.writeFile("graph_djikstra.dot");
 
-        return allVertice;
-
     }
 
     private static void writepgm_try() {
@@ -164,7 +168,7 @@ public class dummy {
 
         String dest = "dummy.pgm" ;
 
-        SeamCarving.writepgm(p_pgm, dest) ;
+        writepgm(p_pgm, dest) ;
     }
 
     private static void writeppm_try() {
@@ -195,7 +199,7 @@ public class dummy {
                         {0,0,0}
                     }
                 } ;
-        SeamCarving.writeppm(test, "PortablePixmaps/ppm/test.ppm") ;
+        writeppm(test, "PortablePixmaps/ppm/test.ppm") ;
     }
 
     private static void purged() {

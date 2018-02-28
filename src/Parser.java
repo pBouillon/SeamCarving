@@ -1,9 +1,10 @@
 class Parser {
 
-    private final static String PROG_NAME    = "SeamCarving" ;  /* prog name for -h */
+    private final static String PROG_NAME    = "seamcarving.SeamCarving" ;  /* prog name for -h */
 
     private final int EXIT_FAILURE = -1 ; /* */
     private final int EXIT_SUCCESS =  0 ; /* */
+    final static int[]  NO_PROP = {-1, -1};   /* */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
@@ -29,8 +30,8 @@ class Parser {
      *  - boolean are false
      */
     Parser() {
-        col_k = SeamCarvingLauncher.NO_PROP ;
-        col_d = SeamCarvingLauncher.NO_PROP ;
+        col_k = NO_PROP ;
+        col_d = NO_PROP ;
         files = new String[]{"", ""} ;
         simple  = false ;
         toggle  = false ;
