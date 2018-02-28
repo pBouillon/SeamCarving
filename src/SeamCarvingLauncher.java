@@ -81,8 +81,6 @@ public class SeamCarvingLauncher {
         }
 
         if (verbose) {
-            if (!simple) System.out.println( "\t| Using Double Dijkstra") ;
-
             System.out.println("Progress:") ;
 
             switch (magicNumber) {
@@ -126,6 +124,7 @@ public class SeamCarvingLauncher {
                     break ;
             }
         }
+        if (verbose && !simple) System.out.println( "\t| Using Double Dijkstra") ;
 
         switch (magicNumber) {
             case PortableAnymap.P_PGM :
