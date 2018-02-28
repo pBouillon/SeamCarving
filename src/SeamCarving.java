@@ -134,7 +134,7 @@ public class SeamCarving {
      * @param interest
      * @return
      */
-    static ArrayList<Integer> getDoublePath(int[][] interest){
+    static int[] getDoublePath(int[][] interest){
         Graph newGraph  = SeamCarving.toDoubleGraph(interest);
 
         // find shortest path
@@ -166,7 +166,12 @@ public class SeamCarving {
             }
         }
 
-        return allVertice;
+        int[] res = new int[allVertice.size()] ;
+        int cpt = 0 ;
+        for(int i : allVertice){
+            res[++cpt]= i ;
+        }
+        return res;
     }
 
     /**
