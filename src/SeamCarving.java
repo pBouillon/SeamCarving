@@ -130,6 +130,46 @@ public class SeamCarving {
     }
 
     /**
+     * Method that return all Vertices contained in two shortest path
+     * @param interest
+     * @return
+     */
+    static ArrayList<Integer> getDoublePath(int[][] interest){
+        Graph newGraph  = SeamCarving.toDoubleGraph(interest);
+
+        // find shortest path
+        int[] shortestPath = SeamCarving.getShortestPath(newGraph);
+        int[] vertices = SeamCarving.getVertices();
+
+        // update new cost :
+        for(Edge e : newGraph.edges()){
+            // for each edge u v add difference between shortest path to get to u with shortest path to get to v
+            e.setCost(e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()]) );
+        }
+        // revert edges :
+        for(int i = 1; i< shortestPath.length   ; i++){
+            newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
+        }
+        // find shortest path : OK good path as shown on example
+        int[] secondShortestPath = SeamCarving.getShortestPath(newGraph);
+
+        ArrayList<Integer> allVertice = new ArrayList<>() ;
+        for(int i : shortestPath){
+            if( i != newGraph.getV()-2 && i != newGraph.getV()-1){
+                allVertice.add(i);
+            }
+
+        }
+        for(int i : secondShortestPath){
+            if(!allVertice.contains(i) && i != newGraph.getV()-2 && i != newGraph.getV()-1 ){
+                allVertice.add(i);
+            }
+        }
+
+        return allVertice;
+    }
+
+    /**
      * Build a double array with interest for each pixel
      * for an array :[x] [y] [z]
      * interest = y - avg(x, z)
