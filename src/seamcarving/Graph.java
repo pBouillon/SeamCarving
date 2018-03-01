@@ -178,6 +178,15 @@ public class Graph {
     }
 
     /**
+     * method to get only vertices from the image to remove
+     * @return
+     */
+    public static int[] toSimpleGraph(){
+        // get one vertice on 2
+        // supposed to be the inverse of getDoublePath
+        return null;
+    }
+    /**
      * Convert the image to a graph doubled
      *
      * @param  itr   interest per pixel (see seamcarving.SeamCarving.interest(...))
