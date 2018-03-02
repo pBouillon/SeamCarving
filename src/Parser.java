@@ -56,7 +56,7 @@ class Parser {
                 "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end> ..... keep pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_LONG      + " ................... use long method instead of double (v2.0)\n" +
                 "   " + OPT_SYMBOL + OPT_LINES     +     " ............... alter lines instead of columns\n" +
-                "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values (for pgm only)\n" +
+                "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values\n" +
                 "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
         System.out.println(helper_msg) ;
         System.exit(ret) ;

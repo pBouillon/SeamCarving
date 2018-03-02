@@ -114,8 +114,7 @@ public class SeamCarving {
 
         if (_verb && long_meth) System.out.println( "\t| Using Double Dijkstra") ;
 
-        if (_verb && _toggle && imgPGM != null) {
-            imgPGM = toggleppm (imgPGM) ;
+        if (_verb && _toggle) {
             System.out.println( "\t| Values correctly inverted") ;
         }
 
@@ -135,13 +134,16 @@ public class SeamCarving {
         // swapping back img to cut lines
         if (_lines) swapAll() ;
 
+        // color inversion
+        if (_toggle) toggleAll() ;
+
         assert magicNumber != null;
         switch (magicNumber) {
             case PortableAnymap.P_PGM :
-                writepgm(imgPGM, _files[OUTPUT]) ;
+                writepgm (imgPGM, _files[OUTPUT]) ;
                 break ;
             case PortableAnymap.P_PPM :
-                writeppm(imgPPM, _files[OUTPUT]);
+                writeppm (imgPPM, _files[OUTPUT]);
                 break ;
         }
     }
@@ -174,6 +176,11 @@ public class SeamCarving {
         if (imgPPM != null) imgPPM = swapTable(imgPPM) ;
     }
 
+    private static void toggleAll(){
+        if (imgPGM != null) imgPGM = togglepgm(imgPGM) ;
+        if (imgPPM != null) imgPPM = toggleppm(imgPPM) ;
+    }
+
     private static int[][] swapTable(int[][] toSwap) {
         int x = toSwap.length ;
         int y = toSwap[0].length ;
@@ -203,10 +210,24 @@ public class SeamCarving {
     /**
      * Switch all ppm pixels to their invert
      */
-    private static int[][] toggleppm (int[][] img) {
+    private static int[][] togglepgm(int[][] img) {
         for (int x = 0; x < img.length; ++x) {
             for (int y = 0; y < img[0].length; ++y) {
                 img[x][y] = PortableAnymap.PGM_MAX_VAL - img[x][y] ;
+            }
+        }
+        return img ;
+    }
+
+    /**
+     * Switch all ppm pixels to their invert
+     */
+    private static int[][][] toggleppm(int[][][] img) {
+        for (int x = 0; x < img.length; ++x) {
+            for (int y = 0; y < img[0].length; ++y) {
+                for (int z = 0; z < RGB; ++z) {
+                    img[x][y][z] = PortableAnymap.PGM_MAX_VAL - img[x][y][z] ;
+                }
             }
         }
         return img ;

@@ -13,7 +13,7 @@ seamcarving.SeamCarving : Available options
    -k <begin> <end> ..... keep pixel between those columns
    -l ................... use long method instead of double (v2.0)
    -lines ............... alter lines instead of columns
-   -t ................... toggle grey values (for pgm only)
+   -t ................... toggle grey values
    -v ................... enable verbose mode
 ```
 Example
@@ -41,6 +41,7 @@ Progress :
 * Lines handling
 * Seam Carving implementation for .pgm
 * Seam Carving implementation for .ppm
+* Toggled values for .pgm and .ppm
 
 ### Yoan Fath
 * Array to graph translation
