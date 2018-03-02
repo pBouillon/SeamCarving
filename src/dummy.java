@@ -4,9 +4,7 @@ import graph.Graph;
 import java.util.ArrayList;
 
 import static seamcarving.Graph.*;
-import static seamcarving.IO.readPPM;
-import static seamcarving.IO.writepgm;
-import static seamcarving.IO.writeppm;
+import static seamcarving.IO.*;
 import static seamcarving.Interest.interest;
 
 /**
@@ -125,87 +123,85 @@ public class dummy {
     }
 
     private static void shortestPathDouble(){
-        Graph newGraph  = to_graph_double();
+        Graph doubledGraph  = to_graph_double() ;
         // find shortest path
-        int[] shortestPath = getShortestPath(newGraph);
-        int[] vertices = getVertices();
+        int[] shortest_1 = getShortestPath(doubledGraph) ;
+        int[] vertices = getVertices() ;
 
         // update new cost : OK costs are ok
-        for(Edge e : newGraph.edges()){
+        int diff ;
+        for (Edge e : doubledGraph.edges()) {
             // for each edge u v add difference between shortest path to get to u with shortest path to get to v
-            e.setCost(e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()]) );
+            diff = vertices[e.getFrom()] - vertices[e.getTo()] ;
+            e.setCost (e.getCost() + diff) ;
         }
-        // revert edges : OK but render is ... not fine for debugg
-        for(int i = 1; i< shortestPath.length   ; i++){
-            newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
-        }
-        // find shortest path : OK good path as shown on example
-        int[] tmp = getShortestPath(newGraph);
 
+        // revert edges : OK but render is ... not fine for debug
+        for (int i = 1; i< shortest_1.length; ++i) {
+            doubledGraph.revertEdge (
+                    shortest_1[i],
+                    shortest_1[i - 1]
+            ) ;
+        }
+
+        // reverse array
+        int pathPart ;
+        for (int i = 0; i < shortest_1.length / 2; ++i) {
+            pathPart = shortest_1[i] ;
+            shortest_1[i] = shortest_1[shortest_1.length - i - 1] ;
+            shortest_1[shortest_1.length - i - 1] = pathPart ;
+        }
+
+        diff = 0 ;
+        int cpt = 0 ;
         // result
-        ArrayList<Integer> allVertice = new ArrayList<>() ;
-
-        // reverse array
-        for(int i = 0; i < shortestPath.length / 2; i++)
-        {
-            int temp = shortestPath[i];
-            shortestPath[i] = shortestPath[shortestPath.length - i - 1];
-            shortestPath[shortestPath.length - i - 1] = temp;
-        }
-
-        int diff = 0 ;
-        int cpt = 0;
-
-       for(int i = 0 ; i < shortestPath.length - 1 ; i++){
-            if( shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
-                if(diff%2 == 0 || i == shortestPath.length - 2 ){
-                    allVertice.add(shortestPath[i] - (cpt * 4));
-                }else {
-                    cpt++;
-                } diff++;
+        ArrayList<Integer> allVertices = new ArrayList<>() ;
+        for(int i = 0 ; i < shortest_1.length - 1; ++i) {
+            if (shortest_1[i] != doubledGraph.getV() - 2
+                    && shortest_1[i] != doubledGraph.getV() - 1) {
+                if (diff++ % 2 == 0
+                        || i == shortest_1.length - 2 ) {
+                    allVertices.add (shortest_1[i] - (cpt * 4)) ;
+                }
+                else ++cpt ;
             }
         }
 
         // reverse array
-       for(int i = 0; i < tmp.length / 2; i++)
-       {
-              int temp = tmp[i];
-           tmp[i] = tmp[tmp.length - i - 1];
-           tmp[tmp.length - i - 1] = temp;
-       }
+        // find shortest path : OK good path as shown on example
+        int temp ;
+        int[] shortestClone = shortest_1.clone() ;
+        for (int i = 0; i < shortestClone.length / 2; ++i) {
+            temp = shortestClone[i] ;
+            shortestClone[i] = shortestClone[shortestClone.length - i - 1] ;
+            shortestClone[shortestClone.length - i - 1] = temp ;
+        }
 
-       ArrayList<Integer> secondShortestPath = new ArrayList<>();
-      for(int i : tmp){
-          secondShortestPath.add(i);
-      }
-        for(int i = 0 ; i < shortestPath.length ; i++){
-            if(secondShortestPath.contains(shortestPath[i])
-                    && shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
-                secondShortestPath.remove((Object)(shortestPath[i]));
+        ArrayList<Integer> shortest_2 = new ArrayList<>() ;
+        for(int i : shortestClone) shortest_2.add(i) ;
+        for (int vertice : shortest_1) {
+            if (shortest_2.contains(vertice)
+                    && vertice != doubledGraph.getV() - 2
+                    && vertice != doubledGraph.getV() - 1) {
+                shortest_2.remove(vertice) ;
             }
         }
 
-
-         diff = 0 ;
-         cpt = 0;
-
-       for(int i = 0 ; i < secondShortestPath.size() - 1 ; i++){
-            if( secondShortestPath.get(i) != newGraph.getV()-2 && secondShortestPath.get(i) != newGraph.getV()-1){
-                if(diff%2 == 0 || i == secondShortestPath.size() - 2 ){
-                    allVertice.add(secondShortestPath.get(i) - (cpt * 4));
-                }else {
-                    cpt++;
-                } diff++;
+        cpt  = 0 ;
+        diff = 0 ;
+        for (int i = 0 ; i < shortest_2.size() - 1; ++i){
+            if (shortest_2.get(i) != doubledGraph.getV() - 2
+                    && shortest_2.get(i) != doubledGraph.getV() - 1) {
+                if (diff++ % 2 == 0
+                        || i == shortest_2.size() - 2) {
+                    allVertices.add (shortest_2.get(i) - (cpt * 4)) ;
+                }
+                else ++cpt ;
             }
-       }
+        }
 
-       for(int i : allVertice) {
-            System.out.println(i);
-       }
-
-
-        newGraph.writeFile("graph_djikstra.dot");
-
+        for (int i : allVertices) System.out.println(i) ;
+        doubledGraph.writeFile("graph_djikstra.dot") ;
     }
 
     private static void writepgm_try() {
