@@ -1,5 +1,3 @@
-import graph.Graph;
-import seamcarving.PortableAnymap;
 import seamcarving.SeamCarving;
 
 /**
@@ -17,7 +15,7 @@ public class SeamCarvingLauncher {
                 launcher.getKeep(),
                 launcher.getDel(),
                 launcher.getFiles(),
-                launcher.isSimple(),
+                launcher.isLong_meth(),
                 launcher.isToggle(),
                 launcher.isVerbose()
         ) ;

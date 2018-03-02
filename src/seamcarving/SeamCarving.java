@@ -20,7 +20,7 @@ public class SeamCarving {
     private static int[]    keep    ;   // get cols
     private static int[]    delete  ;   // get cols
 
-    private static boolean  simple  ; // check requested version
+    private static boolean long_meth; // check requested version
 
     private static graph.Graph imgGraph ;
     private static int[][] interest ;
@@ -63,12 +63,12 @@ public class SeamCarving {
             int[] _keep,
             int[] _del,
             String[] _files,
-            boolean _simpl,
+            boolean _long_meth,
             boolean _toggle,
             boolean _verb ) {
         keep    = _keep   ;
         delete  = _del    ;
-        simple  = _simpl  ;
+        long_meth = _long_meth  ;
 
         long begin = System.currentTimeMillis() ;
 
@@ -88,7 +88,12 @@ public class SeamCarving {
             exitSeamCarving ("Unable read format: " + magicNumber) ;
         }
 
-        if (_verb) System.out.println("Progress (Simple: " + simple + "):") ;
+        if (_verb) {
+            String msg = "Progress " ;
+            if (long_meth)  msg += "(Using double Dijkstra)" ;
+            System.out.println (msg + ": ") ;
+        }
+
         for (int i = 0; i < ROW_REMOVED; ++i) {
             if (_verb) progressPercentage(i, ROW_REMOVED - 1) ;
 
@@ -103,7 +108,7 @@ public class SeamCarving {
             }
         }
 
-        if (_verb && !simple) System.out.println( "\t| Using Double Dijkstra") ;
+        if (_verb && long_meth) System.out.println( "\t| Using Double Dijkstra") ;
 
         if (_verb && _toggle && imgPGM != null) {
             imgPGM = toggleppm (imgPGM) ;
@@ -132,23 +137,23 @@ public class SeamCarving {
 
     private static int[][][] resizePPM(int[][][] imgPPM) {
         interest = Interest.ppmInterest(imgPPM, keep, delete) ;
-        if (simple) {
+        if (long_meth) {
+            shortestPath = getDoublePath(interest) ;
+        } else {
             imgGraph = toGraph(interest) ;
             shortestPath = getShortestPath(imgGraph) ;
-        } else {
-            shortestPath = getDoublePath(interest) ;
         }
         return resize (imgPPM, shortestPath)  ;
     }
 
     private static int[][] resizePGM(int[][] imgPGM) {
         interest = Interest.pgmInterest (imgPGM, keep, delete) ;
-        if (simple) {
-            imgGraph = toGraph(interest) ;
-            shortestPath = getShortestPath (imgGraph) ;
+        if (long_meth) {
+            shortestPath = getDoublePath(interest) ;
         }
         else {
-            shortestPath = getDoublePath(interest) ;
+            imgGraph = toGraph(interest) ;
+            shortestPath = getShortestPath (imgGraph) ;
         }
         return resize (imgPGM, shortestPath) ;
     }

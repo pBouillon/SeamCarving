@@ -1,21 +1,21 @@
 class Parser {
 
-    private final static String PROG_NAME    = "seamcarving.SeamCarving" ;  /* prog name for -h */
+    private final static String PROG_NAME = "SeamCarving" ;  /* prog name for -h */
 
     private final int EXIT_FAILURE = -1 ; /* */
     private final int EXIT_SUCCESS =  0 ; /* */
-    final static int[]  NO_PROP = {-1, -1};   /* */
+    final static int[]  NO_PROP = {-1, -1} ; /* */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
     private final static char   OPT_DELETE   = 'd' ; /* property "delete" on pixels */
     private final static char   OPT_HELP     = 'h' ; /* displays help */
     private final static char   OPT_KEEP     = 'k' ;  /* property "keep" on pixels */
-    private final static char   OPT_SIMPLE   = 's' ; /* chose method */
+    private final static char   OPT_LONG     = 'l' ; /* chose method */
     private final static char   OPT_TOGGLE   = 't' ; /* toggle grey vals */
     private final static char   OPT_VERBOSE  = 'v' ; /* displays progress */
 
-    private boolean  simple  ; /* if using the simple algorithm instead of the double one */
+    private boolean long_meth; /* if using the long_meth algorithm instead of the double one */
     private boolean  toggle  ; /* allow to toggle grey values */
     private boolean  verbose ; /* enable verbose mode */
     private String[] files   ; /* will contain String{source, dest} */
@@ -33,7 +33,7 @@ class Parser {
         col_k = NO_PROP ;
         col_d = NO_PROP ;
         files = new String[]{"", ""} ;
-        simple  = false ;
+        long_meth = false ;
         toggle  = false ;
         verbose = false ;
     }
@@ -51,7 +51,7 @@ class Parser {
                 "   " + OPT_SYMBOL + OPT_HELP      + " ................... displays help\n" +
                 "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end>...... delete pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end>...... keep pixel between those columns\n" +
-                "   " + OPT_SYMBOL + OPT_SIMPLE    + " ................... use simple method instead of double (v2.0)\n" +
+                "   " + OPT_SYMBOL + OPT_LONG      + " ................... use long method instead of double (v2.0)\n" +
                 "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values (for pgm only)\n" +
                 "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
         System.out.println(helper_msg) ;
@@ -132,8 +132,8 @@ class Parser {
                             displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break ;
-                    case OPT_SIMPLE:
-                        simple = true ;
+                    case OPT_LONG:
+                        long_meth = true ;
                         break;
                     case OPT_TOGGLE:
                         toggle = true ;
@@ -173,10 +173,10 @@ class Parser {
     /**
      * Get the chosed method
      *
-     * @return simple
+     * @return long_meth
      */
-    boolean isSimple() {
-        return simple ;
+    boolean isLong_meth() {
+        return long_meth;
     }
 
     /**
