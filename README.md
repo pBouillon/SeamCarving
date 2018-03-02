@@ -1,6 +1,32 @@
 # Seam carving project
 
-Resize an image using the seam carving method. 
+Image resizing with the Seam Carving algorithm.
+
+## Usage
+Helper
+```shell
+~$ java SeamCarvingLauncher -h
+seamcarving.SeamCarving : Available options
+   -c <img> <out.pgm> ... compress an image to a pgm file
+   -h ................... displays help
+   -d <begin> <end> ..... delete pixel between those columns
+   -k <begin> <end> ..... keep pixel between those columns
+   -l ................... use long method instead of double (v2.0)
+   -lines ............... alter lines instead of columns
+   -t ................... toggle grey values (for pgm only)
+   -v ................... enable verbose mode
+```
+Example
+```shell
+~$ java SeamCarvingLauncher -c PortablePixmaps/pgm/totem.pgm totem_out.ppm -v
+Warning: Simple method used by default (version < 2.0)
+
+Progress : 
+	[====================] 100%
+	| Successfully removed 50 columuns in 6400 ms
+	| New image saved in:
+	|	totem_out.ppm
+```
 
 ## Tasks repartition
 ### Pierre Bouillon
@@ -12,6 +38,7 @@ Resize an image using the seam carving method.
 * Documentation
 * GUI
 * Interest evaluation functions
+* Lines handling
 * Seam Carving implementation for .pgm
 * Seam Carving implementation for .ppm
 
@@ -24,35 +51,10 @@ Resize an image using the seam carving method.
 * Seam carving double Dijkstra
 * Seam carving double graph generation
 
-## Usage
-Helper
-```shell
-~$ java SeamCarvingLauncher -h
-seamcarving.SeamCarving : Available options
-   -c <img> <out.pgm> ... compress an image to a pgm file
-   -h ................... displays help
-   -d <begin> <end>...... delete pixel between those columns
-   -k <begin> <end>...... keep pixel between those columns
-   -s ................... use simple method instead of double (v2.0)
-   -t ................... toggle grey values (for pgm only)
-   -v ................... enable verbose mode
-```
-Example
-```shell
-~$ java SeamCarvingLauncher -c PortablePixmaps/pgm/totem.pgm totem_out.ppm -v
-Warning: Simple method used by default (version < 2.0)
-
-Progress:
-	PGM values acquired
-	[====================] 100%
-	| Successfully removed 50 columuns in 7189 ms
-	| New image saved in: PortablePixmaps/pgm/totem_out.pgm
-```
-
 ## Short term goals
 - [ ] GUI
-- [ ] path removed trace
-- [ ] handles lines and columns
+- [x] path removed trace
+- [x] handles lines and columns
 - [x] handles rgb images
 - [x] mark pixels as "to delete"
 - [x] mark pixels as "to keep"

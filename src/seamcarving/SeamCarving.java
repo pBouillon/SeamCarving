@@ -129,7 +129,7 @@ public class SeamCarving {
                             ROW_REMOVED + " columuns in " +
                             (System.currentTimeMillis() - begin) + " ms"
             ) ;
-            System.out.println("\t| New image saved in: " + _files[OUTPUT]) ;
+            System.out.println("\t| New image saved in:\n\t|\t" + _files[OUTPUT]) ;
         }
 
         // swapping back img to cut lines

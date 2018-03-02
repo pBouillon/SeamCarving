@@ -52,8 +52,8 @@ class Parser {
                 PROG_NAME +" : " + msg + "\n" +
                 "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
                 "   " + OPT_SYMBOL + OPT_HELP      + " ................... displays help\n" +
-                "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end>...... delete pixel between those columns\n" +
-                "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end>...... keep pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end> ..... delete pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end> ..... keep pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_LONG      + " ................... use long method instead of double (v2.0)\n" +
                 "   " + OPT_SYMBOL + OPT_LINES     +     " ............... alter lines instead of columns\n" +
                 "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values (for pgm only)\n" +
