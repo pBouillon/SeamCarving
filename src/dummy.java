@@ -140,20 +140,69 @@ public class dummy {
             newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
         }
         // find shortest path : OK good path as shown on example
-        int[] secondShortestPath = getShortestPath(newGraph);
+        int[] tmp = getShortestPath(newGraph);
 
+        // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
-        for(int i : shortestPath){
-            if( i != newGraph.getV()-2 && i != newGraph.getV()-1){
-                allVertice.add(i);
-            }
 
+        // reverse array
+        for(int i = 0; i < shortestPath.length / 2; i++)
+        {
+            int temp = shortestPath[i];
+            shortestPath[i] = shortestPath[shortestPath.length - i - 1];
+            shortestPath[shortestPath.length - i - 1] = temp;
         }
-        for(int i : secondShortestPath){
-            if(!allVertice.contains(i) && i != newGraph.getV()-2 && i != newGraph.getV()-1 ){
-                allVertice.add(i);
+
+        int diff = 0 ;
+        int cpt = 0;
+
+       for(int i = 0 ; i < shortestPath.length - 1 ; i++){
+            if( shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
+                if(diff%2 == 0 || i == shortestPath.length - 2 ){
+                    allVertice.add(shortestPath[i] - (cpt * 4));
+                }else {
+                    cpt++;
+                } diff++;
             }
         }
+
+        // reverse array
+       for(int i = 0; i < tmp.length / 2; i++)
+       {
+              int temp = tmp[i];
+           tmp[i] = tmp[tmp.length - i - 1];
+           tmp[tmp.length - i - 1] = temp;
+       }
+
+       ArrayList<Integer> secondShortestPath = new ArrayList<>();
+      for(int i : tmp){
+          secondShortestPath.add(i);
+      }
+        for(int i = 0 ; i < shortestPath.length ; i++){
+            if(secondShortestPath.contains(shortestPath[i])
+                    && shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
+                secondShortestPath.remove((Object)(shortestPath[i]));
+            }
+        }
+
+
+         diff = 0 ;
+         cpt = 0;
+
+       for(int i = 0 ; i < secondShortestPath.size() - 1 ; i++){
+            if( secondShortestPath.get(i) != newGraph.getV()-2 && secondShortestPath.get(i) != newGraph.getV()-1){
+                if(diff%2 == 0 || i == secondShortestPath.size() - 2 ){
+                    allVertice.add(secondShortestPath.get(i) - (cpt * 4));
+                }else {
+                    cpt++;
+                } diff++;
+            }
+       }
+
+       for(int i : allVertice) {
+            System.out.println(i);
+       }
+
 
         newGraph.writeFile("graph_djikstra.dot");
 
