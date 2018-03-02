@@ -1,7 +1,7 @@
 package seamcarving;
 
-import static seamcarving.SeamCarving.RGB;
 import static seamcarving.Graph.edge2coord;
+import static seamcarving.SeamCarving.RGB;
 
 /**
  /**
@@ -9,7 +9,7 @@ import static seamcarving.Graph.edge2coord;
  *
  * @version 1.0
  */
-public class Resize {
+class Resize {
     private static final int x   = 0 ; // axis for .pgm writing
     private static final int y   = 1 ; // axis for .pgm writing
     private static final int TO_REMOVE = -1 ; // designate values to be erased

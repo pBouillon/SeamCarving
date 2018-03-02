@@ -4,18 +4,20 @@ class Parser {
 
     private final int EXIT_FAILURE = -1 ; /* */
     private final int EXIT_SUCCESS =  0 ; /* */
-    final static int[]  NO_PROP = {-1, -1} ; /* */
+    private final static int[]  NO_PROP = {-1, -1} ; /* */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
     private final static char   OPT_DELETE   = 'd' ; /* property "delete" on pixels */
     private final static char   OPT_HELP     = 'h' ; /* displays help */
-    private final static char   OPT_KEEP     = 'k' ;  /* property "keep" on pixels */
+    private final static char   OPT_KEEP     = 'k' ; /* property "keep" on pixels */
     private final static char   OPT_LONG     = 'l' ; /* chose method */
     private final static char   OPT_TOGGLE   = 't' ; /* toggle grey vals */
     private final static char   OPT_VERBOSE  = 'v' ; /* displays progress */
+    private final static String OPT_LINES    = "lines" ; /* alter lines instead of meth */
 
-    private boolean long_meth; /* if using the long_meth algorithm instead of the double one */
+    private boolean  long_meth; /* if using the long_meth algorithm instead of the double one */
+    private boolean  lines ;    /* alter lines instead of meth */
     private boolean  toggle  ; /* allow to toggle grey values */
     private boolean  verbose ; /* enable verbose mode */
     private String[] files   ; /* will contain String{source, dest} */
@@ -36,6 +38,7 @@ class Parser {
         long_meth = false ;
         toggle  = false ;
         verbose = false ;
+        lines   = false ;
     }
 
     /**
@@ -52,6 +55,7 @@ class Parser {
                 "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end>...... delete pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end>...... keep pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_LONG      + " ................... use long method instead of double (v2.0)\n" +
+                "   " + OPT_SYMBOL + OPT_LINES     +     " ............... alter lines instead of columns\n" +
                 "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values (for pgm only)\n" +
                 "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
         System.out.println(helper_msg) ;
@@ -77,6 +81,10 @@ class Parser {
         }
 
         for (String arg : args) {
+            if (arg.equals(OPT_SYMBOL + OPT_LINES)) {
+                lines = true ;
+                continue ;
+            }
             if (file > -1 && file < 2) {
                 if (arg.charAt(0) == OPT_SYMBOL) {
                     displayHelp("File expected", EXIT_FAILURE) ;
@@ -183,6 +191,11 @@ class Parser {
      *
      */
     boolean isToggle() {return toggle ;}
+
+    /**
+     *
+     */
+    boolean isLines() {return lines ;}
 
     /**
      * Get if the user wants progression

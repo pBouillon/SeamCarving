@@ -17,6 +17,7 @@ public class SeamCarvingLauncher {
                 launcher.getFiles(),
                 launcher.isLong_meth(),
                 launcher.isToggle(),
+                launcher.isLines(),
                 launcher.isVerbose()
         ) ;
     }

@@ -20,7 +20,7 @@ public class SeamCarving {
     private static int[]    keep    ;   // get cols
     private static int[]    delete  ;   // get cols
 
-    private static boolean long_meth; // check requested version
+    private static boolean long_meth ; // check requested version
 
     private static graph.Graph imgGraph ;
     private static int[][] interest ;
@@ -65,6 +65,7 @@ public class SeamCarving {
             String[] _files,
             boolean _long_meth,
             boolean _toggle,
+            boolean _lines,
             boolean _verb ) {
         keep    = _keep   ;
         delete  = _del    ;
@@ -94,6 +95,9 @@ public class SeamCarving {
             System.out.println (msg + ": ") ;
         }
 
+        // swapping img to cut lines
+        if (_lines) swapAll() ;
+
         for (int i = 0; i < ROW_REMOVED; ++i) {
             if (_verb) progressPercentage(i, ROW_REMOVED - 1) ;
 
@@ -115,6 +119,10 @@ public class SeamCarving {
             System.out.println( "\t| Values correctly inverted") ;
         }
 
+        if (_verb && _lines) {
+            System.out.println( "\t| Lines used") ;
+        }
+
         if (_verb) {
             System.out.println(
                     "\t| Successfully removed " +
@@ -123,6 +131,9 @@ public class SeamCarving {
             ) ;
             System.out.println("\t| New image saved in: " + _files[OUTPUT]) ;
         }
+
+        // swapping back img to cut lines
+        if (_lines) swapAll() ;
 
         assert magicNumber != null;
         switch (magicNumber) {
@@ -156,6 +167,37 @@ public class SeamCarving {
             shortestPath = getShortestPath (imgGraph) ;
         }
         return resize (imgPGM, shortestPath) ;
+    }
+
+    private static void swapAll(){
+        if (imgPGM != null) imgPGM = swapTable(imgPGM) ;
+        if (imgPPM != null) imgPPM = swapTable(imgPPM) ;
+    }
+
+    private static int[][] swapTable(int[][] toSwap) {
+        int x = toSwap.length ;
+        int y = toSwap[0].length ;
+        int[][] toReturn = new int[y][x] ;
+
+        for (int _x = 0; _x < x; ++_x) {
+            for (int _y = 0; _y < y; ++_y) {
+                toReturn[_y][_x] = toSwap[_x][_y] ;
+            }
+        }
+        return toReturn ;
+    }
+
+    private static int[][][] swapTable(int[][][] toSwap) {
+        int x = toSwap.length ;
+        int y = toSwap[0].length ;
+        int[][][] toReturn = new int[y][x][RGB] ;
+
+        for (int _x = 0; _x < x; ++_x) {
+            for (int _y = 0; _y < y; ++_y) {
+                toReturn[_y][_x] = toSwap[_x][_y] ;
+            }
+        }
+        return toReturn ;
     }
 
     /**
