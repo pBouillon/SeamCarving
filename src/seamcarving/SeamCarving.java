@@ -68,7 +68,14 @@ public class SeamCarving {
             bareDone.append(icon);
         }
         String bareRemain = bare.substring(remainPercent * 2, bare.length());
-        System.out.print("\r\t" + bareDone + bareRemain  + " " + remainPercent * 10 + "%");
+        System.out.print (
+                "\r\t" +
+                bareDone +
+                bareRemain  +
+                " " +
+                remainPercent * 10 +
+                "% (" + remain + " row(s) handled)"
+        ) ;
         if (remain == total) {
             System.out.print("\n");
         }
