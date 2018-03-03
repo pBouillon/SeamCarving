@@ -46,7 +46,6 @@ Progress :
 * Dijkstra implementation
 * Documentation
 * Forward energy implementation
-* GUI
 * Interest evaluation functions
 * Lines handling
 * Seam Carving implementation for .pgm
