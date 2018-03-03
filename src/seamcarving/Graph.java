@@ -107,6 +107,8 @@ public class Graph {
         }
 
         int verticesCount = imgGraph.getV() ;
+        int lastVertice  = verticesCount - 1 ;
+        int firstVertice = verticesCount - 2 ;
 
         // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
@@ -120,15 +122,13 @@ public class Graph {
 
         diff = 0; cpt = 0 ;
         for (i = 0; i < shortest_1.length - 1; ++i) {
-            if (shortest_1[i] != verticesCount - 2
-                    && shortest_1[i] != verticesCount - 1) {
-                if (diff % 2 == 0
-                        || i == shortest_1.length - 2 ) {
-                    allVertice.add(shortest_1[i] - (cpt * size)) ;
-                }
-                else ++cpt ;
-                ++diff ;
+            if (shortest_1[i] == firstVertice) continue ;
+            if (shortest_1[i] == lastVertice ) continue ;
+            if (diff % 2 == 0 || i == shortest_1.length - 2 ) {
+                allVertice.add(shortest_1[i] - (cpt * size)) ;
             }
+            else ++cpt ;
+            ++diff ;
         }
 
         // reverse array
@@ -144,33 +144,24 @@ public class Graph {
         }
 
         for (int vertice : shortest_1) {
-            if (shortest_2.contains (vertice)
-                    && vertice != verticesCount - 2
-                    && vertice != verticesCount - 1) {
-                shortest_2.remove((Object) (vertice)) ;
-            }
+            if (vertice == firstVertice) continue ;
+            if (vertice == lastVertice ) continue ;
+            if (shortest_2.contains (vertice)) shortest_2.remove (Integer.valueOf(vertice)) ;
         }
 
 
         diff = 0; cpt = 0 ;
         for (i = 0; i < shortest_2.size() - 1 ; ++i) {
-            if (shortest_2.get(i) != verticesCount - 2
-                    && shortest_2.get(i) != verticesCount - 1) {
-                if (diff % 2 == 0
-                        || i == shortest_2.size() - 2) {
-                    allVertice.add(shortest_2.get(i) - (cpt * size)) ;
-                }
-                else ++cpt ;
-                ++diff ;
+            if (shortest_2.get(i) == firstVertice) continue ;
+            if (shortest_2.get(i) == lastVertice ) continue ;
+            if (diff % 2 == 0 || i == shortest_2.size() - 2) {
+                allVertice.add (shortest_2.get(i) - (cpt * size)) ;
             }
+            else ++cpt ;
+            ++diff ;
         }
 
-        int[] res = new int[allVertice.size()] ;
-        for (i = 0 ; i < allVertice.size() ; ++i) {
-            res[i] = allVertice.get(i) ;
-        }
-
-        return res ;
+        return allVertice.stream().mapToInt(j -> j).toArray() ;
     }
 
     /**
