@@ -74,14 +74,14 @@ public class Graph {
     static int[] getDoublePath(int[][] interest){
         size = interest[1].length ;
 
-        graph.Graph newGraph  = toDoubleGraph(interest);
+        graph.Graph imgGraph  = toDoubleGraph(interest);
 
         // find shortest path
-        int[] shortestPath = getShortestPath (newGraph) ;
+        int[] shortest_1 = getShortestPath (imgGraph) ;
         int[] vertices = getVertices() ;
 
         // update new cost
-        for (Edge e : newGraph.edges()) {
+        for (Edge e : imgGraph.edges()) {
             // for each edge u v add difference between shortest path to get to u with shortest path to get to v
             e.setCost (
                     e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()])
@@ -89,35 +89,35 @@ public class Graph {
         }
 
         // revert edges
-        for (int i = 1; i < shortestPath.length; ++i) {
-            newGraph.revertEdge (
-                    shortestPath[i],
-                    shortestPath[i - 1]
+        for (int i = 1; i < shortest_1.length; ++i) {
+            imgGraph.revertEdge (
+                    shortest_1[i],
+                    shortest_1[i - 1]
             ) ;
         }
 
         // find shortest path
-        int[] tmp = getShortestPath(newGraph) ;
+        int[] tmp = getShortestPath (imgGraph) ;
 
         // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
 
         // reverse array
-        for (int i = 0; i < shortestPath.length / 2; ++i) {
-            int temp = shortestPath[i] ;
-            shortestPath[i] = shortestPath[shortestPath.length - i - 1] ;
-            shortestPath[shortestPath.length - i - 1] = temp ;
+        for (int i = 0; i < shortest_1.length / 2; ++i) {
+            int swapStash = shortest_1[i] ;
+            shortest_1[i] = shortest_1[shortest_1.length - i - 1] ;
+            shortest_1[shortest_1.length - i - 1] = swapStash ;
         }
 
         int diff = 0 ;
         int cpt = 0 ;
 
-        for (int i = 0; i < shortestPath.length - 1; ++i) {
-            if (shortestPath[i] != newGraph.getV() - 2
-                    && shortestPath[i] != newGraph.getV() - 1) {
+        for (int i = 0; i < shortest_1.length - 1; ++i) {
+            if (shortest_1[i] != imgGraph.getV() - 2
+                    && shortest_1[i] != imgGraph.getV() - 1) {
                 if (diff % 2 == 0
-                        || i == shortestPath.length - 2 ) {
-                    allVertice.add(shortestPath[i] - (cpt * size)) ;
+                        || i == shortest_1.length - 2 ) {
+                    allVertice.add(shortest_1[i] - (cpt * size)) ;
                 }
                 else ++cpt ;
                 ++diff ;
@@ -126,33 +126,33 @@ public class Graph {
 
         // reverse array
         for (int i = 0; i < tmp.length / 2; ++i) {
-            int temp = tmp[i] ;
+            int swapStash = tmp[i] ;
             tmp[i] = tmp[tmp.length - i - 1] ;
-            tmp[tmp.length - i - 1] = temp ;
+            tmp[tmp.length - i - 1] = swapStash ;
         }
 
-        ArrayList<Integer> secondShortestPath = new ArrayList<>() ;
+        ArrayList<Integer> shortest_2 = new ArrayList<>() ;
         for (int i : tmp) {
-            secondShortestPath.add(i) ;
+            shortest_2.add(i) ;
         }
 
-        for (int aShortestPath : shortestPath) {
-            if (secondShortestPath.contains(aShortestPath)
-                    && aShortestPath != newGraph.getV() - 2
-                    && aShortestPath != newGraph.getV() - 1) {
-                secondShortestPath.remove((Object) (aShortestPath)) ;
+        for (int vertice : shortest_1) {
+            if (shortest_2.contains (vertice)
+                    && vertice != imgGraph.getV() - 2
+                    && vertice != imgGraph.getV() - 1) {
+                shortest_2.remove((Object) (vertice)) ;
             }
         }
 
 
         diff = 0 ;
         cpt = 0 ;
-        for (int i = 0; i < secondShortestPath.size() - 1 ; ++i) {
-            if (secondShortestPath.get(i) != newGraph.getV() - 2
-                    && secondShortestPath.get(i) != newGraph.getV() - 1) {
+        for (int i = 0; i < shortest_2.size() - 1 ; ++i) {
+            if (shortest_2.get(i) != imgGraph.getV() - 2
+                    && shortest_2.get(i) != imgGraph.getV() - 1) {
                 if (diff % 2 == 0
-                        || i == secondShortestPath.size() - 2) {
-                    allVertice.add(secondShortestPath.get(i) - (cpt * size)) ;
+                        || i == shortest_2.size() - 2) {
+                    allVertice.add(shortest_2.get(i) - (cpt * size)) ;
                 }
                 else ++cpt ;
                 ++diff ;
