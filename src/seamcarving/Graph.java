@@ -74,8 +74,8 @@ public class Graph {
 
     /**
      * Method that return all Vertices contained in two shortest path
-     * @param interest
-     * @return
+     * @param interest interests of all pixels
+     * @return created graph
      */
     static int[] getDoublePath(int[][] interest){
         graph.Graph newGraph  = toDoubleGraph(interest);
@@ -130,56 +130,66 @@ public class Graph {
         int height = itr.length ;
         int width  = itr[0].length ;
 
-        graph.Graph graph = new graph.Graph(height * width + 2) ; // height * width + first node + last node
+        // height * width + first node + last node
+        graph.Graph graph = new graph.Graph(height * width + 2) ;
+
         // graph's core
         for (i = 0; i < height - 1; i++) {
-            int  c_val ; // current value
             for (j = 0; j < width ; j++) {
-                c_val = itr[i][j] ;
+                // middle edge
+                if (j - 1 > 0 && j + 1 < width) {
+                    graph.addEdge(new Edge(
+                            width * i + j,
+                            width * (i + 1) + j,
+                            Math.abs(itr[i][j + 1] - itr[i][j - 1])
+                    ));
+                }
 
-                graph.addEdge( new Edge (
-                        width * i + j ,
-                        width * (i + 1) + j,
-                        c_val
-                )) ;
-                if (!(j - 1 < 0)) {
+                // left edge
+                if (j - 1 > 0 && j + 1 < width) {
                     graph.addEdge( new Edge (
                             width * i + j  ,
                             width * (i + 1) + j - 1,
-                            c_val
+                            Math.abs(itr[i][j + 1] - itr[i + 1][j])
                     )) ;
                 }
-                if (j + 1 < width) {
+
+                // right edge
+                if (j + 1 < width && j - 1 > 0) {
                     graph.addEdge( new Edge (
                             width * i + j,
                             width * (i + 1) + j + 1,
-                            c_val
+                            Math.abs(itr[i][j - 1] - itr[i + 1][j])
                     )) ;
                 }
             }
         }
+
         // edge to final vertex
         for (j = 0; j < width ; j++) {
-            graph.addEdge (
-                    new Edge (
-                            width * (height - 1) + j,
-                            height * width,
-                            itr[i][j]
-                    )
-            ) ;
+            if (j - 1 > 0 && j + 1 < width) {
+                graph.addEdge(
+                        new Edge(
+                                width * (height - 1) + j,
+                                height * width,
+                                Math.abs(itr[i][j - 1] - itr[i][j + 1])
+                        )
+                );
+            }
         }
+
         // edge from origin vertex
         for (j = 0; j < width; j++) {
             graph.addEdge (
                     new Edge (width * height + 1, j, 0)
             ) ;
         }
+        graph.writeFile("graph.dot") ;
         return graph ;
     }
 
     /**
      * method to get only vertices from the image to remove
-     * @return
      */
     public static int[] toSimpleGraph(){
         // get one vertice on 2

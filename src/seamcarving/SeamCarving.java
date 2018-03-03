@@ -113,14 +113,14 @@ public class SeamCarving {
             }
         }
 
+        if (_verb && _lines) {
+            System.out.println("\t| Lines used\n\t|") ;
+        }
+
         if (_verb && long_meth) System.out.println("\t| Using Double Dijkstra\n\t|") ;
 
         if (_verb && _toggle) {
             System.out.println("\t| Values correctly inverted\n\t|") ;
-        }
-
-        if (_verb && _lines) {
-            System.out.println("\t| Lines used\n\t|") ;
         }
 
         if (_verb && _grey) {
