@@ -11,15 +11,17 @@ class Parser {
     private final static char   OPT_DELETE   = 'd' ; /* property "delete" on pixels */
     private final static char   OPT_GREY     = 'g' ; /* save ppm as pgm */
     private final static char   OPT_HELP     = 'h' ; /* displays help */
+    private final static char   OPT_INCR     = 'i' ; /* increase lines */
     private final static char   OPT_KEEP     = 'k' ; /* property "keep" on pixels */
     private final static char   OPT_LONG     = 'l' ; /* chose method */
     private final static char   OPT_TOGGLE   = 't' ; /* toggle grey vals */
     private final static char   OPT_VERBOSE  = 'v' ; /* displays progress */
     private final static String OPT_LINES    = "lines" ; /* alter lines instead of meth */
 
-    private boolean  grey; /*save ppm as pgm */
-    private boolean  long_meth; /* if using the long_meth algorithm instead of the double one */
-    private boolean  lines ;    /* alter lines instead of meth */
+    private boolean  grey ;      /* save ppm as pgm */
+    private boolean  increase  ; /* increase img */
+    private boolean  long_meth ; /* if using the long_meth algorithm instead of the double one */
+    private boolean  lines   ;   /* alter lines instead of meth */
     private boolean  toggle  ; /* allow to toggle grey values */
     private boolean  verbose ; /* enable verbose mode */
     private String[] files   ; /* will contain String{source, dest} */
@@ -57,6 +59,7 @@ class Parser {
                 "   " + OPT_SYMBOL + OPT_GREY      + " ................ get greyscale for ppm and save as pgm\n" +
                 "   " + OPT_SYMBOL + OPT_HELP      + " ................ displays help\n" +
                 "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end> .. delete pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_INCR      + " ................ increase lines/rows instead of cropping\n" +
                 "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end> .. keep pixel between those columns\n" +
                 "   " + OPT_SYMBOL + OPT_LONG      + " ................ use long method instead of simple\n" +
                 "   " + OPT_SYMBOL + OPT_LINES     +     " ............ crop lines instead of columns\n" +
@@ -161,6 +164,10 @@ class Parser {
                         grey = true ;
                         break;
 
+                    case OPT_INCR:
+                        increase = true ;
+                        break;
+
                     case OPT_VERBOSE:
                         verbose = true ;
                         break ;
@@ -227,5 +234,12 @@ class Parser {
      */
     public boolean isGrey() {
         return grey;
+    }
+
+    /**
+     *
+     */
+    public boolean isIncrease() {
+        return increase ;
     }
 }

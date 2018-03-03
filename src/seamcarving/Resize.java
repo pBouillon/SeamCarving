@@ -2,6 +2,7 @@ package seamcarving;
 
 import static seamcarving.Graph.edge2coord;
 import static seamcarving.SeamCarving.RGB;
+import static seamcarving.SeamCarving.increase;
 
 /**
  /**
@@ -24,26 +25,40 @@ class Resize {
      */
     static int[][] resize(int[][] img, int[] vertices) {
         // marking each nodes as to remove except for the first and the last ones
-        int[] coord;
+        int[] coord ;
+
+        boolean[][] toDel = new boolean[img.length][img[0].length] ;
+        for (int x = 0; x < img.length * img[0].length; ++x) {
+            toDel[x / img[0].length][x % img.length] = false ;
+        }
+
         for (int i = 1; i < vertices.length - 1; ++i) {
-            coord = edge2coord(vertices[i], img[0].length);
-            img[coord[x]][coord[y]] = TO_REMOVE;
+            coord = edge2coord(vertices[i], img[0].length) ;
+            toDel[coord[x]][coord[y]] = true ;
         }
 
-        int[][] newImg = new int[img.length][img[0].length - 1]; // new image has one column less
+        int[][] newImg ;
+        // new image has one column less
+        newImg = new int[img.length][img[0].length - 1] ;
+        // new image has one more column
+        if (increase) newImg = new int[img.length][img[0].length + 1] ;
 
-        int _x = 0;
-        int _y = 0;
-        for (int[] x : img) {
-            for (int y : x) {
-                if (y == TO_REMOVE) {
-                    continue;
+        int _x, _y ;
+        _x = 0 ;
+        for (int x = 0; x < img.length; ++x) {
+            _y = 0 ;
+            for (int y = 0; y < img[0].length; ++y) {
+                if (toDel[x][y]) {
+                    // ignoring the line to reduce size
+                    if (!increase) continue ;
+                    // duplicate the pixel to increase size
+                    newImg[_x][_y++] = img[x][y] ;
                 }
-                newImg[_x][_y++] = y;
+                newImg[_x][_y++] = img[x][y] ;
             }
-            _y = 0;
-            ++_x;
+            ++_x ;
         }
+
         return newImg ;
     }
 

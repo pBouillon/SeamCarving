@@ -17,8 +17,9 @@ public class SeamCarving {
     private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
     private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
 
-    private static int[]    keep    ;   // get cols
-    private static int[]    delete  ;   // get cols
+    private static int[]  keep   ;   // get cols
+    private static int[]  delete ;   // get cols
+    public static boolean increase ; // increase img size
 
     private static boolean long_meth ; // check requested version
 
@@ -59,7 +60,7 @@ public class SeamCarving {
         }
     }
 
-    public static void resizeImage (
+    public static void resizeImage(
             int[] _keep,
             int[] _del,
             String[] _files,
@@ -67,10 +68,12 @@ public class SeamCarving {
             boolean _toggle,
             boolean _lines,
             boolean _grey,
-            boolean _verb ) {
-        keep    = _keep   ;
-        delete  = _del    ;
-        long_meth = _long_meth  ;
+            boolean _inc,
+            boolean _verb) {
+        keep      = _keep ;
+        delete    = _del  ;
+        increase  = _inc  ;
+        long_meth = _long_meth ;
 
         long begin = System.currentTimeMillis() ;
 
@@ -111,6 +114,10 @@ public class SeamCarving {
                     imgPPM = resizePPM(imgPPM) ;
                     break ;
             }
+        }
+
+        if (_verb && _lines) {
+            System.out.println("\t| Increasing size\n\t|") ;
         }
 
         if (_verb && _lines) {

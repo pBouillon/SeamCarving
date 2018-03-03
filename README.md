@@ -11,6 +11,7 @@ SeamCarving : Available options
    -g ................ get greyscale for ppm and save as pgm
    -h ................ displays help
    -d <begin> <end> .. delete pixel between those columns
+   -i ................ increase lines/rows instead of cropping
    -k <begin> <end> .. keep pixel between those columns
    -l ................ use long method instead of simple
    -lines ............ crop lines instead of columns
@@ -19,16 +20,18 @@ SeamCarving : Available options
 ```
 Example (with a lots of arguments)
 ```shell
-~$ java SeamCarvingLauncher -c PortablePixmaps/ppm/cake.ppm type_swap_output.pgm -v -g -t -lines
+~$ java SeamCarvingLauncher -c PortablePixmaps/ppm/cake.ppm type_swap_output.pgm -v -g -t -lines -i
 Progress : 
 	[====================] 100%
-	| Values correctly inverted
+	| Increasing size
 	|
 	| Lines used
 	|
+	| Values correctly inverted
+	|
 	| Saved as ppm instead of pgm
 	|
-	| Successfully removed 50 columuns in 10197 ms
+	| Successfully removed 50 columuns in 19074 ms
 	| New image saved in:
 	|	type_swap_output.pgm
 ```
@@ -48,6 +51,7 @@ Progress :
 * Lines handling
 * Seam Carving implementation for .pgm
 * Seam Carving implementation for .ppm
+* Size augmentation
 * Toggled values for .pgm and .ppm
 
 ### Yoan Fath

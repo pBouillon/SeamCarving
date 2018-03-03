@@ -1,6 +1,7 @@
 package seamcarving;
 
 import static seamcarving.SeamCarving.RGB;
+import static seamcarving.SeamCarving.increase;
 
 /**
  * Seam Carving interest handling methods
@@ -47,6 +48,17 @@ public class Interest {
                 interest_grid[i][j] = Math.abs(px_c - neighbors_avg) ;
             }
         }
+
+        if (increase) {
+            // making uninteresting edge interesting for shortest path
+            for (int x = 0; x < interest_grid.length; ++x) {
+                for (int y = 0; y < interest_grid[0].length; ++y) {
+                    if (interest_grid[x][y] == 0) continue ;
+                    interest_grid[x][y] = 1 / interest_grid[x][y] ;
+                }
+            }
+        }
+
         return interest_grid ;
     }
 
