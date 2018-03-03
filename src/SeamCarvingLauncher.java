@@ -3,7 +3,7 @@ import seamcarving.SeamCarving;
 /**
  * Seam Carving launcher
  *
- * @version 1.0
+ * @version 2.0
  */
 public class SeamCarvingLauncher {
 

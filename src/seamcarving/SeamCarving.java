@@ -7,7 +7,7 @@ import static seamcarving.Resize.resize;
 /**
  * Seam Carving methods
  *
- * @version 1.0
+ * @version 2.0
  */
 public class SeamCarving {
 
@@ -19,7 +19,7 @@ public class SeamCarving {
 
     private static int[]  keep   ;   // get cols
     private static int[]  delete ;   // get cols
-    public static boolean increase ; // increase img size
+    static boolean increase ; // increase img size
 
     private static boolean long_meth ; // check requested version
 
@@ -30,15 +30,24 @@ public class SeamCarving {
     private static int[][]   imgPGM ;
     private static int[][][] imgPPM ;
 
+    /**
+     *
+     */
     private static void exitSeamCarving (String reason) {
         exitSeamCarving (reason, -1) ;
     }
 
+    /**
+     *
+     */
     private static void exitSeamCarving(String reason, int errcode) {
-        System.out.println (reason) ;
+        System.err.println (reason) ;
         System.exit (errcode) ;
     }
 
+    /**
+     *
+     */
     private static void progressPercentage(int remain, int total) {
         if (remain > total) {
             throw new IllegalArgumentException();
@@ -60,6 +69,9 @@ public class SeamCarving {
         }
     }
 
+    /**
+     *
+     */
     public static void resizeImage(
             int[] _keep,
             int[] _del,
@@ -103,7 +115,7 @@ public class SeamCarving {
         if (_lines) swapAll() ;
 
         for (int i = 0; i < ROW_REMOVED; ++i) {
-            if (_verb) progressPercentage(i, ROW_REMOVED - 1) ;
+            if (_verb) progressPercentage (i, ROW_REMOVED - 1) ;
 
             assert magicNumber != null;
             switch (magicNumber) {
@@ -116,7 +128,7 @@ public class SeamCarving {
             }
         }
 
-        if (_verb && _lines) {
+        if (_verb && _inc) {
             System.out.println("\t| Increasing size\n\t|") ;
         }
 
@@ -166,17 +178,23 @@ public class SeamCarving {
         }
     }
 
+    /**
+     *
+     */
     private static int[][][] resizePPM(int[][][] imgPPM) {
-        interest = Interest.ppmInterest(imgPPM, keep, delete) ;
+        interest = Interest.ppmInterest (imgPPM, keep, delete) ;
         if (long_meth) {
-            shortestPath = getDoublePath(interest) ;
+            shortestPath = getDoublePath (interest) ;
         } else {
-            imgGraph = toGraph(interest) ;
-            shortestPath = getShortestPath(imgGraph) ;
+            imgGraph = toGraph (interest) ;
+            shortestPath = getShortestPath (imgGraph) ;
         }
         return resize (imgPPM, shortestPath)  ;
     }
 
+    /**
+     *
+     */
     private static int[][] resizePGM(int[][] imgPGM) {
         interest = Interest.pgmInterest (imgPGM, keep, delete) ;
         if (long_meth) {
@@ -189,16 +207,25 @@ public class SeamCarving {
         return resize (imgPGM, shortestPath) ;
     }
 
+    /**
+     *
+     */
     private static void swapAll(){
         if (imgPGM != null) imgPGM = swapTable(imgPGM) ;
         if (imgPPM != null) imgPPM = swapTable(imgPPM) ;
     }
 
+    /**
+     *
+     */
     private static void toggleAll(){
         if (imgPGM != null) imgPGM = togglepgm(imgPGM) ;
         if (imgPPM != null) imgPPM = toggleppm(imgPPM) ;
     }
 
+    /**
+     *
+     */
     private static int[][] swapTable(int[][] toSwap) {
         int x = toSwap.length ;
         int y = toSwap[0].length ;
@@ -212,6 +239,9 @@ public class SeamCarving {
         return toReturn ;
     }
 
+    /**
+     *
+     */
     private static int[][][] swapTable(int[][][] toSwap) {
         int x = toSwap.length ;
         int y = toSwap[0].length ;

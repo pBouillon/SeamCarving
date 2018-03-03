@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Seam Carving graph handling methods
  *
- * @version 1.0
+ * @version 2.0
  */
 public class Graph {
     private static int[] vertices ;

@@ -8,7 +8,7 @@ import static seamcarving.SeamCarving.RGB;
 /**
  * Seam Carving methods
  *
- * @version 1.0
+ * @version 2.0
  */
 public class IO {
     private static final String BASE_PATH      = "./" ; // default path

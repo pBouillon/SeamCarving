@@ -1,3 +1,8 @@
+/**
+ * Seam Carving parser
+ *
+ * @version 2.0
+ */
 class Parser {
 
     private final static String PROG_NAME = "SeamCarving" ;  /* prog name for -h */

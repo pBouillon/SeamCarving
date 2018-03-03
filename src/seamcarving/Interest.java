@@ -6,11 +6,11 @@ import static seamcarving.SeamCarving.increase;
 /**
  * Seam Carving interest handling methods
  *
- * @version 1.0
+ * @version 2.0
  */
 public class Interest {
-    static final int PX_DEL_VAL =  0 ;
-    static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
+    private static final int PX_DEL_VAL =  0 ;
+    private static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
 
     /**
      * Build a double array with interest for each pixel
@@ -23,6 +23,16 @@ public class Interest {
     public static int[][] interest(int[][] img) {
         int height = img.length ;
         int width  = img[0].length ;
+
+        if (increase) {
+            // making uninteresting edge interesting for shortest path
+            for (int x = 0; x < img.length; ++x) {
+                for (int y = 0; y < img[0].length; ++y) {
+                    if (img[x][y] == 0) continue ;
+                    img[x][y] = -img[x][y] ;
+                }
+            }
+        }
 
         int[][] interest_grid = new int[height][width] ;
 
@@ -46,16 +56,6 @@ public class Interest {
                 int neighbors_avg = (px_l + px_r) / 2 ;
 
                 interest_grid[i][j] = Math.abs(px_c - neighbors_avg) ;
-            }
-        }
-
-        if (increase) {
-            // making uninteresting edge interesting for shortest path
-            for (int x = 0; x < interest_grid.length; ++x) {
-                for (int y = 0; y < interest_grid[0].length; ++y) {
-                    if (interest_grid[x][y] == 0) continue ;
-                    interest_grid[x][y] = 1 / interest_grid[x][y] ;
-                }
             }
         }
 

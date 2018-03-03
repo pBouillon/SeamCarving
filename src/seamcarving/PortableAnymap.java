@@ -3,7 +3,7 @@ package seamcarving;
 /**
  * References for portable anymap
  *
- * @version 1.0
+ * @version 2.0
  */
 
 public class PortableAnymap {
