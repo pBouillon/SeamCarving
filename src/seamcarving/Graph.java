@@ -4,9 +4,6 @@ import graph.Edge;
 import graph.Heap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Seam Carving graph handling methods
@@ -74,91 +71,100 @@ public class Graph {
      * @param interest interests of all pixels
      * @return created graph
      */
-    static int[] getDoublePath(int[][] interest) {
-        size = interest[0].length;
+    static int[] getDoublePath(int[][] interest){
+        size = interest[1].length ;
 
-        // loop counter
-        int i;
-        // for value swapping
-        int temp;
+        graph.Graph newGraph  = toDoubleGraph(interest);
 
-        graph.Graph imgGraph = toDoubleGraph(interest);
-        int verticesCount = imgGraph.getV();
         // find shortest path
-        int[] shortest_1 = getShortestPath(imgGraph);
-        int[] shortest_tmp = shortest_1.clone();
-        int[] vertices = getVertices();
+        int[] shortestPath = getShortestPath (newGraph) ;
+        int[] vertices = getVertices() ;
 
         // update new cost
-        for (Edge e : imgGraph.edges()) {
+        for (Edge e : newGraph.edges()) {
             // for each edge u v add difference between shortest path to get to u with shortest path to get to v
             e.setCost (
-                    e.getCost() +(vertices[e.getFrom()] - vertices[e.getTo()]));
-        }
-
-        // revert edges
-        for (i = 1; i < shortest_1.length; ++i) {
-            imgGraph.revertEdge(
-                    shortest_1[i],
-                    shortest_1[i - 1]
+                    e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()])
             ) ;
         }
 
+        // revert edges
+        for (int i = 1; i < shortestPath.length; ++i) {
+            newGraph.revertEdge (
+                    shortestPath[i],
+                    shortestPath[i - 1]
+            ) ;
+        }
+
+        // find shortest path
+        int[] tmp = getShortestPath(newGraph) ;
+
         // result
-        ArrayList<Integer> allVertice = new ArrayList<>();
+        ArrayList<Integer> allVertice = new ArrayList<>() ;
 
         // reverse array
-        for (i = 0; i < shortest_1.length / 2; ++i) {
-            temp = shortest_1[i];
-            shortest_1[i] = shortest_1[shortest_1.length - i - 1];
-            shortest_1[shortest_1.length - i - 1] = temp;
+        for (int i = 0; i < shortestPath.length / 2; ++i) {
+            int temp = shortestPath[i] ;
+            shortestPath[i] = shortestPath[shortestPath.length - i - 1] ;
+            shortestPath[shortestPath.length - i - 1] = temp ;
         }
 
-        int diff = 0;
-        int cpt = 0;
-        for (i = 0; i < shortest_1.length - 1; ++i) {
-            if (shortest_1[i] != verticesCount - 2
-                    && shortest_1[i] != verticesCount - 1) {
+        int diff = 0 ;
+        int cpt = 0 ;
+
+        for (int i = 0; i < shortestPath.length - 1; ++i) {
+            if (shortestPath[i] != newGraph.getV() - 2
+                    && shortestPath[i] != newGraph.getV() - 1) {
                 if (diff % 2 == 0
-                        || i == shortest_1.length - 2) {
-                    allVertice.add(shortest_1[i] - (cpt * size));
-                } else ++cpt ;
+                        || i == shortestPath.length - 2 ) {
+                    allVertice.add(shortestPath[i] - (cpt * size)) ;
+                }
+                else ++cpt ;
                 ++diff ;
             }
         }
 
         // reverse array
-        for (i = 0; i < shortest_tmp.length / 2; ++i) {
-            temp = shortest_tmp[i];
-            shortest_tmp[i] = shortest_tmp[shortest_tmp.length - i - 1];
-            shortest_tmp[shortest_tmp.length - i - 1] = temp;
+        for (int i = 0; i < tmp.length / 2; ++i) {
+            int temp = tmp[i] ;
+            tmp[i] = tmp[tmp.length - i - 1] ;
+            tmp[tmp.length - i - 1] = temp ;
         }
 
-        List<Integer> shortest_2 = Arrays.stream(shortest_tmp)
-                .boxed()
-                .collect(Collectors.toList());
+        ArrayList<Integer> secondShortestPath = new ArrayList<>() ;
+        for (int i : tmp) {
+            secondShortestPath.add(i) ;
+        }
 
-        for (int vertice : shortest_1) {
-            if (shortest_2.contains(vertice)
-                    && vertice != verticesCount - 2
-                    && vertice != verticesCount - 1) {
-                shortest_2.remove((Object) vertice);
+        for (int aShortestPath : shortestPath) {
+            if (secondShortestPath.contains(aShortestPath)
+                    && aShortestPath != newGraph.getV() - 2
+                    && aShortestPath != newGraph.getV() - 1) {
+                secondShortestPath.remove((Object) (aShortestPath)) ;
             }
         }
 
-        diff = 0;
-        cpt = 0;
-        for (i = 0; i < shortest_2.size() - 1; ++i) {
-            if (shortest_2.get(i) != verticesCount - 2
-                    && shortest_2.get(i) != verticesCount - 1) {
-                if (diff % 2 == 0 || i == shortest_2.size() - 2) {
-                    allVertice.add(shortest_2.get(i) - (cpt * size));
-                } else ++cpt ;
+
+        diff = 0 ;
+        cpt = 0 ;
+        for (int i = 0; i < secondShortestPath.size() - 1 ; ++i) {
+            if (secondShortestPath.get(i) != newGraph.getV() - 2
+                    && secondShortestPath.get(i) != newGraph.getV() - 1) {
+                if (diff % 2 == 0
+                        || i == secondShortestPath.size() - 2) {
+                    allVertice.add(secondShortestPath.get(i) - (cpt * size)) ;
+                }
+                else ++cpt ;
                 ++diff ;
             }
         }
 
-        return allVertice.stream().mapToInt(j -> j).toArray() ;
+        int[] res = new int[allVertice.size()] ;
+        for (int i = 0 ; i < allVertice.size() ; ++i) {
+            res[i] = allVertice.get(i) ;
+        }
+
+        return res ;
     }
 
     /**
