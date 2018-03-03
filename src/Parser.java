@@ -9,7 +9,7 @@ class Parser {
 
     private final int EXIT_FAILURE = -1 ; /* */
     private final int EXIT_SUCCESS =  0 ; /* */
-    private final static int[]  NO_PROP = {-1, -1} ; /* */
+    final static int[] NO_PROP = {-1, -1} ; /* */
 
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */

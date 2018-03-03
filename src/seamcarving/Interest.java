@@ -10,7 +10,7 @@ import static seamcarving.SeamCarving.increase;
  */
 public class Interest {
     private static final int PX_DEL_VAL =  0 ;
-    private static final int PX_KEEP_VAL = PortableAnymap.PGM_MAX_VAL ;
+    private static final int PX_KEEP_VAL = PortableAnyMap.PGM_MAX_VAL ;
 
     /**
      * Build a double array with interest for each pixel
@@ -140,7 +140,7 @@ public class Interest {
     private static int[][] applyChanges (int[][] interest_grid, int[] keep, int[] delete) {
         if (isSet(keep)) {
             if (keep[0] < 0 || keep[1] > interest_grid[0].length) {
-                System.out.println("Error: columns to keep are not matching the current image") ;
+                System.err.println("\nError: columns to keep are not matching the current image") ;
                 System.exit(-1) ;
             }
             interest_grid = alterInterest (interest_grid, keep, PX_KEEP_VAL) ;
@@ -148,7 +148,7 @@ public class Interest {
 
         if (isSet(delete)) {
             if (delete[0] < 0 || delete[1] > interest_grid[0].length) {
-                System.out.println("Error: columns to delete are not matching the current image") ;
+                System.err.println("\nError: columns to delete are not matching the current image") ;
                 System.exit(-1) ;
             }
             interest_grid = alterInterest (interest_grid, delete, PX_DEL_VAL) ;
@@ -162,7 +162,9 @@ public class Interest {
      */
     private static boolean isSet(int[] property) {
         for (int v : property) {
-            if (v < 0) return false ;
+            if (v == -1) {
+                return false ;
+            }
         }
         return true ;
     }

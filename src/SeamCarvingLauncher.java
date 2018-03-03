@@ -12,9 +12,9 @@ public class SeamCarvingLauncher {
         launcher.parse(args) ;
 
         SeamCarving.resizeImage (
-                launcher.getKeep(),
-                launcher.getDel(),
-                launcher.getFiles(),
+                launcher.getKeep().clone(),
+                launcher.getDel().clone(),
+                launcher.getFiles().clone(),
                 launcher.isLong_meth(),
                 launcher.isToggle(),
                 launcher.isLines(),

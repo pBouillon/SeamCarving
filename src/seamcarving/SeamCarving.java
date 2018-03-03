@@ -17,8 +17,8 @@ public class SeamCarving {
     private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
     private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
 
-    private static int[]  keep   ;   // get cols
-    private static int[]  delete ;   // get cols
+     static int[]  keep   ;   // get cols
+     static int[]  delete ;   // get cols
     static boolean increase ; // increase img size
 
     private static boolean long_meth ; // check requested version
@@ -53,7 +53,12 @@ public class SeamCarving {
             throw new IllegalArgumentException();
         }
         int maxBareSize = 20;
-        int remainPercent = ((200 * remain) / total) / maxBareSize;
+        int remainPercent ;
+        try {
+            remainPercent = ((200 * remain) / total) / maxBareSize;
+        } catch (ArithmeticException e) {
+            return ;
+        }
         char defaultChar = ' ';
         String icon = "==";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
@@ -83,7 +88,13 @@ public class SeamCarving {
             boolean _inc,
             boolean _verb) {
         keep      = _keep ;
+        // from pixel id to array index
+        --keep[0]; --keep[1];
+
         delete    = _del  ;
+        // from pixel id to array index
+        --delete[0]; --delete[1];
+
         increase  = _inc  ;
         long_meth = _long_meth ;
 
@@ -93,11 +104,11 @@ public class SeamCarving {
         if (magicNumber == null) exitSeamCarving ("Unable to read file format") ;
 
         assert magicNumber != null ;
-        if (magicNumber.contains(PortableAnymap.P_PGM)) {
+        if (magicNumber.contains(PortableAnyMap.P_PGM)) {
             imgPGM  = readPGM(_files[SOURCE]) ;
             if (imgPGM == null) exitSeamCarving ("Unable to read the PGM file") ;
         }
-        else if (magicNumber.contains(PortableAnymap.P_PPM)) {
+        else if (magicNumber.contains(PortableAnyMap.P_PPM)) {
             imgPPM  = readPPM(_files[SOURCE]) ;
             if (imgPPM == null) exitSeamCarving ("Unable to read the PPM file") ;
         }
@@ -119,10 +130,10 @@ public class SeamCarving {
 
             assert magicNumber != null;
             switch (magicNumber) {
-                case PortableAnymap.P_PGM :
+                case PortableAnyMap.P_PGM :
                     imgPGM = resizePGM (imgPGM) ;
                     break ;
-                case PortableAnymap.P_PPM :
+                case PortableAnyMap.P_PPM :
                     imgPPM = resizePPM(imgPPM) ;
                     break ;
             }
@@ -162,17 +173,14 @@ public class SeamCarving {
         // color inversion
         if (_toggle) toggleAll() ;
 
-        if (_grey && imgPPM != null) {
-            magicNumber = PortableAnymap.P_PGM ;
-            imgPGM = topgm(imgPPM) ;
-        }
+        if (_grey && imgPPM != null) imgPGM = topgm(imgPPM) ;
 
         assert magicNumber != null;
         switch (magicNumber) {
-            case PortableAnymap.P_PGM :
+            case PortableAnyMap.P_PGM :
                 writepgm (imgPGM, _files[OUTPUT]) ;
                 break ;
-            case PortableAnymap.P_PPM :
+            case PortableAnyMap.P_PPM :
                 writeppm (imgPPM, _files[OUTPUT]);
                 break ;
         }
@@ -261,7 +269,7 @@ public class SeamCarving {
     private static int[][] togglepgm(int[][] img) {
         for (int x = 0; x < img.length; ++x) {
             for (int y = 0; y < img[0].length; ++y) {
-                img[x][y] = PortableAnymap.PGM_MAX_VAL - img[x][y] ;
+                img[x][y] = PortableAnyMap.PGM_MAX_VAL - img[x][y] ;
             }
         }
         return img ;
@@ -274,7 +282,7 @@ public class SeamCarving {
         for (int x = 0; x < img.length; ++x) {
             for (int y = 0; y < img[0].length; ++y) {
                 for (int z = 0; z < RGB; ++z) {
-                    img[x][y][z] = PortableAnymap.PGM_MAX_VAL - img[x][y][z] ;
+                    img[x][y][z] = PortableAnyMap.PGM_MAX_VAL - img[x][y][z] ;
                 }
             }
         }

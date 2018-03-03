@@ -91,7 +91,7 @@ public class IO {
 
             br.readLine() ;  // magic number (http://netpbm.sourceforge.net/doc/pgm.html)
             String line  = br.readLine() ;
-            while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
+            while (line.charAt(0) == PortableAnyMap.COMMENT) {  // ignoring comments
                 line = br.readLine() ;
             }
 
@@ -102,7 +102,7 @@ public class IO {
             line = br.readLine() ;
             scan = new Scanner(line) ;
             int maxVal = scan.nextInt() ;
-            if (maxVal > PortableAnymap.PGM_MAX_VAL) {
+            if (maxVal > PortableAnyMap.PGM_MAX_VAL) {
                 return null ;
             }
 
@@ -146,7 +146,7 @@ public class IO {
 
             br.readLine() ;
             String line  = br.readLine() ;
-            while (line.charAt(0) == PortableAnymap.COMMENT) {  // ignoring comments
+            while (line.charAt(0) == PortableAnyMap.COMMENT) {  // ignoring comments
                 line = br.readLine() ;
             }
 
@@ -158,7 +158,7 @@ public class IO {
             scan = new Scanner(line) ;
 
             int maxVal = scan.nextInt() ;
-            if (maxVal > PortableAnymap.PPM_MAX_VAL) {
+            if (maxVal > PortableAnyMap.PPM_MAX_VAL) {
                 return null ;
             }
 
@@ -206,9 +206,9 @@ public class IO {
         pw.flush() ;
 
         // Write plain pgm header
-        pw.println(PortableAnymap.P_PGM + SEPARATOR) ;
+        pw.println(PortableAnyMap.P_PGM + SEPARATOR) ;
         pw.println(image[0].length + SEPARATOR + image.length + SEPARATOR) ;
-        pw.println(PortableAnymap.PGM_MAX_VAL) ;
+        pw.println(PortableAnyMap.PGM_MAX_VAL) ;
 
         // write the value for each table cell
         for (int[] row : image) {
@@ -217,7 +217,7 @@ public class IO {
             for (int val : row) {
                 String written = val + SEPARATOR ;
 
-                if (line_len + written.length() > PortableAnymap.PGM_MAX_LEN) {
+                if (line_len + written.length() > PortableAnyMap.PGM_MAX_LEN) {
                     pw.print("\n") ;
                     line_len = 0 ;
                 }
@@ -249,9 +249,9 @@ public class IO {
         pw.flush() ;
 
         // Write plain ppm header
-        pw.println(PortableAnymap.P_PPM + SEPARATOR) ;
+        pw.println(PortableAnyMap.P_PPM + SEPARATOR) ;
         pw.println(image[0].length + SEPARATOR + image.length + SEPARATOR) ;
-        pw.println(PortableAnymap.PPM_MAX_VAL) ;
+        pw.println(PortableAnyMap.PPM_MAX_VAL) ;
 
         // write the value for each table cell
         int line_len = 0 ;
@@ -270,7 +270,7 @@ public class IO {
                 buff.append(LONG_SEPARATOR) ;
 
                 // ensure ppm line limit
-                if (buff.length() + line_len > PortableAnymap.PPM_MAX_LEN) {
+                if (buff.length() + line_len > PortableAnyMap.PPM_MAX_LEN) {
                     line_len = 0 ;
                     pw.write("\n") ;
                 }

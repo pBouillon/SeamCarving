@@ -6,7 +6,7 @@ package seamcarving;
  * @version 2.0
  */
 
-public class PortableAnymap {
+public class PortableAnyMap {
 
     public static final char COMMENT = '#' ;
 

@@ -1,8 +1,7 @@
 package seamcarving;
 
 import static seamcarving.Graph.edge2coord;
-import static seamcarving.SeamCarving.RGB;
-import static seamcarving.SeamCarving.increase;
+import static seamcarving.SeamCarving.*;
 
 /**
  /**
@@ -24,7 +23,7 @@ class Resize {
      */
     static int[][] resize(int[][] img, int[] vertices) {
         // marking each nodes as to remove except for the first and the last ones
-        int[] coord ;
+        int[] coord = null;
 
         boolean[][] toDel = new boolean[img.length][img[0].length] ;
         for (int x = 0; x < img.length * img[0].length; ++x) {
@@ -58,6 +57,14 @@ class Resize {
             ++_x ;
         }
 
+        if (newImg[0].length <= keep[1]) --keep[0] ; --keep[1] ;
+
+        int colDelId = edge2coord(vertices[0], img[0].length)[x] ;
+        if (colDelId > delete[0]
+                && colDelId < delete[1]) {
+            --delete[1] ;
+        }
+
         return newImg ;
     }
 
@@ -73,7 +80,7 @@ class Resize {
 
         boolean[][] toDel = new boolean[img.length][img[0].length] ;
         for (int x = 0; x < img.length * img[0].length; ++x) {
-            toDel[x / img[0].length][x % img.length] = false ;
+            toDel[x / img[0].length][x % img[0].length] = false ;
         }
 
         for (int i = 1; i < vertices.length - 1; ++i) {
@@ -102,20 +109,6 @@ class Resize {
             }
             ++_x ;
         }
-
-//        int _x = 0 ;
-//        int _y = 0 ;
-//        for (int[][] x : img) {
-//            for (int[] y : x) {
-//                if (y[0] == TO_REMOVE) {
-//                    continue ;
-//                }
-//                newImg[_x][_y] = y ;
-//                ++_y ;
-//            }
-//            _y = 0 ;
-//            ++_x   ;
-//        }
 
         return newImg ;
     }
