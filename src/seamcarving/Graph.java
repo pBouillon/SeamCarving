@@ -86,7 +86,6 @@ public class Graph {
 
         // find shortest path
         int[] shortest_1 = getShortestPath (imgGraph) ;
-        int[] shortest_cpy = shortest_1.clone() ;
 
         int[] vertices = getVertices() ;
 
@@ -106,6 +105,8 @@ public class Graph {
             ) ;
         }
 
+        int[] shortest_cpy = getShortestPath (imgGraph) ;
+
         int verticesCount = imgGraph.getV() ;
         int lastVertice  = verticesCount - 1 ;
         int firstVertice = verticesCount - 2 ;
@@ -124,8 +125,8 @@ public class Graph {
         for (i = 0; i < shortest_1.length - 1; ++i) {
             if (shortest_1[i] == firstVertice) continue ;
             if (shortest_1[i] == lastVertice ) continue ;
-            if (diff % 2 == 0 || i == shortest_1.length - 2 ) {
-                allVertice.add(shortest_1[i] - (cpt * size)) ;
+            if (diff % 2 == 0 || i == shortest_1.length - 2) {
+                allVertice.add (shortest_1[i] - (cpt * size)) ;
             }
             else ++cpt ;
             ++diff ;

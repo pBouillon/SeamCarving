@@ -13,7 +13,7 @@ public class SeamCarving {
 
     static final int RGB = 3 ;
 
-    private final static int    ROW_REMOVED  = 50 ; /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 2 ; /* number of rows to be removed */
     private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
     private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
 
