@@ -13,7 +13,7 @@ public class SeamCarving {
 
     static final int RGB = 3 ;
 
-    private final static int    ROW_REMOVED  = 2 ; /* number of rows to be removed */
+    private final static int    ROW_REMOVED  = 50 ; /* number of rows to be removed */
     private final static int    SOURCE  = 0 ; /* position of output file in arg list for -c */
     private final static int    OUTPUT  = 1 ; /* position of output file in arg list for -c */
 
@@ -74,7 +74,7 @@ public class SeamCarving {
                 bareRemain  +
                 " " +
                 remainPercent * 10 +
-                "% (" + remain + " row(s) handled)"
+                "% (" + (remain + 1) + " row(s) handled)"
         ) ;
         if (remain == total) {
             System.out.print("\n");
@@ -121,6 +121,10 @@ public class SeamCarving {
         }
         else {
             exitSeamCarving ("Unable read format: " + magicNumber) ;
+        }
+
+        if (_verb && long_meth) {
+            System.out.println("/!\\ WARNING: double Dijkstra takes a huge amount of time\n");
         }
 
         if (_verb) {
