@@ -63,7 +63,6 @@ Progress :
 * Seam carving double graph generation
 
 ## Short term goals
-- [ ] GUI
 - [x] path removed trace
 - [x] handles lines and columns
 - [x] handles rgb images
