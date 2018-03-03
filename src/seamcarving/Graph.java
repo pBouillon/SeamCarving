@@ -79,7 +79,7 @@ public class Graph {
      */
     static int[] getDoublePath(int[][] interest){
         taille = interest[1].length ;
-        System.out.println(" taille de taille " + taille );
+
         graph.Graph newGraph  = toDoubleGraph(interest);
         // find shortest path
         int[] shortestPath = getShortestPath(newGraph);

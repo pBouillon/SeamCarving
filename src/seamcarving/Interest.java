@@ -162,9 +162,7 @@ public class Interest {
      */
     private static boolean isSet(int[] property) {
         for (int v : property) {
-            if (v == -1) {
-                return false ;
-            }
+            if (v < 0) return false ;
         }
         return true ;
     }
