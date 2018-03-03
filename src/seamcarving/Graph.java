@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Graph {
     private static int[] vertices ;
-    private static int taille ;
+    private static int size;
     /**
      * Give the coordinates of an axis in the pixel tab
      *
@@ -67,99 +67,103 @@ public class Graph {
     }
 
     /**
-     */
-    private static int[] doubleDjikstra(graph.Graph g, int s, int t){
-        return null;
-    }
-
-    /**
      * Method that return all Vertices contained in two shortest path
      * @param interest interests of all pixels
      * @return created graph
      */
     static int[] getDoublePath(int[][] interest){
-        taille = interest[1].length ;
+        size = interest[0].length ;
 
-        graph.Graph newGraph  = toDoubleGraph(interest);
+        // loop counter
+        int i ;
+        // for value swapping
+        int temp ;
+
+        graph.Graph imgGraph  = toDoubleGraph (interest) ;
         // find shortest path
-        int[] shortestPath = getShortestPath(newGraph);
-        int[] vertices = getVertices();
+        int[] shortest_1     = getShortestPath (imgGraph) ;
+        int[] shortest_tmp = shortest_1.clone() ;
+        int[] vertices     = getVertices() ;
 
-        // update new cost : OK costs are ok
-        for(Edge e : newGraph.edges()){
+        // update new cost
+        for (Edge e : imgGraph.edges()){
             // for each edge u v add difference between shortest path to get to u with shortest path to get to v
-            e.setCost(e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()]) );
+            e.setCost(
+                    e.getCost() +
+                    (vertices[e.getFrom()] - vertices[e.getTo()])) ;
         }
-        // revert edges : OK but render is ... not fine for debugg
-        for(int i = 1; i< shortestPath.length   ; i++){
-            newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
+
+        // revert edges
+        for (i = 1; i < shortest_1.length; ++i) {
+            imgGraph.revertEdge (
+                    shortest_1[i],
+                    shortest_1[i - 1]
+            ) ;
         }
-        // find shortest path : OK good path as shown on example
-        int[] tmp = getShortestPath(newGraph);
 
         // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
 
         // reverse array
-        for(int i = 0; i < shortestPath.length / 2; i++)
-        {
-            int temp = shortestPath[i];
-            shortestPath[i] = shortestPath[shortestPath.length - i - 1];
-            shortestPath[shortestPath.length - i - 1] = temp;
+        for (i = 0; i < shortest_1.length / 2; ++i) {
+            temp = shortest_1[i] ;
+            shortest_1[i] = shortest_1[shortest_1.length - i - 1] ;
+            shortest_1[shortest_1.length - i - 1] = temp ;
         }
 
         int diff = 0 ;
-        int cpt = 0;
-
-        for(int i = 0 ; i < shortestPath.length - 1 ; i++){
-            if( shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
-                if(diff%2 == 0 || i == shortestPath.length - 2 ){
-                    allVertice.add(shortestPath[i] - (cpt * taille));
-                }else {
-                    cpt++;
-                } diff++;
+        int cpt = 0 ;
+        for (i = 0 ; i < shortest_1.length - 1; ++i) {
+            if (shortest_1[i] != imgGraph.getV() - 2
+                    && shortest_1[i] != imgGraph.getV() - 1) {
+                if (diff % 2 == 0
+                        || i == shortest_1.length - 2 ) {
+                    allVertice.add (shortest_1[i] - (cpt * size)) ;
+                }
+                else ++cpt ;
+                ++diff ;
             }
         }
 
         // reverse array
-        for(int i = 0; i < tmp.length / 2; i++)
-        {
-            int temp = tmp[i];
-            tmp[i] = tmp[tmp.length - i - 1];
-            tmp[tmp.length - i - 1] = temp;
+        for (i = 0; i < shortest_tmp.length / 2; ++i) {
+            temp = shortest_tmp[i];
+            shortest_tmp[i] = shortest_tmp[shortest_tmp.length - i - 1];
+            shortest_tmp[shortest_tmp.length - i - 1] = temp ;
         }
 
-        ArrayList<Integer> secondShortestPath = new ArrayList<>();
-        for(int i : tmp){
-            secondShortestPath.add(i);
+        ArrayList<Integer> shortest_2 = new ArrayList<>();
+        for (int vertice : shortest_tmp) {
+            shortest_2.add(vertice) ;
         }
-        for(int i = 0 ; i < shortestPath.length ; i++){
-            if(secondShortestPath.contains(shortestPath[i])
-                    && shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
-                secondShortestPath.remove((Object)(shortestPath[i]));
+
+        for (int vertice : shortest_1) {
+            if (shortest_2.contains(vertice)
+                    && vertice != imgGraph.getV() - 2
+                    && vertice != imgGraph.getV() - 1) {
+                shortest_2.remove (vertice) ;
             }
         }
-
 
         diff = 0 ;
         cpt = 0;
-
-        for(int i = 0 ; i < secondShortestPath.size() - 1 ; i++){
-            if( secondShortestPath.get(i) != newGraph.getV()-2 && secondShortestPath.get(i) != newGraph.getV()-1){
-                if(diff%2 == 0 || i == secondShortestPath.size() - 2 ){
-                    allVertice.add(secondShortestPath.get(i) - (cpt * taille));
-                }else {
-                    cpt++;
-                } diff++;
+        for (i = 0; i < shortest_2.size() - 1; ++i) {
+            if (shortest_2.get(i) != imgGraph.getV() - 2
+                    && shortest_2.get(i) != imgGraph.getV() - 1) {
+                if (diff % 2 == 0 || i == shortest_2.size() - 2 ) {
+                    allVertice.add (shortest_2.get(i) - (cpt * size)) ;
+                }
+                else ++cpt ;
+                ++diff ;
             }
         }
-        System.out.println(allVertice.size()/2);
-        int[] res = new int[allVertice.size()];
-        for(int i = 0 ; i < allVertice.size() ; i++){
-            res[i] = allVertice.get(i) ;
 
+        int[] res = new int[allVertice.size()] ;
+        for(i = 0; i < allVertice.size(); ++i) {
+            res[i] = allVertice.get(i) ;
         }
-        return res;
+
+        return res ;
     }
 
     /**
