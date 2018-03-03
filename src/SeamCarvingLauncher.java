@@ -18,6 +18,7 @@ public class SeamCarvingLauncher {
                 launcher.isLong_meth(),
                 launcher.isToggle(),
                 launcher.isLines(),
+                launcher.isGrey(),
                 launcher.isVerbose()
         ) ;
     }

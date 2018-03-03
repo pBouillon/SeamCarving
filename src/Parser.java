@@ -9,6 +9,7 @@ class Parser {
     private final static char   OPT_SYMBOL   = '-' ; /* */
     private final static char   OPT_COMPRESS = 'c' ; /* compression option */
     private final static char   OPT_DELETE   = 'd' ; /* property "delete" on pixels */
+    private final static char   OPT_GREY     = 'g' ; /* save ppm as pgm */
     private final static char   OPT_HELP     = 'h' ; /* displays help */
     private final static char   OPT_KEEP     = 'k' ; /* property "keep" on pixels */
     private final static char   OPT_LONG     = 'l' ; /* chose method */
@@ -16,6 +17,7 @@ class Parser {
     private final static char   OPT_VERBOSE  = 'v' ; /* displays progress */
     private final static String OPT_LINES    = "lines" ; /* alter lines instead of meth */
 
+    private boolean  grey; /*save ppm as pgm */
     private boolean  long_meth; /* if using the long_meth algorithm instead of the double one */
     private boolean  lines ;    /* alter lines instead of meth */
     private boolean  toggle  ; /* allow to toggle grey values */
@@ -38,6 +40,7 @@ class Parser {
         long_meth = false ;
         toggle  = false ;
         verbose = false ;
+        grey = false ;
         lines   = false ;
     }
 
@@ -50,14 +53,15 @@ class Parser {
     private void displayHelp(String msg, int ret) {
         String helper_msg = "" +
                 PROG_NAME +" : " + msg + "\n" +
-                "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out.pgm> ... compress an image to a pgm file\n" +
-                "   " + OPT_SYMBOL + OPT_HELP      + " ................... displays help\n" +
-                "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end> ..... delete pixel between those columns\n" +
-                "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end> ..... keep pixel between those columns\n" +
-                "   " + OPT_SYMBOL + OPT_LONG      + " ................... use long method instead of double (v2.0)\n" +
-                "   " + OPT_SYMBOL + OPT_LINES     +     " ............... alter lines instead of columns\n" +
-                "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................... toggle grey values\n" +
-                "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................... enable verbose mode" ;
+                "   " + OPT_SYMBOL + OPT_COMPRESS  + " <img> <out> .... compress an image to a pgm file\n" +
+                "   " + OPT_SYMBOL + OPT_GREY      + " ................ get greyscale for ppm and save as pgm\n" +
+                "   " + OPT_SYMBOL + OPT_HELP      + " ................ displays help\n" +
+                "   " + OPT_SYMBOL + OPT_DELETE    + " <begin> <end> .. delete pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_KEEP      + " <begin> <end> .. keep pixel between those columns\n" +
+                "   " + OPT_SYMBOL + OPT_LONG      + " ................ use long method instead of simple\n" +
+                "   " + OPT_SYMBOL + OPT_LINES     +     " ............ crop lines instead of columns\n" +
+                "   " + OPT_SYMBOL + OPT_TOGGLE    + " ................ toggle values (color inversion)\n" +
+                "   " + OPT_SYMBOL + OPT_VERBOSE   + " ................ enable verbose mode" ;
         System.out.println(helper_msg) ;
         System.exit(ret) ;
     }
@@ -76,7 +80,7 @@ class Parser {
         int dim_d = -1 ;
         int dim_k = -1 ;
 
-        if (args.length < 2) {
+        if (args.length == 0) {
             displayHelp("Args required, see -h", EXIT_SUCCESS) ;
         }
 
@@ -85,6 +89,7 @@ class Parser {
                 lines = true ;
                 continue ;
             }
+
             if (file > -1 && file < 2) {
                 if (arg.charAt(0) == OPT_SYMBOL) {
                     displayHelp("File expected", EXIT_FAILURE) ;
@@ -123,32 +128,43 @@ class Parser {
                             displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break;
+
                     case OPT_DELETE:
                         if (dim_d < 0) { // if -k is not set
-                            ++dim_d;
+                            ++dim_d ;
                         } else {
                             displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break ;
+
                     case OPT_HELP:
                         displayHelp("Available options", EXIT_SUCCESS) ;
                         break;
+
                     case OPT_KEEP:
                         if (dim_k < 0) { // if -k is not set
-                            ++dim_k;
+                            ++dim_k ;
                         } else {
                             displayHelp("Duplicated option", EXIT_FAILURE) ;
                         }
                         break ;
+
                     case OPT_LONG:
                         long_meth = true ;
                         break;
+
                     case OPT_TOGGLE:
                         toggle = true ;
                         break;
+
+                    case OPT_GREY:
+                        grey = true ;
+                        break;
+
                     case OPT_VERBOSE:
                         verbose = true ;
                         break ;
+
                     default:
                         displayHelp("Missing parameters", EXIT_FAILURE) ;
                 }
@@ -157,7 +173,7 @@ class Parser {
 
         if (dim_k > 0 && dim_k < 2 ||
                 file > 0 && file < 2 ) {
-            displayHelp("Missing arguments", -1) ;
+            displayHelp("Missing arguments", EXIT_FAILURE) ;
         }
     }
 
@@ -204,5 +220,12 @@ class Parser {
      */
     boolean isVerbose() {
         return verbose ;
+    }
+
+    /**
+     *
+     */
+    public boolean isGrey() {
+        return grey;
     }
 }

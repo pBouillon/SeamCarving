@@ -66,6 +66,7 @@ public class SeamCarving {
             boolean _long_meth,
             boolean _toggle,
             boolean _lines,
+            boolean _grey,
             boolean _verb ) {
         keep    = _keep   ;
         delete  = _del    ;
@@ -112,14 +113,19 @@ public class SeamCarving {
             }
         }
 
-        if (_verb && long_meth) System.out.println( "\t| Using Double Dijkstra") ;
+        if (_verb && long_meth) System.out.println("\t| Using Double Dijkstra\n\t|") ;
 
         if (_verb && _toggle) {
-            System.out.println( "\t| Values correctly inverted") ;
+            System.out.println("\t| Values correctly inverted\n\t|") ;
         }
 
         if (_verb && _lines) {
-            System.out.println( "\t| Lines used") ;
+            System.out.println("\t| Lines used\n\t|") ;
+        }
+
+        if (_verb && _grey) {
+            if (imgPPM != null) System.out.println("\t| Saved as ppm instead of pgm\n\t|") ;
+            else System.out.println("\t| (/!\\ ignoring conversion: image is already a greyscale\n\t|");
         }
 
         if (_verb) {
@@ -136,6 +142,11 @@ public class SeamCarving {
 
         // color inversion
         if (_toggle) toggleAll() ;
+
+        if (_grey && imgPPM != null) {
+            magicNumber = PortableAnymap.P_PGM ;
+            imgPGM = topgm(imgPPM) ;
+        }
 
         assert magicNumber != null;
         switch (magicNumber) {
@@ -231,5 +242,29 @@ public class SeamCarving {
             }
         }
         return img ;
+    }
+
+    /**
+     *
+     */
+    private static int[][] topgm(int[][][] ppm) {
+        int[][] newPGM = new int[ppm.length][ppm[0].length] ;
+        for (int x = 0; x < newPGM.length; ++x) {
+            for (int y = 0; y < newPGM[0].length; ++y) {
+                newPGM[x][y] = getGreyVal(ppm[x][y]) ;
+            }
+        }
+        return newPGM ;
+    }
+
+    /**
+     * see: https://linux.die.net/man/1/ppmtopgm
+     */
+    private static int getGreyVal(int[] ppmVals) {
+        int greyVal = 0 ;
+        greyVal += .299 * ppmVals[0] ; // R
+        greyVal += .587 * ppmVals[1] ; // G
+        greyVal += .114 * ppmVals[2] ; // B
+        return greyVal ;
     }
 }

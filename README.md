@@ -6,26 +6,31 @@ Image resizing with the Seam Carving algorithm.
 Helper
 ```shell
 ~$ java SeamCarvingLauncher -h
-seamcarving.SeamCarving : Available options
-   -c <img> <out.pgm> ... compress an image to a pgm file
-   -h ................... displays help
-   -d <begin> <end> ..... delete pixel between those columns
-   -k <begin> <end> ..... keep pixel between those columns
-   -l ................... use long method instead of double (v2.0)
-   -lines ............... alter lines instead of columns
-   -t ................... toggle grey values
-   -v ................... enable verbose mode
+SeamCarving : Available options
+   -c <img> <out> .... compress an image to a pgm file
+   -g ................ get greyscale for ppm and save as pgm
+   -h ................ displays help
+   -d <begin> <end> .. delete pixel between those columns
+   -k <begin> <end> .. keep pixel between those columns
+   -l ................ use long method instead of simple
+   -lines ............ crop lines instead of columns
+   -t ................ toggle values (color inversion)
+   -v ................ enable verbose mode
 ```
-Example
+Example (with a lots of arguments)
 ```shell
-~$ java SeamCarvingLauncher -c PortablePixmaps/pgm/totem.pgm totem_out.ppm -v
-Warning: Simple method used by default (version < 2.0)
-
+~$ java SeamCarvingLauncher -c PortablePixmaps/ppm/cake.ppm type_swap_output.pgm -v -g -t -lines
 Progress : 
 	[====================] 100%
-	| Successfully removed 50 columuns in 6400 ms
+	| Values correctly inverted
+	|
+	| Lines used
+	|
+	| Saved as ppm instead of pgm
+	|
+	| Successfully removed 50 columuns in 10197 ms
 	| New image saved in:
-	|	totem_out.ppm
+	|	type_swap_output.pgm
 ```
 
 ## Tasks repartition
@@ -33,7 +38,8 @@ Progress :
 * .pgm saving function
 * .ppm reading function
 * .ppm saving function
-* CLI
+* Arg parser
+* Conversion from .ppm to .pgm
 * Dijkstra implementation
 * Documentation
 * GUI
