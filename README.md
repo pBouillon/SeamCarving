@@ -69,6 +69,18 @@ Progress (Using double Dijkstra):
 	| New image saved in:
 	|	totem_out_double.pgm
 ```
+
+## Improvements
+- [x] Arg parser
+- [x] Forward energy
+- [x] Lines handling
+- [x] Marking pixels as to delete
+- [x] Marking pixels as to keep
+- [x] PPM handling
+- [x] PPM to PGM
+- [x] Progress bar
+- [x] Toggle values (PPM and PGM)
+
 ## Tasks repartition
 ### Pierre Bouillon
 * .pgm saving function
@@ -88,22 +100,6 @@ Progress (Using double Dijkstra):
 * Seam Carving implementation for .ppm
 * Size augmentation
 * Toggled values for .pgm and .ppm
-
-### Yoan Fath
-* Array to graph translation
-* Dijkstra implementation
-* Double Dijkstra implementation
-* Documentation
-* Seam Carving implementation for .pgm
-* Seam Carving graph transformation with double vertices
-* Seam carving double graph generation
-
-## Short term goals
-- [x] path removed trace
-- [x] handles lines and columns
-- [x] handles rgb images
-- [x] mark pixels as "to delete"
-- [x] mark pixels as "to keep"
 
 ## Authors
 * [Pierre Bouillon](https://pierrebouillon.tech/)
