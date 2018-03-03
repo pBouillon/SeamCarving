@@ -4,6 +4,9 @@ import graph.Edge;
 import graph.Heap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Seam Carving graph handling methods
@@ -139,15 +142,15 @@ public class Graph {
             shortest_cpy[shortest_cpy.length - i - 1] = swapStash ;
         }
 
-        ArrayList<Integer> shortest_2 = new ArrayList<>() ;
-        for (int vertice : shortest_cpy) {
-            shortest_2.add(vertice) ;
-        }
+        List<Integer> shortest_2 =
+                Arrays.stream(shortest_cpy)
+                        .boxed()
+                        .collect(Collectors.toList()) ;
 
         for (int vertice : shortest_1) {
             if (vertice == firstVertice) continue ;
             if (vertice == lastVertice ) continue ;
-            if (shortest_2.contains (vertice)) shortest_2.remove (Integer.valueOf(vertice)) ;
+            shortest_2.remove (Integer.valueOf(vertice)) ;
         }
 
 
