@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Graph {
     private static int[] vertices ;
-
+    private static int taille ;
     /**
      * Give the coordinates of an axis in the pixel tab
      *
@@ -78,41 +78,86 @@ public class Graph {
      * @return created graph
      */
     static int[] getDoublePath(int[][] interest){
+        taille = interest[1].length ;
+        System.out.println(" taille de taille " + taille );
         graph.Graph newGraph  = toDoubleGraph(interest);
-
         // find shortest path
         int[] shortestPath = getShortestPath(newGraph);
         int[] vertices = getVertices();
 
-        // update new cost :
+        // update new cost : OK costs are ok
         for(Edge e : newGraph.edges()){
             // for each edge u v add difference between shortest path to get to u with shortest path to get to v
             e.setCost(e.getCost() + (vertices[e.getFrom()] - vertices[e.getTo()]) );
         }
-        // revert edges :
+        // revert edges : OK but render is ... not fine for debugg
         for(int i = 1; i< shortestPath.length   ; i++){
             newGraph.revertEdge(shortestPath[i],shortestPath[i-1]);
         }
         // find shortest path : OK good path as shown on example
-        int[] secondShortestPath = getShortestPath(newGraph);
+        int[] tmp = getShortestPath(newGraph);
 
+        // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
-        for(int i : shortestPath){
-            if( i != newGraph.getV()-2 && i != newGraph.getV()-1){
-                allVertice.add(i);
-            }
 
-        }
-        for(int i : secondShortestPath){
-            if(!allVertice.contains(i) && i != newGraph.getV()-2 && i != newGraph.getV()-1 ){
-                allVertice.add(i);
-            }
+        // reverse array
+        for(int i = 0; i < shortestPath.length / 2; i++)
+        {
+            int temp = shortestPath[i];
+            shortestPath[i] = shortestPath[shortestPath.length - i - 1];
+            shortestPath[shortestPath.length - i - 1] = temp;
         }
 
-        int[] res = new int[allVertice.size()] ;
-        int cpt = 0 ;
-        for(int i : allVertice){
-            res[cpt++]= i ;
+        int diff = 0 ;
+        int cpt = 0;
+
+        for(int i = 0 ; i < shortestPath.length - 1 ; i++){
+            if( shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
+                if(diff%2 == 0 || i == shortestPath.length - 2 ){
+                    allVertice.add(shortestPath[i] - (cpt * taille));
+                }else {
+                    cpt++;
+                } diff++;
+            }
+        }
+
+        // reverse array
+        for(int i = 0; i < tmp.length / 2; i++)
+        {
+            int temp = tmp[i];
+            tmp[i] = tmp[tmp.length - i - 1];
+            tmp[tmp.length - i - 1] = temp;
+        }
+
+        ArrayList<Integer> secondShortestPath = new ArrayList<>();
+        for(int i : tmp){
+            secondShortestPath.add(i);
+        }
+        for(int i = 0 ; i < shortestPath.length ; i++){
+            if(secondShortestPath.contains(shortestPath[i])
+                    && shortestPath[i] != newGraph.getV()-2 && shortestPath[i] != newGraph.getV()-1){
+                secondShortestPath.remove((Object)(shortestPath[i]));
+            }
+        }
+
+
+        diff = 0 ;
+        cpt = 0;
+
+        for(int i = 0 ; i < secondShortestPath.size() - 1 ; i++){
+            if( secondShortestPath.get(i) != newGraph.getV()-2 && secondShortestPath.get(i) != newGraph.getV()-1){
+                if(diff%2 == 0 || i == secondShortestPath.size() - 2 ){
+                    allVertice.add(secondShortestPath.get(i) - (cpt * taille));
+                }else {
+                    cpt++;
+                } diff++;
+            }
+        }
+        System.out.println(allVertice.size()/2);
+        int[] res = new int[allVertice.size()];
+        for(int i = 0 ; i < allVertice.size() ; i++){
+            res[i] = allVertice.get(i) ;
+
         }
         return res;
     }
