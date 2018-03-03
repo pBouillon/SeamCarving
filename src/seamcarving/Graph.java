@@ -74,10 +74,20 @@ public class Graph {
     static int[] getDoublePath(int[][] interest){
         size = interest[1].length ;
 
-        graph.Graph imgGraph  = toDoubleGraph(interest);
+        // counter
+        int i ;
+        // swaping var
+        int swapStash ;
+        //
+        int diff;
+        int cpt;
+
+        graph.Graph imgGraph  = toDoubleGraph (interest);
 
         // find shortest path
         int[] shortest_1 = getShortestPath (imgGraph) ;
+        int[] shortest_cpy = shortest_1.clone() ;
+
         int[] vertices = getVertices() ;
 
         // update new cost
@@ -89,32 +99,29 @@ public class Graph {
         }
 
         // revert edges
-        for (int i = 1; i < shortest_1.length; ++i) {
+        for (i = 1; i < shortest_1.length; ++i) {
             imgGraph.revertEdge (
                     shortest_1[i],
                     shortest_1[i - 1]
             ) ;
         }
 
-        // find shortest path
-        int[] tmp = getShortestPath (imgGraph) ;
+        int verticesCount = imgGraph.getV() ;
 
         // result
         ArrayList<Integer> allVertice = new ArrayList<>() ;
 
         // reverse array
-        for (int i = 0; i < shortest_1.length / 2; ++i) {
-            int swapStash = shortest_1[i] ;
+        for (i = 0; i < shortest_1.length / 2; ++i) {
+            swapStash = shortest_1[i] ;
             shortest_1[i] = shortest_1[shortest_1.length - i - 1] ;
             shortest_1[shortest_1.length - i - 1] = swapStash ;
         }
 
-        int diff = 0 ;
-        int cpt = 0 ;
-
-        for (int i = 0; i < shortest_1.length - 1; ++i) {
-            if (shortest_1[i] != imgGraph.getV() - 2
-                    && shortest_1[i] != imgGraph.getV() - 1) {
+        diff = 0; cpt = 0 ;
+        for (i = 0; i < shortest_1.length - 1; ++i) {
+            if (shortest_1[i] != verticesCount - 2
+                    && shortest_1[i] != verticesCount - 1) {
                 if (diff % 2 == 0
                         || i == shortest_1.length - 2 ) {
                     allVertice.add(shortest_1[i] - (cpt * size)) ;
@@ -125,31 +132,30 @@ public class Graph {
         }
 
         // reverse array
-        for (int i = 0; i < tmp.length / 2; ++i) {
-            int swapStash = tmp[i] ;
-            tmp[i] = tmp[tmp.length - i - 1] ;
-            tmp[tmp.length - i - 1] = swapStash ;
+        for (i = 0; i < shortest_cpy.length / 2; ++i) {
+            swapStash = shortest_cpy[i] ;
+            shortest_cpy[i] = shortest_cpy[shortest_cpy.length - i - 1] ;
+            shortest_cpy[shortest_cpy.length - i - 1] = swapStash ;
         }
 
         ArrayList<Integer> shortest_2 = new ArrayList<>() ;
-        for (int i : tmp) {
-            shortest_2.add(i) ;
+        for (int vertice : shortest_cpy) {
+            shortest_2.add(vertice) ;
         }
 
         for (int vertice : shortest_1) {
             if (shortest_2.contains (vertice)
-                    && vertice != imgGraph.getV() - 2
-                    && vertice != imgGraph.getV() - 1) {
+                    && vertice != verticesCount - 2
+                    && vertice != verticesCount - 1) {
                 shortest_2.remove((Object) (vertice)) ;
             }
         }
 
 
-        diff = 0 ;
-        cpt = 0 ;
-        for (int i = 0; i < shortest_2.size() - 1 ; ++i) {
-            if (shortest_2.get(i) != imgGraph.getV() - 2
-                    && shortest_2.get(i) != imgGraph.getV() - 1) {
+        diff = 0; cpt = 0 ;
+        for (i = 0; i < shortest_2.size() - 1 ; ++i) {
+            if (shortest_2.get(i) != verticesCount - 2
+                    && shortest_2.get(i) != verticesCount - 1) {
                 if (diff % 2 == 0
                         || i == shortest_2.size() - 2) {
                     allVertice.add(shortest_2.get(i) - (cpt * size)) ;
@@ -160,7 +166,7 @@ public class Graph {
         }
 
         int[] res = new int[allVertice.size()] ;
-        for (int i = 0 ; i < allVertice.size() ; ++i) {
+        for (i = 0 ; i < allVertice.size() ; ++i) {
             res[i] = allVertice.get(i) ;
         }
 
