@@ -101,6 +101,15 @@ Progress (Using double Dijkstra):
 * Size augmentation
 * Toggled values for .pgm and .ppm
 
+### Yoan Fath
+* Array to graph translation
+* Dijkstra implementation
+* Double Dijkstra implementation
+* Documentation
+* Seam Carving implementation for .pgm
+* Seam Carving graph transformation with double vertices
+* Seam carving double graph generation
+
 ## Authors
 * [Pierre Bouillon](https://pierrebouillon.tech/)
 * [Yoan Fath](https://github.com/yoanFath)
